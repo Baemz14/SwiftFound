@@ -42,7 +42,7 @@
             if (data.is_user_exist === 'yes') {
                 alert("Username already exists.");
             }
-            else {
+            else {//oh no
               return callServer('php_server_call/add_user.php', formData);
             }
         })
