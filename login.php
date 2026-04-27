@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftFound | Login</title>
-
+    
     <script type="module" src="script/login.js"></script>
+    <script type="module">
+        import { loginLoad } from '/swiftfound/script/login.js';
+        window.onload = loginLoad;
+    </script>
+
 </head>
 <body>
+    <a href="/swiftfound/">frontpage</a><br><br>
 
     <form method=post action="login.php" onsubmit="return validateLoginForm()">
         <label for="uname">username:</label>

@@ -116,7 +116,7 @@ input[type="text"]:focus {
     filter: brightness(1.1);
 }
 
-.login-btn {
+.nav-btn {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: var(--neon-purple);
@@ -128,7 +128,7 @@ input[type="text"]:focus {
     text-decoration: none;
 }
 
-.login-btn:hover {
+.nav-btn:hover {
     background: var(--vibrant-violet);
     color: white;
 }

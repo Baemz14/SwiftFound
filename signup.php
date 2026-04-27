@@ -8,6 +8,7 @@
     <script type="module" src="script/signup.js"></script>
 </head>
 <body>
+    <a href="/swiftfound/">frontpage</a><br><br>
 
     <form method=post action="login.php" onsubmit="return validateSignupForm()">
         <label for="uname">username:</label>

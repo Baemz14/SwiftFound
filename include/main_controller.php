@@ -28,4 +28,28 @@ function addUser($username, $password) {
     return mysqli_query($conn, $sql);
 }
 
+function getUserId($username) {
+    global $conn;
+    $sql = "SELECT user_id FROM User WHERE username = '$username'";
+    $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return $row['user_id'];
+    } else {
+        return null;
+    }
+}
+
+function getUser($user_id) {
+    global $conn;
+    $sql = "SELECT username, reputation FROM User WHERE user_id = '$user_id'";
+    $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return $row;
+    } else {
+        return null;
+    }
+}
+
 ?>

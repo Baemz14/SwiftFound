@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftFound | Home</title>
-    <link rel="stylesheet" href="homepage.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 
     <header>
         <a href="#" class="logo">SwiftFound</a>
         <nav>
-            <a href="login.php" class="login-btn">Login / Register</a>
+            <a href="/swiftfound/home.php" class="nav-btn">home</a>
+            <a href="login.php" class="nav-btn">Login / Register</a>
         </nav>
     </header>
 

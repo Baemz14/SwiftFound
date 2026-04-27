@@ -1,4 +1,5 @@
 import { callServer } from "../include/call_server.js";
+import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
 
 function toggleShowPassword() {
     var passInput = document.getElementById("pass");
@@ -29,6 +30,8 @@ function validateLoginForm() {
     .then(data => {
         if (data.status === 'success') {
             alert("Login successful");
+            saveLogin(data.user_id);
+            window.location.href = "/swiftfound/home.php";
         } else {
             alert("Login failed");
         }
@@ -37,3 +40,25 @@ function validateLoginForm() {
     return false;
 }
 window.validateLoginForm = validateLoginForm;
+
+export async function loginLoad() {
+    let isLoggedIn = await checkIsLoggedIn()
+    if (isLoggedIn) {
+        alert("already logged in dada");
+        window.location.href = '/swiftfound/home.php';        
+    }
+}
+
+function saveLogin(user_id) {
+    let formData = new FormData();
+    formData.append('user_id', user_id);
+    callServer('php_server_call/save_sessdata.php', formData)
+    .then( data => {
+        if (data['status'] === 'success') {
+            console.log("Login data saved");
+        }
+        else {
+            alert("Failed to save login data");
+        }
+    });
+}
