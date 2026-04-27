@@ -1,0 +1,21 @@
+# --- OS / IDE Junk ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- WSL / Linux Junk ---
+*~
+*.swp
+
+# --- Logs & Temp ---
+*.log
+npm-debug.log*
+temp/
+tmp/
+
+# --- Database Exports ---
+# You want to push specific schema files, 
+# but ignore random local dumps.
+*.sql
+!database/schema.sql
