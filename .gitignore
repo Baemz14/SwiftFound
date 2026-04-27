@@ -19,3 +19,5 @@ tmp/
 # but ignore random local dumps.
 *.sql
 !database/schema.sql
+
+token.txt
