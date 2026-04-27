@@ -18,6 +18,6 @@ tmp/
 # You want to push specific schema files, 
 # but ignore random local dumps.
 *.sql
-!database/schema.sql
+!db_stuff/schema.sql
 
 token.txt
