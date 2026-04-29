@@ -64,9 +64,39 @@ function addItem(
     $foundOrLost
 ) {
     global $conn;
-    $sql = "INSERT INTO Item (user_id, title, category, desc, location, , img_file, secret_question, created_at, foundOrLost) 
-        VALUES ('$user_id', '$title', '$category', '$desc', '$location', , '$img_file', '$secret_question', '$created_at', '$foundOrLost')";
+    $sql = "INSERT INTO Item (
+        user_id, 
+        title, 
+        category, 
+        description, 
+        location, 
+        img_file, 
+        secret_question, 
+        created_at, 
+        found_or_lost
+    ) VALUES (
+        '$user_id', 
+        '$title', 
+        '$category', 
+        '$desc', 
+        '$location', 
+        '$img_file', 
+        '$secret_question', 
+        '$created_at', 
+        '$foundOrLost')";
     return mysqli_query($conn, $sql);
 }
 
+function getUserItems($user_id) {
+    global $conn;
+    $sql = "SELECT * FROM item WHERE user_id = '$user_id'";
+    $result = mysqli_query($conn, $sql);
+
+    $items = array();
+    while($row = mysqli_fetch_assoc($result)) {
+        $items[] = $row;
+    }
+    
+    return $items;
+}
 ?>

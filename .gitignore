@@ -21,3 +21,5 @@ tmp/
 !db_stuff/schema.sql
 
 token.txt
+
+img_upload/

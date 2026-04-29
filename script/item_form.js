@@ -1,5 +1,5 @@
 import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
-import { CategoryText } from "/swiftfound/enum_constant.js";
+import { CategoryText, CategoryEnumDB } from "/swiftfound/enum_constant.js";
 import { callServer } from "/swiftfound/include/call_server.js";
 
 export async function itemFormLoad() {
@@ -23,7 +23,7 @@ async function onItemSubmit(event) {
     event.preventDefault();
 
     let itemTitle = document.getElementById("title").value;
-    let categoryInt = document.getElementById("category").value;
+    let categoryInt = parseInt(document.getElementById("category").value, 10);
     let desc = document.getElementById("description").value;
     let location = document.getElementById("location").value;
     let imgFile = document.getElementById("img");
@@ -43,11 +43,16 @@ async function onItemSubmit(event) {
     let imgPointer = imgFile.files[0];
 
     let formData = new FormData();
-    formData.append("item_img", imgPointer);
-    formData.append("item_title", itemTitle);
+    formData.append("title", itemTitle);
+    formData.append("category", CategoryEnumDB[categoryInt]);
+    formData.append("desc", desc);
+    formData.append("location", location);
+    formData.append("img", imgPointer);
+    formData.append("secret_question", secretQuestion);
 
     let data = await callServer("/swiftfound/php_server_call/upload_item.php", formData);
     if (data['upload_status'] === "success") {
-        console.log("saved successfully as: " + data['saved_as']);
+        alert("item uploaded :D");
+        window.location.href = "/swiftfound/home.php";
     }
 }

@@ -14,6 +14,7 @@
     <a href="/swiftfound/">frontpage</a>
     <h1 id="welcome_text">Welcome to SwiftFound!</h1>
     <p id="rep_text">your reputation is: -1</p>
+    <p id="posted_count">youve posted -1 items</p>
     <button type="button" id="logoutButton">logout</button>
     <a href="/swiftfound/item_form.php">post found item</a>
 </body>
