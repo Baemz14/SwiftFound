@@ -1,4 +1,5 @@
 import { loadUserData } from "/swiftfound/script/user_utils.js";
+import { logout } from "/swiftfound/script/logout.js";
 
 export async function homeLoad() {
     let user = await loadUserData();
@@ -12,4 +13,7 @@ export async function homeLoad() {
 
     let rep_text = document.getElementById("rep_text");
     rep_text.innerHTML = "your reputation is: " + user.reputation;
+
+    let logoutButton = document.getElementById("logoutButton");
+    logoutButton.addEventListener('click', logout);
 }

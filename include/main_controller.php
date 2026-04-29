@@ -52,4 +52,21 @@ function getUser($user_id) {
     }
 }
 
+function addItem(
+    $user_id,
+    $title,
+    $category,
+    $desc,
+    $location,
+    $img_file,
+    $secret_question,
+    $created_at,
+    $foundOrLost
+) {
+    global $conn;
+    $sql = "INSERT INTO Item (user_id, title, category, desc, location, , img_file, secret_question, created_at, foundOrLost) 
+        VALUES ('$user_id', '$title', '$category', '$desc', '$location', , '$img_file', '$secret_question', '$created_at', '$foundOrLost')";
+    return mysqli_query($conn, $sql);
+}
+
 ?>
