@@ -1,0 +1,22 @@
+.listings-wrapper {
+  display: flex;       /* Puts items in a row */
+  overflow-x: auto;    /* Enables horizontal scrolling */
+  flex-wrap: wrap;
+  gap: 20px;           /* Basic spacing between boxes */
+  padding: 10px;
+}
+
+.item-card {
+  flex: 0 0 250px;     /* Forces boxes to stay 250px wide and not shrink */
+  border: 1px solid;   /* Simple border just so you can see the box boundaries */
+}
+
+.item-card img {
+  width: 100%;         /* Makes sure the image fits inside the box */
+  display: block;
+}
+
+.item-card h3 {
+    margin: 0;
+    padding: 2px;
+}

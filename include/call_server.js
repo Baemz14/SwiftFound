@@ -1,4 +1,4 @@
-export async function callServer(server_url, formData) {
+export async function callServer(server_url, formData=new FormData()) {
     let response = await fetch(server_url, {
         method: 'POST',
         body: formData

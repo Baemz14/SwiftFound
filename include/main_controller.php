@@ -99,4 +99,17 @@ function getUserItems($user_id) {
     
     return $items;
 }
+
+function getItems() {
+    global $conn;
+    $sql = "SELECT * FROM item";
+    $result = mysqli_query($conn, $sql);
+
+    $items = array();
+    while($row = mysqli_fetch_assoc($result)) {
+        $items[] = $row;
+    }
+    
+    return $items;
+}
 ?>

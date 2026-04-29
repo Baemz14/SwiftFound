@@ -25,6 +25,7 @@
                 <form action="search.php" method="GET">
                     <input type="text" name="q" placeholder="Search e.g. 'Matric Card' or 'Blue Wallet'">
                 </form>
+                <a href="/swiftfound/browse.php">browse</a>
                 <div style="margin: 20px 0; color: rgba(255,255,255,0.3); font-size: 0.8rem;">— OR —</div>
                 <button class="btn-report" onclick="window.location.href='/swiftfound/item_form.php'">Post Found Item</button>
             </div>
