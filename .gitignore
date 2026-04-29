@@ -22,4 +22,5 @@ tmp/
 
 token.txt
 
-img_upload/
+img_upload/*
+!img_upload/.gitkeep
