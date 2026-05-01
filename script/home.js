@@ -19,6 +19,14 @@ export async function homeLoad() {
     let user_items = await callServer("/swiftfound/php_server_call/user_items.php");
     posted_count.innerHTML = "youve posted " + user_items["items"].length + " items";
 
+    let claims_count = document.getElementById('claims_count');
+    let claims = await callServer("/swiftfound/php_server_call/user_item_claims.php");
+    claims_count.innerHTML = "youve claimed "+ claims['items'].length +" items";
+
+    let claimed_count = document.getElementById('claimed_count');
+    let claimed = await callServer("/swiftfound/php_server_call/user_item_claimed.php");
+    claimed_count.innerHTML = claimed['items'].length+" people claimed your items";
+
     let logoutButton = document.getElementById("logoutButton");
     logoutButton.addEventListener('click', logout);
 }

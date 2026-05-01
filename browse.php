@@ -18,13 +18,13 @@
     <a href="/swiftfound/login.php">login</a>
     
     <div id="listings_wrapper" class="listings-wrapper">
-        <div class="item-card">
-            <img src="/swiftfound/img_upload/placeholder.png" alt="Event Image">
-            <h3>title: title</h3>
-            <div>category: category</div>
-            <div>description: description</div>
-            <div>location: location</div>
-        </div>
     </div>
+
+    <dialog id="secretDialog">
+        <p id="secretQuestionText">answer some question</p>
+        <input type="text" id="answerText">
+        <button id="cancelBtn">Cancel</button>
+        <button id="submitBtn">Submit</button>
+    </dialog>
 </body>
 </html>

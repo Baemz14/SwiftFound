@@ -102,7 +102,7 @@ function getUserItems($user_id) {
 
 function getItems() {
     global $conn;
-    $sql = "SELECT * FROM item";
+    $sql = "SELECT item.*, user.username FROM item, user WHERE item.user_id = user.user_id";
     $result = mysqli_query($conn, $sql);
 
     $items = array();
@@ -110,6 +110,49 @@ function getItems() {
         $items[] = $row;
     }
     
+    return $items;
+}
+
+function getItem($item_id) {
+    global $conn;
+    $sql = "SELECT item.*, user.username FROM item, user WHERE item.user_id = user.user_id and item.item_id = '$item_id'";
+    $result = mysqli_query($conn, $sql);
+
+    $items = array();
+
+    if (mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    }
+    
+    return null;
+}
+
+function addClaim($user_id, $item_id, $answer_text) {
+    global $conn;
+    $sql = "INSERT INTO Claim (user_id, item_id, answer_text, is_approved) 
+        VALUES ('$user_id', '$item_id', '$answer_text', 0)";
+    return mysqli_query($conn, $sql);
+}
+
+function getUserItemClaims($user_id) {
+    global $conn;
+    $sql = "SELECT item.* FROM item, claim, user WHERE claim.item_id = item.item_id AND claim.user_id = user.user_id AND user.user_id = '$user_id'";
+    $result = mysqli_query($conn, $sql);
+    $items = array();
+    while($row = mysqli_fetch_assoc($result)) {
+        $items[] = $row;
+    }
+    return $items;
+}
+
+function getUserItemClaimed($user_id) {
+    global $conn;
+    $sql = "SELECT item.* FROM item, claim, user WHERE claim.item_id = item.item_id AND item.user_id = user.user_id AND user.user_id = '$user_id'";
+    $result = mysqli_query($conn, $sql);
+    $items = array();
+    while($row = mysqli_fetch_assoc($result)) {
+        $items[] = $row;
+    }
     return $items;
 }
 ?>
