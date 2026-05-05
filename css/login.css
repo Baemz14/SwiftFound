@@ -1,0 +1,143 @@
+/* css/login.css */
+
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --glass-bg: rgba(255, 255, 255, 0.95);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-gradient);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    background: var(--glass-bg);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 380px;
+}
+
+.brand-link {
+    display: block;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h2 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+    text-align: center;
+    font-weight: 600;
+}
+
+.subtitle {
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+input[type="submit"] {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 1rem;
+}
+
+input[type="submit"]:hover {
+    background-color: var(--primary-hover);
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.signup-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+/* Add this to your existing css/login.css */
+
+.brand-title {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.brand-title h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    
+    /* The fix: include both the webkit version and the standard one */
+    -webkit-background-clip: text; 
+    background-clip: text; 
+    
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
