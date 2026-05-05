@@ -1,4 +1,8 @@
-export async function callServer(server_url, formData=new FormData()) {
+export async function callServer(server_url, formData=new FormData(), call_state="") {
+    if(!formData) {
+        formData = new FormData();
+    }
+    formData.append('call_state', call_state);
     let response = await fetch(server_url, {
         method: 'POST',
         body: formData

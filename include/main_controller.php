@@ -3,15 +3,16 @@ include '../db_stuff/db_conn.php';
 
 function findUser($username, $password) {
     global $conn;
-    $sql = "SELECT password_hash FROM User WHERE username = '$username'";
+    $sql = "SELECT * FROM User WHERE username = '$username'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
         $hash = $row['password_hash'];
-        return password_verify($password, $hash);
-    } else {
-        return false;
+        if(password_verify($password, $hash)) {
+            return $row;
+        }
     }
+    return null;
 }
 
 function userExists($username) {

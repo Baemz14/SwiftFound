@@ -41,8 +41,7 @@ async function onLoginSubmit(event) {
     formData.append('uname', username);
     formData.append('pass', password);
 
-    let data = await callServer('php_server_call/check_login.php', formData);
-    callServer('php_server_call/check_login.php', formData)
+    let data = await callServer('server_call/user_call.php', formData, "FIND_USER");
     if (data.status === 'success') {
         alert("Login successful");
         await saveLogin(data.user_id);
@@ -57,11 +56,10 @@ async function onLoginSubmit(event) {
 async function saveLogin(user_id) {
     let formData = new FormData();
     formData.append('user_id', user_id);
-    let data = await callServer('php_server_call/save_sessdata.php', formData)
+    let data = await callServer('server_call/user_call.php', formData, "LOGIN");
     if (data['status'] === 'success') {
         console.log("Login data saved");
-    }
-    else {
+    } else {
         alert("Failed to save login data");
     }
 }

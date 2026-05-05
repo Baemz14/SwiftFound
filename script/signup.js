@@ -47,13 +47,13 @@ async function onSignupSubmit(event) {
     formData.append('uname', username);
     formData.append('pass', password);
 
-    let data = await callServer('php_server_call/check_existed.php', formData);
-    if (data.is_user_exist === 'yes') {
+    let data = await callServer('server_call/user_call.php', formData, "USER_EXIST");
+    if (data.is_user_exist === 'true') {
         alert("Username already exists.");
         return;
     }
     
-    let data2 = await callServer('php_server_call/add_user.php', formData);
+    let data2 = await callServer('server_call/user_call.php', formData, "ADD_USER");
     if (!data2) {
         return;
     }

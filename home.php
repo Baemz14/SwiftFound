@@ -17,17 +17,22 @@
         <nav class="sidebar">
             <div class="profile-preview">
                 <div class="avatar-placeholder"></div>
-                <h3>Baemz</h3>
+                <a href="/swiftfound/" class="logo">SwiftFound</a>
             </div>
             
-            <ul class="nav-links">
-                <li id='recentBtn' class="nav-buttons">Recent Activity</li>
-                <li id='postedBtn' class="nav-buttons">My Posted Items</li>
-                <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
-                <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
-                <li id='chatBtn' class="nav-buttons">Chat</li>
-                <li id='logoutBtn' class="red-logout">logout</li>
-            </ul>
+            <div class="not-logout">
+                <ul class="nav-links">
+                    <li id='recentBtn' class="nav-buttons">Recent Activity</li>
+                    <li id='postedBtn' class="nav-buttons">My Posted Items</li>
+                    <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
+                    <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
+                    <li id='chatBtn' class="nav-buttons">Chat</li>
+                </ul>   
+                <a class="other-buttons" href="item_form.php">Post Item</a>
+                <a class="other-buttons" href="browse.php">Browse Item</a>
+            </div>
+
+            <a id='logoutBtn' class="red-logout">logout</a>
         </nav>
 
         <section class="content-area">

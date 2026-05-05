@@ -1,3 +1,15 @@
+.logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    /* Gradient Text */
+    background: #ffffff;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
 .app-layout {
     display: flex; /* Puts sidebar and content side-by-side */
     min-height: 100vh;
@@ -8,7 +20,8 @@
     background: #777a7d;
     color: white;
     padding: 20px;
-    flex-shrink: 0; /* Prevents sidebar from squishing */
+    display: flex;
+    flex-direction: column;
 }
 
 .content-area {
@@ -17,7 +30,19 @@
     background: #f4f4f4;
 }
 
-.nav-links { list-style: none; padding: 0; margin-top: 30px; }
+.not-logout {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;     
+}
+
+.nav-links { 
+    list-style: none; 
+    padding: 0; 
+    margin-top: 30px;
+
+}
+
 .nav-buttons { 
     padding: 12px; 
     cursor: pointer; 
@@ -27,11 +52,27 @@
 .nav-buttons:hover { background: #576573; }
 .nav-buttons.active { background: #404b53; }
 
+.other-buttons {
+    padding: 12px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    margin-bottom: 5px;
+    background: #e2ff6f; 
+    display: flex;
+    flex-direction: column; 
+    text-decoration: none;
+}
+.other-buttons:hover {
+    background: #ccff00; 
+}
+
 .red-logout { 
     padding: 12px; 
     cursor: pointer; 
     border-radius: 4px;
     margin-bottom: 5px;
     background: #b56666; 
+    display: flex;
+    flex-direction: column;
 }
 .red-logout:hover { background: #c03030; }

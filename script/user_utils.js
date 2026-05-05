@@ -1,12 +1,19 @@
 import { callServer } from "../include/call_server.js";
 
 export async function checkIsLoggedIn() {
-    let data = await callServer('php_server_call/get_sessdata.php');
-    return data['is_logged_in'];
+    //let data = await callServer('server_call/user_call.php', null, "GET_SESSDATA");
+    //return data['is_logged_in'];
+    
+    // changed new code
+    let user = await loadUserData();
+    if(!user) {
+        return false;
+    }
+    return true;
 }
 
 export async function loadUserData() {
-    let data = await callServer('php_server_call/get_user.php', new FormData())
+    let data = await callServer('server_call/user_call.php', null, "GET_USER");
     if (!data.user_id) {
         return null;
     }
