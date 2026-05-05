@@ -7,7 +7,7 @@ let itemOn = null;
 export async function onBrowseLoad() {
     let listingsWrapper = document.getElementById("listings_wrapper");
 
-    let allItems = (await callServer("/swiftfound/php_server_call/all_items.php"))['items'];
+    let allItems = (await callServer("/swiftfound/server_call/item_call.php", null, "ALL_ITEMS"))['items'];
     for (let i = 0; i < allItems.length; i++) {
         let newCard = `
             <div class="item-card">
@@ -45,7 +45,7 @@ export async function onBrowseLoad() {
         formData.append('item_id', itemOn['item_id']);
         formData.append('answer_text', answerText.value);
 
-        let data = await callServer('/swiftfound/php_server_call/add_claim.php', formData);
+        let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
         if(data['add_status'] === "success") {
             alert('claimed success');
         }

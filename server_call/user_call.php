@@ -106,7 +106,7 @@ switch ($call_state) {
         break;
 
     default:
-        $response['error_log'] = "state wong";
+        $response['error_log'] = "state wong >:(";
 }
 
 header('Content-Type: application/json');

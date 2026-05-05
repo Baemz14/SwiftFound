@@ -50,7 +50,7 @@ async function onItemSubmit(event) {
     formData.append("img", imgPointer);
     formData.append("secret_question", secretQuestion);
 
-    let data = await callServer("/swiftfound/php_server_call/upload_item.php", formData);
+    let data = await callServer("/swiftfound/server_call/item_call.php", formData, "UPLOAD");
     if (data['upload_status'] === "success") {
         alert("item uploaded :D");
         window.location.href = "/swiftfound/home.php";

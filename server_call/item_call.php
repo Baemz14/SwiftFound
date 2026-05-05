@@ -1,0 +1,66 @@
+<?php
+include '../include/main_controller.php';
+session_start();
+
+$response = [
+    'error_log' => "poop"
+];
+
+$call_state = $_POST['call_state'];
+switch ($call_state) {
+    case 'ALL_ITEMS':
+        $response['items'] = getItems();
+        break;
+    
+    case "GET_ITEM":
+        $response['items'] = getItem($_POST['item_id']);
+        break;
+
+    case "UPLOAD":
+        $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        if(!$user_id) {
+            $response['error_log'] = "not logged in";
+            break;
+        }
+
+        $upload_destination = "../img_upload/";
+        $basename = $_FILES['img']['name'];
+        $filename = time() . "_" . $basename;
+
+        $tmp_loc = $_FILES['img']['tmp_name'];
+        $is_upload_success = move_uploaded_file($tmp_loc, $upload_destination . $filename);
+
+        $title = $_POST['title'];
+        $category = $_POST['category'];
+        $desc = $_POST['desc'];
+        $location = $_POST['location'];
+        $secret_question = $_POST['secret_question'];
+
+        $tz = new DateTimeZone('Asia/Kuala_Lumpur');
+        $date = new DateTime('now', $tz);
+        $created_at = $date->format('Y-m-d H:i:s');
+
+        $is_add_item_success = addItem(
+            $user_id,
+            $title,
+            $category,
+            $desc,
+            $location,
+            $filename,
+            $secret_question,
+            $created_at,
+            "FOUND"
+        );
+
+        $response["upload_status"] = $is_upload_success? "success": "failed";
+        $response["saved_as"] = $is_upload_success? $filename : null;
+        break;
+
+    default:
+        $response['error_log'] = "state wong >:(";
+        break;
+}
+
+header('Content-Type: application/json');
+echo json_encode($response);
+?>

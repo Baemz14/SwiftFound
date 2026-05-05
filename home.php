@@ -37,7 +37,7 @@
 
         <section class="content-area">
             <div id="recentSect" class="tab-content">
-                <h1>Welcome Back</h1>
+                <h1>Hello <span id="usernameTxt">User</span>!</h1>
                 <p>Quick stats and recent activity will go here.</p>
             </div>
 

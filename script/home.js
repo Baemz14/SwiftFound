@@ -16,6 +16,7 @@ export async function homeLoad() {
         alert("You are not logged in. Redirecting to login page.");
         window.location.href = 'login.php';
     }
+    document.getElementById("usernameTxt").innerText = user['username'];
 
     document.getElementById("logoutBtn").addEventListener('click', logout);
 
