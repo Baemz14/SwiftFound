@@ -1,5 +1,5 @@
 import { callServer } from "/swiftfound/include/call_server.js";
-import { CategoryEnum, CategoryText } from "/swiftfound/enum_constant.js";
+import { CategoryEnumDB, CategoryText, CategoryEnum } from "/swiftfound/enum_constant.js";
 import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
 
 let itemOn = null;
@@ -10,53 +10,67 @@ export async function onBrowseLoad() {
     let allItems = (await callServer("/swiftfound/server_call/item_call.php", null, "ALL_ITEMS"))['items'];
     for (let i = 0; i < allItems.length; i++) {
         let newCard = `
-            <div class="item-card">
-                <img src="/swiftfound/img_upload/`+ allItems[i]['img_file'] +`" alt="some Image">
-                <h3>`+ allItems[i]['title'] +`</h3>
-                <div>`+ CategoryText[CategoryEnum[allItems[i]['category']]] +`</div>
-                <div>`+ allItems[i]['description'] +`</div>
-                <div>`+ allItems[i]['location'] +`</div>
-                <div>posted by `+ allItems[i]['username'] +`</div>
-                <button id=\"claim`+ i +`\">claim</button>
+            <div id="itemCard_${i}" class="item-card">
+                <div class="item-card-img">
+                    <img src="/swiftfound/img_upload/${allItems[i]['img_file']}" alt="${allItems[i]['title']}">
+                </div>
+                <div class="card-info">
+                    <div class="category-tag">${CategoryText[CategoryEnum[allItems[i]['category']]]}</div>
+                    <h3>${allItems[i]['title']}</h3>
+                    <div class="card-meta">
+                        <span> loc: ${allItems[i]['location']}</span>
+                    </div>
+                    <div class="posted-by">
+                        posted by <strong>${allItems[i]['username']}</strong>
+                    </div>
+                </div>
             </div>
         `;
         listingsWrapper.insertAdjacentHTML('beforeend', newCard);
 
-        let claimButton = document.getElementById("claim"+i);
-        claimButton.addEventListener('click', function(){
+        let itemCard = document.getElementById("itemCard_"+i);
+        itemCard.addEventListener('click', function(){
             claimItem(allItems[i]);
         });
     }
 
-    let answerText = document.getElementById('answerText');
-    let cancelBtn = document.getElementById('cancelBtn');
-    let submitBtn = document.getElementById('submitBtn');
-    cancelBtn.addEventListener('click', function() {
-        answerText.value = "";
-        secretDialog.close();
-    });
-    submitBtn.addEventListener('click', async function() {
-        if(answerText.value === "") {
-            alert('fill in the answer');
-            return;
-        }
+    let categoryFilter = document.getElementById("categoryFilter");
+    for (let i = 0; i < CategoryText.length; i++) {
+        let newCategory = `
+            <option value="${CategoryEnumDB[i]}">${CategoryText[i]}</option>
+        `;
+        categoryFilter.insertAdjacentHTML('beforeend', newCategory);
+    }
 
-        let formData = new FormData();
-        formData.append('item_id', itemOn['item_id']);
-        formData.append('answer_text', answerText.value);
+    // let answerText = document.getElementById('answerText');
+    // let cancelBtn = document.getElementById('cancelBtn');
+    // let submitBtn = document.getElementById('submitBtn');
+    // cancelBtn.addEventListener('click', function() {
+    //     answerText.value = "";
+    //     secretDialog.close();
+    // });
+    // submitBtn.addEventListener('click', async function() {
+    //     if(answerText.value === "") {
+    //         alert('fill in the answer');
+    //         return;
+    //     }
 
-        let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
-        if(data['add_status'] === "success") {
-            alert('claimed success');
-        }
-        else {
-            alert("ohno somting happen :(");
-            console.log("add claim error: "+ data['error_log']);
-        }
+    //     let formData = new FormData();
+    //     formData.append('item_id', itemOn['item_id']);
+    //     formData.append('answer_text', answerText.value);
 
-        answerText.value = "";
-        secretDialog.close();
-    });
+    //     let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
+    //     if(data['add_status'] === "success") {
+    //         alert('claimed success');
+    //     }
+    //     else {
+    //         alert("ohno somting happen :(");
+    //         console.log("add claim error: "+ data['error_log']);
+    //     }
+
+    //     answerText.value = "";
+    //     secretDialog.close();
+    // });
 }
 
 async function claimItem(item) {
@@ -64,6 +78,9 @@ async function claimItem(item) {
         alert('item dont exist (:O');
         return;
     }
+    alert("claiming "+ item['title']);
+    return;
+    // dont run after code need change
 
     let is_logged_in = await checkIsLoggedIn();
     if (!is_logged_in) {

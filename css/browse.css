@@ -1,3 +1,15 @@
+.logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    /* Gradient Text */
+    background: #007bff;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
 .listings-wrapper {
   display: flex;       /* Puts items in a row */
   overflow-x: auto;    /* Enables horizontal scrolling */
@@ -6,17 +18,161 @@
   padding: 10px;
 }
 
-.item-card {
+.item-item-card {
   flex: 0 0 250px;     /* Forces boxes to stay 250px wide and not shrink */
   border: 1px solid;   /* Simple border just so you can see the box boundaries */
 }
 
-.item-card img {
+.item-item-card img {
   width: 100%;         /* Makes sure the image fits inside the box */
   display: block;
 }
 
-.item-card h3 {
+.item-item-card h3 {
     margin: 0;
     padding: 2px;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f4f4f9;
+    padding: 20px;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 1rem 5%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-links a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #333;
+}
+
+.btn-reg {
+    background: #007bff;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+/* Search & Filters */
+.search-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#searchInput {
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filters input, .filters select, .filters button {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Grid Layout */
+.item-grid {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.item-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-card:hover {
+    transform: translateY(-4px);
+}
+
+.item-card-img {
+    height: 180px;
+    background: #f0f0f0;
+}
+
+.item-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Spacing between elements */
+}
+
+.card-info h3 {
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    margin: 0;
+    font-weight: 600;
+    /* Optional: Truncate long titles to 1 line */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* The Category Tag */
+.category-tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #007bff;
+    background: #e7f3ff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: fit-content;
+}
+
+/* Metadata (Location & Username) */
+.card-meta {
+    font-size: 0.85rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.posted-by {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 4px;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
 }

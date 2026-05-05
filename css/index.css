@@ -95,7 +95,7 @@ input[type="text"]:focus {
     box-shadow: 0 0 15px rgba(162, 155, 254, 0.3);
 }
 
-.btn-report {
+.btn-primary {
     background: linear-gradient(135deg, var(--vibrant-violet) 0%, #a29bfe 100%);
     color: white;
     padding: 16px 45px;
@@ -108,9 +108,10 @@ input[type="text"]:focus {
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-decoration: none;
 }
 
-.btn-report:hover {
+.btn-primary:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
     filter: brightness(1.1);
