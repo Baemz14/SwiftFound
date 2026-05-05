@@ -15,7 +15,7 @@ switch ($call_state) {
 
     case "ADD_USER":
         $username = $_POST['uname'];
-        $password = $_POST['password'];
+        $password = $_POST['pass'];
         if (!userExists($username)) {
             if (addUser($username, $password)) {
                 $response['is_added'] = "yes";
