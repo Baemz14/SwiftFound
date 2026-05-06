@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwiftFound | Home</title>
-    <link rel="stylesheet" href="css/index.css">
+    <title>SwiftFound | Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- The ?v=2 forces the browser to load the NEW css -->
+    <link rel="stylesheet" href="css/index.css?v=2">
 </head>
 <body>
 
     <header>
         <a href="#" class="logo">SwiftFound</a>
         <nav>
-            <a href="/swiftfound/home.php" class="nav-btn">home</a>
-            <a href="login.php" class="nav-btn">Login / Register</a>
+            <a href="/swiftfound/home.php" class="nav-btn">Home</a>
+            <a href="login.php" class="nav-btn login-cta">Login / Register</a>
         </nav>
     </header>
 
     <main>
         <section class="hero">
-            <h1>Lost something?</h1>
-            <p>Tapah Campus | Lost & Found Network ;D</p>
+            <div class="hero-text">
+                <h1>Lost something?</h1>
+                <p class="campus-tag">Tapah Campus | Lost & Found Network ;D</p>
+            </div>
             
-            <div class="search-container">
-                <form action="search.php" method="GET">
-                    <input type="text" name="q" placeholder="Cannot search yet :(">
+            <div class="search-card">
+                <form action="search.php" method="GET" class="search-form">
+                    <input type="text" name="q" placeholder="Search for lost items..." disabled>
                 </form>
-                <a class="btn-primary" href="/swiftfound/browse.php">browse</a>
-                <div style="margin: 20px 0; color: rgba(255,255,255,0.3); font-size: 0.8rem;">— OR —</div>
-                <a class="btn-primary" href="/swiftfound/item_form.php">Post Found Item</a>
+                
+                <div class="button-stack">
+                    <a class="btn-primary" href="/swiftfound/browse.php">Browse Items</a>
+                    <div class="or-divider"><span>OR</span></div>
+                    <a class="btn-secondary" href="/swiftfound/item_form.php">Post Found Item</a>
+                </div>
             </div>
         </section>
     </main>

@@ -1,135 +1,140 @@
 :root {
-    /* Purple Vibe Palette */
-    --deep-space: #1e1e2e;
-    --glass-purple: rgba(108, 92, 231, 0.15);
-    --neon-purple: #a29bfe;
-    --vibrant-violet: #6c5ce7;
-    --text-main: #f8f9fa;
-    --text-dim: #b2a4ff;
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --text-dark: #1f2937;
+    --text-gray: #6b7280;
+    --white: #ffffff;
 }
 
 body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--deep-space);
-    /* Subtle doodle texture overlay */
-    background-image: url('https://www.transparenttextures.com/patterns/p6-mini.png');
-    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-gradient);
     margin: 0;
-    padding: 0;
     min-height: 100vh;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
 }
 
 header {
-    background: rgba(30, 30, 46, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 1rem 5%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    padding: 1.2rem 5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .logo {
     font-size: 1.8rem;
     font-weight: 800;
-    /* Gradient Text */
-    background: linear-gradient(to bottom, #ffffff 40%, var(--neon-purple) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--white);
     text-decoration: none;
     letter-spacing: -1px;
 }
 
-/* Hero Section */
+.nav-btn {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 15px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.login-cta {
+    background: var(--white);
+    color: var(--primary-color);
+}
+
 .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
     text-align: center;
-    padding: 100px 20px;
-    position: relative;
-    overflow: hidden;
 }
 
 h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
+    font-size: 3.5rem;
     font-weight: 800;
+    margin: 0;
 }
 
-.hero p {
-    font-family: 'Courier New', Courier, monospace;
-    color: var(--text-dim);
-    font-size: 1.1rem;
+.campus-tag {
+    font-family: monospace;
+    opacity: 0.8;
     margin-bottom: 40px;
 }
 
-.search-container {
-    background: var(--glass-purple);
+/* Fixes the overlap from image_a2f22b.png */
+.search-card {
+    background: var(--white);
     padding: 40px;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: inline-block;
-    width: 90%;
-    max-width: 600px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    border-radius: 1.5rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    color: var(--text-dark);
 }
 
-input[type="text"] {
-    width: 80%;
-    padding: 18px 25px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
+.search-form input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #f3f4f6;
+    background: #f9fafb;
     border-radius: 12px;
     font-size: 1rem;
-    color: white;
-    outline: none;
-    transition: 0.3s;
+    margin-bottom: 20px;
+    box-sizing: border-box;
 }
 
-input[type="text"]:focus {
-    border-color: var(--neon-purple);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 15px rgba(162, 155, 254, 0.3);
+.button-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.2s;
+    display: block; /* Ensures they take full width of the card */
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--vibrant-violet) 0%, #a29bfe 100%);
+    background: var(--primary-color);
     color: white;
-    padding: 16px 45px;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 30px;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-decoration: none;
 }
 
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
-    filter: brightness(1.1);
+.btn-secondary {
+    background: #eef2ff;
+    color: var(--primary-color);
 }
 
-.nav-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--neon-purple);
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
-    text-decoration: none;
+.or-divider {
+    display: flex;
+    align-items: center;
+    color: var(--text-gray);
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin: 5px 0;
 }
 
-.nav-btn:hover {
-    background: var(--vibrant-violet);
-    color: white;
+.or-divider::before, .or-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.or-divider span {
+    padding: 0 10px;
 }

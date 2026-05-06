@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftFound | Home</title>
+    
+    <!-- Added Inter Font to match SwiftFound branding -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/home.css">
 
     <script type="module">
@@ -14,6 +17,7 @@
 
 <body>
     <div class="app-layout">
+        <!-- Sidebar Navigation Card -->
         <nav class="sidebar">
             <div class="profile-preview">
                 <div class="avatar-placeholder"></div>
@@ -22,43 +26,53 @@
             
             <div class="not-logout">
                 <ul class="nav-links">
-                    <li id='recentBtn' class="nav-buttons">Recent Activity</li>
+                    <li id='recentBtn' class="nav-buttons active">Recent Activity</li>
                     <li id='postedBtn' class="nav-buttons">My Posted Items</li>
                     <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
                     <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
                     <li id='chatBtn' class="nav-buttons">Chat</li>
                 </ul>   
-                <a class="other-buttons" href="item_form.php">Post Item</a>
-                <a class="other-buttons" href="browse.php">Browse Item</a>
+                
+                <div class="action-buttons">
+                    <a class="other-buttons primary-btn" href="item_form.php">Post Item</a>
+                    <a class="other-buttons secondary-btn" href="browse.php">Browse Items</a>
+                </div>
             </div>
 
-            <a id='logoutBtn' class="red-logout">logout</a>
+            <a id='logoutBtn' class="red-logout">Logout</a>
         </nav>
 
-        <section class="content-area">
+        <!-- Main Content Card -->
+        <main class="content-area">
             <div id="recentSect" class="tab-content">
-                <h1>Hello <span id="usernameTxt">User</span>!</h1>
-                <p>Quick stats and recent activity will go here.</p>
+                <h1>Hello, <span id="usernameTxt">User</span>!</h1>
+                <p class="subtitle">Here is what's happening with your items today.</p>
+                <hr>
+                <div class="placeholder-content">Quick stats and recent activity will go here.</div>
             </div>
 
-            <div id="postedSect" class="tab-content">
+            <div id="postedSect" class="tab-content" style="display:none;">
                 <h1>My Posted Items</h1>
             </div>
 
-            <div id="claimsSect" class="tab-content">
-                <h1>pending claim</h1>
-                <h1>approved claim</h1>
-                <h1>rejected claim</h1>
+            <div id="claimsSect" class="tab-content" style="display:none;">
+                <h1>My Claims</h1>
+                <div class="claim-grid">
+                    <section><h3>Pending</h3></section>
+                    <section><h3>Approved</h3></section>
+                    <section><h3>Rejected</h3></section>
+                </div>
             </div>
 
-            <div id="claimReqSect" class="tab-content">
-                <h1>people claiming my item</h1>
+            <div id="claimReqSect" class="tab-content" style="display:none;">
+                <h1>Claim Requests</h1>
+                <p>Manage people claiming your found items.</p>
             </div>
 
-            <div id="chatSect" class="tab-content">
-                <h1>chat stuff</h1>
+            <div id="chatSect" class="tab-content" style="display:none;">
+                <h1>Messages</h1>
             </div>
-        </section>
+        </main>
     </div>
 </body>
 </html>
