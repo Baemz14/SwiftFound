@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwiftFound | Post Found Item Form</title>
+    <title>SwiftFound | Post Found Item</title>
+    
+    <!-- Fonts and Separated CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/itemform.css">
     
     <script type="module">
         import { itemFormLoad } from "/swiftfound/script/item_form.js";
@@ -11,31 +15,50 @@
     </script>
 </head>
 <body>
-    <a href="/swiftfound/">frontpage</a>
-    <a href="/swiftfound/home.php">home</a><br><br>
 
-    <form method="POST" action="#" id="itemForm">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title"><br><br>
+    <div class="form-container">
+        <div class="brand-name">SwiftFound</div>
+        <a href="/swiftfound/home.php" class="back-link">← Return to Home</a>
 
-        <label for="category">Category:</label>
-        <select id="category">
-            <option value="-1">Select a category</option>
-        </select><br><br>
+        <h2>Post Found Item</h2>
+        <p class="subtitle">Please enter the item details</p>
 
-        <label for="description">Description:</label>
-        <textarea id="description"></textarea><br><br>
+        <form method="POST" action="#" id="itemForm">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" placeholder="What did you find?">
+            </div>
 
-        <label for="location">Location:</label>
-        <input type="text" id="location"><br><br>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    <option value="-1">Select a category</option>
+                </select>
+            </div>
 
-        <label for="img">upload img:</label>
-        <input type="file" id="img" accept="image/*"><br><br>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Describe the item..."></textarea>
+            </div>
 
-        <label for="secret_question">Secret Question (for verification):</label>
-        <input type="text" id="secret_question" placeholder="e.g., What color was it?"><br><br>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="Where was it found?">
+            </div>
 
-        <button type="submit">Submit</button>
-    </form>
+            <div class="form-group">
+                <label for="img">Upload Image</label>
+                <input type="file" id="img" name="img" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label for="secret_question">Secret Question (for verification)</label>
+                <input type="text" id="secret_question" name="secret_question" placeholder="e.g., What color was it?">
+            </div>
+
+            <button type="submit">Submit Form</button>
+        </form>
+    </div>
+
 </body>
 </html>
