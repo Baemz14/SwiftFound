@@ -7,6 +7,20 @@
     --error-red: #ef4444;
 }
 
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-white);
+    overflow-x: hidden;
+}
+
 .admin-card {
     background: var(--card-bg);
     padding: 60px 40px; 
@@ -17,6 +31,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
     animation: fadeIn 0.5s ease-out;
+    margin: 20px; /* Ensures it doesn't touch screen edges on mobile */
 }
 
 .admin-header {
@@ -25,6 +40,25 @@
     align-items: center;
     gap: 16px; 
     margin-bottom: 50px; 
+}
+
+.admin-logo {
+    font-weight: 800;
+    font-size: 1.4rem;
+    background: linear-gradient(to right, #ffffff, #8b8cf7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.badge {
+    background: rgba(139, 140, 247, 0.1);
+    color: var(--primary-purple);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(139, 140, 247, 0.2);
 }
 
 h1 {
@@ -72,7 +106,7 @@ h1 {
 
 input[type="password"] {
     width: 100%;
-    padding: 16px;
+    padding: 18px;
     border-radius: 12px;
     border: 2px solid rgba(255, 255, 255, 0.05);
     background: rgba(15, 23, 42, 0.8);
@@ -108,10 +142,6 @@ input[type="password"]:focus {
     box-shadow: 0 12px 24px rgba(139, 140, 247, 0.3);
 }
 
-.primary-btn:active {
-    transform: translateY(0);
-}
-
 .admin-footer {
     margin-top: 45px; 
 }
@@ -129,6 +159,6 @@ input[type="password"]:focus {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
 }
