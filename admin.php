@@ -1,18 +1,13 @@
 <?php
 session_start();
-
-$error_message = "";
-
+$error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $security_key = $_POST['pass'];
-
-    // Define your secure key here
-    if ($security_key === "your_secure_password_here") {
+    if ($_POST['pass'] === "TAPAH2026") {
         $_SESSION['admin_auth'] = true;
         header("Location: admin_dashboard.php");
         exit();
     } else {
-        $error_message = "ACCESS DENIED: INVALID SECURITY KEY";
+        $error = "Invalid Security Key";
     }
 }
 ?>
@@ -21,38 +16,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwiftFound | Admin Authorization</title>
-    
+    <title>SwiftFound | Admin</title>
     <link rel="stylesheet" href="css/admin.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="admin-container">
+        <h1>Admin Portal</h1>
+        <p class="subtitle">Secure Access Only</p>
 
-    <div class="admin-box">
-        <h2>Admin Access</h2>
-
-        <?php if (!empty($error_message)): ?>
-            <div class="error-box">
-                <?php echo $error_message; ?>
-            </div>
+        <?php if($error): ?>
+            <div class="error-message"><?php echo $error; ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <div class="input-container">
-                <label for="pass">Security Key</label>
-                <input type="password" id="pass" name="pass" placeholder="••••••••" required autofocus>
+        <form method="POST" action="">
+            <div class="input-group">
+                <input type="password" name="pass" placeholder="Enter Security Key" required autofocus>
             </div>
-
-            <button type="submit" class="admin-btn">Authorize System</button>
+            <button type="submit" class="admin-btn">Authorize</button>
         </form>
 
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="index.php" style="color: var(--text-silver); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
-                Return to Terminal
-            </a>
-        </div>
+        <a href="index.php" class="back-link">← Return to Home</a>
     </div>
-
 </body>
 </html>

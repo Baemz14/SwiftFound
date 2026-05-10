@@ -1,138 +1,116 @@
-/* 1. System Variables */
 :root {
-    --admin-red: #ef4444;      /* Alert/Admin color */
-    --admin-red-glow: rgba(239, 68, 68, 0.2);
-    --bg-dark: #020617;        /* Main background */
-    --panel-bg: #0f172a;       /* Form container */
+    --bg-dark: #121421;
+    --card-bg: #1e1e30;
+    --accent-purple: #8b8cf7;
     --text-main: #ffffff;
-    --text-silver: #cbd5e1;    /* Dimmed labels */
-    --input-bg: #1e293b;
-    --border-color: rgba(255, 255, 255, 0.1);
+    --text-dim: #a0a0b8;
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --error-red: #ff5f5f;
 }
 
-/* 2. Page Layout */
 body {
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-dark);
-    /* Subtle radial glow to make the screen look more techy */
-    background-image: radial-gradient(at 0% 0%, rgba(30, 41, 59, 1) 0, transparent 50%),
-                      radial-gradient(at 100% 100%, rgba(15, 23, 42, 1) 0, transparent 50%);
+    color: var(--text-main);
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-main);
-    overflow: hidden;
 }
 
-/* 3. The Login Card */
-.admin-box {
-    background: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    padding: 3rem 2.5rem;
-    border-radius: 8px; /* Industrial/Professional look */
+.admin-container {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 24px;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-    position: relative;
-    z-index: 1;
-}
-
-/* Red indicator line at the top */
-.admin-box::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: var(--admin-red);
-    box-shadow: 0 0 15px var(--admin-red);
-}
-
-/* 4. Typography */
-h2 {
-    font-size: 1.5rem;
-    margin: 0 0 2rem 0;
-    font-weight: 600;
-    text-transform: uppercase;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     text-align: center;
-    letter-spacing: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* 5. Form Elements */
-.input-container {
-    margin-bottom: 1.5rem;
+.admin-container h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    font-weight: 700;
 }
 
-label {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--text-silver);
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1px;
+.subtitle {
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    font-size: 0.9rem;
 }
 
-input[type="text"], 
+.input-group {
+    margin-bottom: 20px;
+}
+
 input[type="password"] {
     width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     background: var(--input-bg);
-    border: 1px solid #334155;
-    border-radius: 4px;
-    padding: 14px;
     color: white;
     font-size: 1rem;
-    /* Font specifically for credentials/code */
-    font-family: 'JetBrains Mono', monospace;
     box-sizing: border-box;
-    transition: all 0.2s ease-in-out;
-}
-
-input:focus {
     outline: none;
-    border-color: var(--admin-red);
-    box-shadow: 0 0 0 4px var(--admin-red-glow);
+    transition: all 0.3s ease;
 }
 
-/* 6. Action Button */
+input[type="password"]:focus {
+    border-color: var(--accent-purple);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 4px rgba(139, 140, 247, 0.1);
+}
+
 .admin-btn {
-    width: 100%;
-    background: transparent;
+    background: var(--accent-purple);
     color: white;
-    border: 2px solid var(--admin-red);
-    padding: 14px;
-    border-radius: 4px;
-    font-weight: 600;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(139, 140, 247, 0.3);
 }
 
 .admin-btn:hover {
-    background: var(--admin-red);
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    opacity: 0.9;
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 140, 247, 0.4);
 }
 
 .admin-btn:active {
-    transform: translateY(0px);
+    transform: translateY(0);
 }
 
-/* 7. Error Messages */
-.error-box {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--admin-red);
+.error-message {
+    color: var(--error-red);
+    background: rgba(255, 95, 95, 0.1);
     padding: 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 0.85rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    font-weight: 500;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 95, 95, 0.2);
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 25px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--text-main);
 }
