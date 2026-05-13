@@ -3,12 +3,20 @@ import { CategoryEnumDB, CategoryText, CategoryEnum } from "/swiftfound/enum_con
 import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
 
 let itemOn = null;
+let user = null;
 
 export async function onBrowseLoad() {
+    let sessData = await callServer('/swiftfound/server_call/user_call.php', null, "GET_SESSDATA");
+    user = sessData['user'];
+
     let listingsWrapper = document.getElementById("listings_wrapper");
 
     let allItems = (await callServer("/swiftfound/server_call/item_call.php", null, "ALL_ITEMS"))['items'];
     for (let i = 0; i < allItems.length; i++) {
+        let isUserPosted = false;
+        if (user) {
+            isUserPosted = allItems[i]['user_id'] === user['user_id'];
+        }
         let newCard = `
             <div id="itemCard_${i}" class="item-card">
                 <div class="item-card-img">
@@ -21,7 +29,7 @@ export async function onBrowseLoad() {
                         <span> loc: ${allItems[i]['location']}</span>
                     </div>
                     <div class="posted-by">
-                        posted by <strong>${allItems[i]['username']}</strong>
+                        posted by <strong>${isUserPosted? "you": allItems[i]['username']}</strong>
                     </div>
                 </div>
             </div>
@@ -30,7 +38,7 @@ export async function onBrowseLoad() {
 
         let itemCard = document.getElementById("itemCard_"+i);
         itemCard.addEventListener('click', function(){
-            claimItem(allItems[i]);
+            window.location.href = `item_detail.php?item_id=${allItems[i]['item_id']}`;
         });
     }
 
@@ -41,56 +49,4 @@ export async function onBrowseLoad() {
         `;
         categoryFilter.insertAdjacentHTML('beforeend', newCategory);
     }
-
-    // let answerText = document.getElementById('answerText');
-    // let cancelBtn = document.getElementById('cancelBtn');
-    // let submitBtn = document.getElementById('submitBtn');
-    // cancelBtn.addEventListener('click', function() {
-    //     answerText.value = "";
-    //     secretDialog.close();
-    // });
-    // submitBtn.addEventListener('click', async function() {
-    //     if(answerText.value === "") {
-    //         alert('fill in the answer');
-    //         return;
-    //     }
-
-    //     let formData = new FormData();
-    //     formData.append('item_id', itemOn['item_id']);
-    //     formData.append('answer_text', answerText.value);
-
-    //     let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
-    //     if(data['add_status'] === "success") {
-    //         alert('claimed success');
-    //     }
-    //     else {
-    //         alert("ohno somting happen :(");
-    //         console.log("add claim error: "+ data['error_log']);
-    //     }
-
-    //     answerText.value = "";
-    //     secretDialog.close();
-    // });
-}
-
-async function claimItem(item) {
-    if(!item) {
-        alert('item dont exist (:O');
-        return;
-    }
-    alert("claiming "+ item['title']);
-    return;
-    // dont run after code need change
-
-    let is_logged_in = await checkIsLoggedIn();
-    if (!is_logged_in) {
-        alert("you have to log in to claim. redirecting to login page");
-        window.location.href = "/swiftfound/login.php";
-        return;
-    }
-
-    let secretDialog = document.getElementById("secretDialog").showModal();
-    document.getElementById("secretQuestionText").innerHTML = item['secret_question'];
-
-    itemOn = item;
 }

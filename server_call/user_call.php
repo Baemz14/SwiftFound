@@ -56,9 +56,10 @@ switch ($call_state) {
         }
         break;
 
-    case "GET_SESSDATA":
+    case "GET_SESSDATA": 
         $response['is_logged_in'] = isset($_SESSION['user_id']);
-        $response['user_id'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        $response['user_id'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null; // obsolete but old code uses
+        $response['user'] = isset($_SESSION['user_id']) ? getUser($_SESSION['user_id']) : null;
         break;
 
     case "LOGOUT":

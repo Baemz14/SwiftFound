@@ -38,11 +38,5 @@
     <main class="item-grid" id="listings_wrapper">
     </main>
 
-    <dialog id="secretDialog">
-        <p id="secretQuestionText">answer some question</p>
-        <input type="text" id="answerText">
-        <button id="cancelBtn">Cancel</button>
-        <button id="submitBtn">Submit</button>
-    </dialog>
 </body>
 </html>

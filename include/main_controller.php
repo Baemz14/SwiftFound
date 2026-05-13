@@ -43,7 +43,7 @@ function getUserId($username) {
 
 function getUser($user_id) {
     global $conn;
-    $sql = "SELECT username, reputation FROM User WHERE user_id = '$user_id'";
+    $sql = "SELECT user_id, username, reputation FROM User WHERE user_id = '$user_id'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
@@ -103,7 +103,7 @@ function getUserItems($user_id) {
 
 function getItems() {
     global $conn;
-    $sql = "SELECT item.*, user.username FROM item, user WHERE item.user_id = user.user_id";
+    $sql = "SELECT item.*, user.user_id, user.username, user.reputation FROM item, user WHERE item.user_id = user.user_id";
     $result = mysqli_query($conn, $sql);
 
     $items = array();
@@ -116,7 +116,7 @@ function getItems() {
 
 function getItem($item_id) {
     global $conn;
-    $sql = "SELECT item.*, user.username FROM item, user WHERE item.user_id = user.user_id and item.item_id = '$item_id'";
+    $sql = "SELECT item.*, user.username, user.reputation FROM item, user WHERE item.user_id = user.user_id and item.item_id = '$item_id'";
     $result = mysqli_query($conn, $sql);
 
     $items = array();

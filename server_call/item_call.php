@@ -13,7 +13,13 @@ switch ($call_state) {
         break;
     
     case "GET_ITEM":
-        $response['items'] = getItem($_POST['item_id']);
+        if (isset($_POST['item_id'])) {
+            $response['item'] = getItem($_POST['item_id']);
+        } else if (isset($_GET['item_id'])) {
+            $response['item'] = getItem($_GET['item_id']);
+        } else {
+            $response['error_log'] = "no item id passed";
+        }
         break;
 
     case "UPLOAD":
