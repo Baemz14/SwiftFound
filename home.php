@@ -20,7 +20,6 @@
         <!-- Sidebar Navigation Card -->
         <nav class="sidebar">
             <div class="profile-preview">
-                <div class="avatar-placeholder"></div>
                 <a href="/swiftfound/" class="logo">SwiftFound</a>
             </div>
             
