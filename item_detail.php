@@ -68,6 +68,21 @@
     </main>
 </div>
 
+<div id="claimModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h2>Claim Item</h2>
+        <p>Ownership verification question</p>
+
+        <label for="answer">some question</label>
+        <input type="text" id="answer">
+
+        <div class="modal-actions">
+            <button id="cancelClaimBtn" class="btn-secondary">Cancel</button>
+            <button id="submitClaimBtn" class="btn-claim">Claim</button>
+        </div>
+    </div>
+</div>
+
 <!-- Report Modal -->
 <div id="reportModal" class="modal-overlay" style="display: none;">
     <div class="modal-card">

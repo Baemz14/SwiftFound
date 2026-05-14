@@ -5,6 +5,7 @@ import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
 let item = null;
 let user = null;
 let isUserPosted = false;
+let isUserClaimed = false;
 
 export async function onItemLoad() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -21,6 +22,14 @@ export async function onItemLoad() {
     user = sessData['user'];
     if (user) {
         isUserPosted = item['user_id'] === user['user_id'];
+    }
+
+    let claimData = await callServer('/swiftfound/server_call/user_call.php', null, "USER_CLAIMS");
+    for (const claim of claimData['claims']) {
+        if (item['item_id'] === claim['item_id']) {
+            isUserClaimed = true;
+            break;
+        }
     }
 
     document.getElementById('item_image').src = `/swiftfound/img_upload/${item['img_file']}`;
@@ -43,6 +52,8 @@ export async function onItemLoad() {
     document.getElementById('reportBtn').addEventListener('click', onReportClick);
     document.getElementById('cancelReportBtn').addEventListener('click', closeReportModal);
     document.getElementById('submitReportBtn').addEventListener('click', submitReport);
+
+    document.getElementById('claimModal').style.display = 'flex';
 }
 
 function onClaimClick(e) {
@@ -50,7 +61,15 @@ function onClaimClick(e) {
         // TODO: alert only for dev, later want to add nicer way to alert user
         alert(`cannot claim your own stuff >:(`);
         return;
+    } if (!user) {
+        alert(`you no login go login`);
+        window.location.href = "/swiftfound/login.php";
+        return;
+    } if (isUserClaimed) {
+        alert(`already claimed this item`);
+        return;
     }
+
 }
 
 function onReportClick(e) {

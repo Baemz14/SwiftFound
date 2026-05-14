@@ -88,7 +88,7 @@ switch ($call_state) {
         if (!$user_id) {
             die("you no login dada");
         }
-        $response['items'] = getUserItemclaims($user_id);
+        $response['claims'] = getUserItemclaims($user_id);
         break;
 
     case "USER_CLAIMED":

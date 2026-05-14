@@ -213,6 +213,8 @@ body {
 .btn-secondary:hover { background: #e5e7eb; }
 .btn-danger { background: #ef4444; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; font-weight: 600; transition: 0.2s;}
 .btn-danger:hover { background: #dc2626; }
+.btn-claim { background: #74caff; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; font-weight: 600; transition: 0.2s;}
+.btn-claim:hover { background: #1397f5; }
 
 @media (max-width: 768px) {
     .item-details-grid { grid-template-columns: 1fr; }
