@@ -117,6 +117,10 @@ export async function homeLoad() {
 
     // This will activate the section and trigger the fetch logic below
     activateSection("recentBtn");
+
+    // TODO: show all these user posted to ui
+    let data = await callServer("/swiftfound/server_call/user_call.php", null, "USER_ITEMS");
+    let items = data['items'];
 }
 
 function activateSection(btnId) {
