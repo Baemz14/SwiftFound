@@ -42,10 +42,6 @@ switch ($call_state) {
         $location = $_POST['location'];
         $secret_question = $_POST['secret_question'];
 
-        $tz = new DateTimeZone('Asia/Kuala_Lumpur');
-        $date = new DateTime('now', $tz);
-        $created_at = $date->format('Y-m-d H:i:s');
-
         $is_add_item_success = addItem(
             $user_id,
             $title,
@@ -53,9 +49,7 @@ switch ($call_state) {
             $desc,
             $location,
             $filename,
-            $secret_question,
-            $created_at,
-            "FOUND"
+            $secret_question
         );
 
         $response["upload_status"] = $is_upload_success? "success": "failed";

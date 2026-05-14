@@ -74,9 +74,7 @@ function addItem(
     $desc,
     $location,
     $img_file,
-    $secret_question,
-    $created_at,
-    $foundOrLost
+    $secret_question
 ) {
     global $conn;
     $sql = "INSERT INTO Item (
@@ -86,9 +84,7 @@ function addItem(
         description, 
         location, 
         img_file, 
-        secret_question, 
-        created_at, 
-        found_or_lost
+        secret_question
     ) VALUES (
         '$user_id', 
         '$title', 
@@ -96,9 +92,8 @@ function addItem(
         '$desc', 
         '$location', 
         '$img_file', 
-        '$secret_question', 
-        '$created_at', 
-        '$foundOrLost')";
+        '$secret_question'
+    )";
     return mysqli_query($conn, $sql);
 }
 
@@ -144,8 +139,8 @@ function getItem($item_id) {
 
 function addClaim($user_id, $item_id, $answer_text) {
     global $conn;
-    $sql = "INSERT INTO Claim (user_id, item_id, answer_text, is_approved) 
-        VALUES ('$user_id', '$item_id', '$answer_text', 0)";
+    $sql = "INSERT INTO Claim (user_id, item_id, answer_text) 
+        VALUES ('$user_id', '$item_id', '$answer_text')";
     return mysqli_query($conn, $sql);
 }
 

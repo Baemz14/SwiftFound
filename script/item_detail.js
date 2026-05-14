@@ -35,6 +35,7 @@ export async function onItemLoad() {
     document.getElementById('item_image').src = `/swiftfound/img_upload/${item['img_file']}`;
     document.getElementById('category').innerText = CategoryText[CategoryEnum[item['category']]];
     document.getElementById('title').innerText = item['title'];
+    document.getElementById('question').innerText = item['secret_question'];
 
     const dateObj = new Date(item['created_at']);
     const dateOptions = { month: 'short', day: 'numeric', year: 'numeric' };
@@ -49,11 +50,18 @@ export async function onItemLoad() {
     document.getElementById('rep').innerText = item['reputation'];
 
     document.getElementById('claimBtn').addEventListener('click', onClaimClick);
-    document.getElementById('reportBtn').addEventListener('click', onReportClick);
+    document.getElementById('reportBtn').addEventListener('click', function(e) {
+        if (!user) {
+            alert("You must be logged in to report an item");
+            return;
+        }
+        document.getElementById('reportModal').style.display = 'flex';
+    });
     document.getElementById('cancelReportBtn').addEventListener('click', closeReportModal);
     document.getElementById('submitReportBtn').addEventListener('click', submitReport);
 
-    document.getElementById('claimModal').style.display = 'flex';
+    document.getElementById('cancelClaimBtn').addEventListener('click', closeClaimModal);
+    document.getElementById('submitClaimBtn').addEventListener('click', claimItem);
 }
 
 function onClaimClick(e) {
@@ -69,15 +77,30 @@ function onClaimClick(e) {
         alert(`already claimed this item`);
         return;
     }
-
+    document.getElementById('claimModal').style.display = 'flex';
 }
 
-function onReportClick(e) {
-    if (!user) {
-        alert("You must be logged in to report an item");
+async function claimItem(e) {
+    e.preventDefault();
+    let answer = document.getElementById('answer').value;
+    if (answer === "") {
+        alert(`plis give your answer`);
         return;
     }
-    document.getElementById('reportModal').style.display = 'flex';
+    let formData = new FormData();
+    formData.append('item_id', item['item_id']);
+    formData.append('answer_text', answer);
+    let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
+    if (data['is_added']) {
+        alert(`success`);
+    } else {
+        console.log(`something went wong: ${data['error_log']}`);
+    }
+}
+
+function closeClaimModal(e) {
+    document.getElementById('claimModal').style.display = 'none';
+    document.getElementById('answer').value = "";
 }
 
 function closeReportModal() {

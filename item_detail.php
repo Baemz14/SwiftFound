@@ -73,7 +73,7 @@
         <h2>Claim Item</h2>
         <p>Ownership verification question</p>
 
-        <label for="answer">some question</label>
+        <label for="answer" id="question">some question</label>
         <input type="text" id="answer">
 
         <div class="modal-actions">

@@ -1,4 +1,5 @@
 <?php
+// TODO: dah ada controller utk handle smue ni, so kalu db tuka tinggal tukar controller je
 session_start();
 include '../db_stuff/db_conn.php';
 header('Content-Type: application/json');
@@ -15,7 +16,7 @@ $response = ['status' => 'success', 'recent_items' => []];
 // Query: Get the 5 most recent items posted by this user
 // Notice we are selecting img_file here so the frontend can display it
 $stmt = $conn->prepare("
-    SELECT title, category, found_or_lost, created_at, img_file 
+    SELECT *
     FROM item 
     WHERE user_id = ? 
     ORDER BY created_at DESC 

@@ -1,4 +1,5 @@
 <?php
+// TODO: dah ada controller utk handle smue ni, so kalu db tuka tinggal tukar controller je
 session_start();
 include '../db_stuff/db_conn.php';
 header('Content-Type: application/json');
@@ -14,7 +15,7 @@ $response = ['status' => 'success', 'items' => []];
 
 // Query: Get all items posted by this specific user
 $stmt = $conn->prepare("
-    SELECT item_id, title, category, description, found_or_lost, created_at, img_file 
+    SELECT *
     FROM item 
     WHERE user_id = ? 
     ORDER BY created_at DESC
