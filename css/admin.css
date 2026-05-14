@@ -43,6 +43,7 @@ body, html {
     font-weight: 800;
     font-size: 1.2rem;
     background: linear-gradient(to right, #ffffff, #8b8cf7);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }

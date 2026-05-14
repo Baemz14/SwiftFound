@@ -22,6 +22,12 @@ function userExists($username) {
     return mysqli_num_rows($result) > 0;
 }
 
+function ensureUserAvatarColumn() {
+    global $conn;
+    $sql = "ALTER TABLE User ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(255) DEFAULT NULL";
+    return mysqli_query($conn, $sql);
+}
+
 function addUser($username, $password) {
     global $conn;
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -43,7 +49,8 @@ function getUserId($username) {
 
 function getUser($user_id) {
     global $conn;
-    $sql = "SELECT user_id, username, reputation FROM User WHERE user_id = '$user_id'";
+    ensureUserAvatarColumn();
+    $sql = "SELECT user_id, username, reputation, avatar_url FROM User WHERE user_id = '$user_id'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
@@ -51,6 +58,13 @@ function getUser($user_id) {
     } else {
         return null;
     }
+}
+
+function updateUserAvatar($user_id, $avatar_url) {
+    global $conn;
+    ensureUserAvatarColumn();
+    $sql = "UPDATE User SET avatar_url = '$avatar_url' WHERE user_id = '$user_id'";
+    return mysqli_query($conn, $sql);
 }
 
 function addItem(

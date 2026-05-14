@@ -20,6 +20,7 @@ export async function loadUserData() {
 
     return {
         "username": data.username,
-        "reputation": data.reputation
+        "reputation": data.reputation,
+        "avatar_url": data.avatar_url || null
     };
 }

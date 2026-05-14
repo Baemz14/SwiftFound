@@ -40,6 +40,9 @@ export async function onItemLoad() {
     document.getElementById('rep').innerText = item['reputation'];
 
     document.getElementById('claimBtn').addEventListener('click', onClaimClick);
+    document.getElementById('reportBtn').addEventListener('click', onReportClick);
+    document.getElementById('cancelReportBtn').addEventListener('click', closeReportModal);
+    document.getElementById('submitReportBtn').addEventListener('click', submitReport);
 }
 
 function onClaimClick(e) {
@@ -47,5 +50,43 @@ function onClaimClick(e) {
         // TODO: alert only for dev, later want to add nicer way to alert user
         alert(`cannot claim your own stuff >:(`);
         return;
+    }
+}
+
+function onReportClick(e) {
+    if (!user) {
+        alert("You must be logged in to report an item");
+        return;
+    }
+    document.getElementById('reportModal').style.display = 'flex';
+}
+
+function closeReportModal() {
+    document.getElementById('reportModal').style.display = 'none';
+    document.getElementById('reportReason').value = '';
+    document.getElementById('reportDetails').value = '';
+}
+
+async function submitReport() {
+    const reason = document.getElementById('reportReason').value;
+    const details = document.getElementById('reportDetails').value;
+
+    if (!reason) {
+        alert('Please select a reason for reporting');
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append('item_id', item['item_id']);
+    formData.append('reason', reason);
+    formData.append('details', details);
+
+    let response = await callServer('/swiftfound/server_call/item_call.php', formData, "REPORT_ITEM");
+    
+    if (response['success']) {
+        alert('Thank you for your report. Our team will review it shortly.');
+        closeReportModal();
+    } else {
+        alert('Error submitting report: ' + (response['message'] || 'Unknown error'));
     }
 }

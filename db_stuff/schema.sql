@@ -101,7 +101,8 @@ CREATE TABLE `user` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `username` varchar(100) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `reputation` int(11) NOT NULL
+  `reputation` int(11) NOT NULL,
+  `avatar_url` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

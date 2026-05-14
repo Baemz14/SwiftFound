@@ -63,9 +63,35 @@
                 <button id="claimBtn" class="msg-btn">Claim</button>
             </div>
 
-            <button class="report-btn">Report</button>
+            <button id="reportBtn" class="report-btn">Report</button>
         </section>
     </main>
+</div>
+
+<!-- Report Modal -->
+<div id="reportModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h2>Report Item</h2>
+        <p>Let us know why you're reporting this item.</p>
+        
+        <label for="reportReason">Reason:</label>
+        <select id="reportReason">
+            <option value="">-- Select a reason --</option>
+            <option value="inappropriate">Inappropriate Content</option>
+            <option value="duplicate">Duplicate Listing</option>
+            <option value="scam">Suspected Scam</option>
+            <option value="damaged">Item Damaged/Not as Described</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="reportDetails">Additional Details (Optional):</label>
+        <textarea id="reportDetails" rows="4" placeholder="Provide more information about your report..."></textarea>
+
+        <div class="modal-actions">
+            <button id="cancelReportBtn" class="btn-secondary">Cancel</button>
+            <button id="submitReportBtn" class="btn-danger">Report</button>
+        </div>
+    </div>
 </div>
 
 </body>

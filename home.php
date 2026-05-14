@@ -19,9 +19,14 @@
     <div class="app-layout">
         <!-- Sidebar Navigation Card -->
         <nav class="sidebar">
-            <div class="profile-preview">
-                <div class="avatar-placeholder"></div>
+            <div id="profilePanel" class="profile-preview" role="button" tabindex="0">
+                <div id="sidebarAvatar" class="avatar-placeholder">
+                    <img id="sidebarAvatarImg" class="avatar-image" alt="Profile avatar" />
+                    <span id="sidebarAvatarInitial" class="avatar-initial">F</span>
+                </div>
                 <a href="/swiftfound/" class="logo">SwiftFound</a>
+                <p id="sidebarUsername" class="profile-name">User</p>
+                <p class="profile-role">Member Dashboard</p>
             </div>
             
             <div class="not-logout">
@@ -73,6 +78,23 @@
                 <h1>Messages</h1>
             </div>
         </main>
+    </div>
+
+    <div id="profileModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <h2>My Profile</h2>
+            <p><strong>Username:</strong> <span id="modalUsername">User</span></p>
+            <p><strong>Status:</strong> Member</p>
+            <div class="avatar-upload">
+                <label for="profileAvatarInput">Upload profile photo</label>
+                <input id="profileAvatarInput" type="file" accept="image/*">
+                <button id="saveAvatarBtn" class="primary-btn">Save Avatar</button>
+            </div>
+            <div class="modal-actions">
+                <button id="closeProfileModal" class="secondary-btn">Close</button>
+                <a href="item_form.php" class="primary-btn">Post Item</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

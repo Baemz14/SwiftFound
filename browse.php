@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,11 +18,16 @@
         <a href="/swiftfound/" class="logo">SwiftFound</a>
         <div class="nav-links">
             <a href="home.php">Home</a>
-            <a href="login.php">Login</a>
-            <a href="signup.php" class="btn-reg">Signup</a>
+            
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <a href="home.php" class="btn-reg">My Dashboard</a>
+            <?php else: ?>
+                <a href="login.php">Login</a>
+                <a href="signup.php" class="btn-reg">Signup</a>
+            <?php endif; ?>
+            
         </div>
     </nav>
-
     <header class="search-container">
         <input type="text" id="searchInput" placeholder="Search items...">
         

@@ -38,6 +38,11 @@ body {
 .profile-preview {
     text-align: center;
     margin-bottom: 30px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.profile-preview:hover {
+    background: rgba(99, 102, 241, 0.08);
 }
 
 .avatar-placeholder {
@@ -47,6 +52,24 @@ body {
     border-radius: 50%;
     margin: 0 auto 10px;
     border: 2px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.avatar-initial {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    font-weight: 700;
 }
 
 .logo {
@@ -55,6 +78,21 @@ body {
     font-weight: 800;
     text-decoration: none;
     letter-spacing: -1px;
+}
+
+.profile-name {
+    margin: 12px 0 2px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.profile-role {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    text-align: center;
 }
 
 .not-logout {
@@ -170,4 +208,62 @@ hr {
     padding: 40px;
     text-align: center;
     color: var(--text-gray);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-card {
+    background: var(--white);
+    padding: 28px;
+    border-radius: 18px;
+    width: min(420px, calc(100% - 32px));
+    box-shadow: var(--shadow);
+}
+
+.modal-card h2 {
+    margin-top: 0;
+    color: var(--text-dark);
+}
+
+.modal-card p {
+    color: var(--text-gray);
+    margin: 10px 0;
+}
+
+.avatar-upload {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.avatar-upload label {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.avatar-upload input {
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 10px;
+    background: #f9fafb;
+}
+
+.avatar-upload button {
+    width: fit-content;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
 }
