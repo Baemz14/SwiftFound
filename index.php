@@ -8,16 +8,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- The ?v=2 forces the browser to load the NEW css -->
     <link rel="stylesheet" href="css/index.css?v=2">
+
+    <script type="module">
+        import { onIndexLoad } from '/swiftfound/script/index.js';
+        window.onload = onIndexLoad;
+    </script>
 </head>
 <body>
 
     <header>
         <a href="#" class="logo">SwiftFound</a>
         <nav>
-            <a href="/swiftfound/home.php" class="nav-btn">Home</a>
-            <?php if(!isset($_SESSION['user_id'])): ?>
-                <a href="login.php" class="nav-btn login-cta">Login / Register</a>
-            <?php endif; ?>
+            <a id=btnHome href="/swiftfound/home.php" class="nav-btn">Home</a>
+            <a id=btnLogin href="login.php" class="nav-btn login-cta">Login</a>
+            <a id=btnRegister href="signup.php" class="nav-btn login-cta">Register</a>
         </nav>
     </header>
 

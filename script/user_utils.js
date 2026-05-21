@@ -24,3 +24,14 @@ export async function loadUserData() {
         "avatar_url": data.avatar_url || null
     };
 }
+
+export async function saveLogin(user_id) {
+    let formData = new FormData();
+    formData.append('user_id', user_id);
+    let data = await callServer('server_call/user_call.php', formData, "LOGIN");
+    if (data['status'] === 'success') {
+        console.log("Login data saved");
+    } else {
+        alert("Failed to save login data");
+    }
+}

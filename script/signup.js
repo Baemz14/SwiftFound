@@ -1,5 +1,5 @@
 import { callServer } from "../include/call_server.js";
-import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
+import { checkIsLoggedIn, saveLogin } from "/swiftfound/script/user_utils.js";
 
 export async function onSignupLoad() {
     let isLoggedIn = await checkIsLoggedIn();
@@ -49,6 +49,7 @@ async function onSignupSubmit(event) {
 
     let data = await callServer('server_call/user_call.php', formData, "USER_EXIST");
     if (data.is_user_exist === 'true') {
+        //TODO no alert buat dia tunjuk dkt petak input  "username already exist"
         alert("Username already exists.");
         return;
     }
@@ -58,8 +59,8 @@ async function onSignupSubmit(event) {
         return;
     }
     if (data2.is_added === 'yes') {
-        alert("User added successfully.");
-        window.location.href = "login.php";
+        await saveLogin(data.user_id);
+        window.location.href = "/swiftfound/home.php";
     } else {
         alert("Add User Error: " + data2.error_log);
     }
