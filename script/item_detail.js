@@ -92,8 +92,11 @@ async function claimItem(e) {
     formData.append('answer_text', answer);
     let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
     if (data['is_added']) {
-        alert(`success`);
+        closeClaimModal();
+        document.getElementById('successModal').style.display = "";
+        document.getElementById('btnOk').addEventListener('click', function() {document.getElementById('successModal').style.display = "none";});
     } else {
+        alert(`something went wong`);
         console.log(`something went wong: ${data['error_log']}`);
     }
 }

@@ -58,20 +58,19 @@
 
             <div id="postedSect" class="tab-content" style="display:none;">
                 <h1>My Posted Items</h1>
+                <div id="postedItemsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                </div>
             </div>
 
             <div id="claimsSect" class="tab-content" style="display:none;">
                 <h1>My Claims</h1>
-                <div class="claim-grid">
-                    <section><h3>Pending</h3></section>
-                    <section><h3>Approved</h3></section>
-                    <section><h3>Rejected</h3></section>
+                <div id="claimContainer" class="claim-grid">
                 </div>
             </div>
 
             <div id="claimReqSect" class="tab-content" style="display:none;">
                 <h1>Claim Requests</h1>
-                <p>Manage people claiming your found items.</p>
+                <div id="claimReqContainer" class="claim-grid"></div>
             </div>
 
             <div id="chatSect" class="tab-content" style="display:none;">

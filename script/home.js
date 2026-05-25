@@ -1,4 +1,5 @@
-import { loadUserData } from "/swiftfound/script/user_utils.js";
+import * as userUtil from "/swiftfound/script/user_utils.js";
+let loadUserData = userUtil.loadUserData;
 import { logout } from "/swiftfound/script/logout.js";
 import { callServer } from "/swiftfound/include/call_server.js";
 
@@ -9,6 +10,18 @@ const btnIdToSect = {
     'claimReqBtn': 'claimReqSect',
     'chatBtn': 'chatSect'
 };
+const btnIdToText = {
+    'recentBtn': 'recent',
+    'postedBtn': 'posted',
+    'claimsBtn': 'claims',
+    'claimReqBtn': 'claimReq',
+    'chatBtn': 'chat'
+}
+
+let item = [];
+let claim = [];
+let claimReq = [];
+let chat = [];
 
 export async function homeLoad() {
     let user = await loadUserData();
@@ -17,6 +30,17 @@ export async function homeLoad() {
         window.location.href = 'login.php';
         return; // Prevents further execution if not logged in
     }
+
+    item = await userUtil.loadNewItem();
+    claim = await userUtil.loadNewClaim();
+    claimReq = await userUtil.loadNewClaimReq();
+    chat = await userUtil.loadNewChat();
+
+    updateItemUi(item);
+    updateClaimUi(claim);
+    updateClaimReqUi(claimReq);
+    updateChatUi(chat);
+
     document.getElementById("usernameTxt").innerText = user['username'];
     const sidebarName = document.getElementById("sidebarUsername");
     const sidebarAvatarImg = document.getElementById("sidebarAvatarImg");
@@ -112,15 +136,16 @@ export async function homeLoad() {
         activateSection("claimReqBtn");
     });
     document.getElementById("chatBtn").addEventListener('click', function() {
+        window.location.href = "chat.php";
         activateSection("chatBtn");
     });
 
-    // This will activate the section and trigger the fetch logic below
-    activateSection("recentBtn");
+    const urlParams = new URLSearchParams(window.location.search);
+    let opening = urlParams.get('opening') ?? "recent";
+    const btnId = Object.keys(btnIdToText).find(key => btnIdToText[key] === opening);
+    activateSection(btnId);
 
-    // TODO: show all these user posted to ui
-    let data = await callServer("/swiftfound/server_call/user_call.php", null, "USER_ITEMS");
-    let items = data['items'];
+    setInterval(checkNewThings, 1000);
 }
 
 function activateSection(btnId) {
@@ -138,172 +163,196 @@ function activateSection(btnId) {
         }
     });
 
-    // Trigger the dynamic data fetch specifically when the tabs are activated
-    if (btnId === 'recentBtn') {
-        fetchRecentActivity();
-    } else if (btnId === 'postedBtn') {
-        fetchPostedItems();
-    } else if (btnId === 'claimsBtn') {
-        fetchMyClaims();
+    const url = new URL(window.location);
+    url.searchParams.set('opening', btnIdToText[btnId]);
+    window.history.pushState({}, '', url);
+}
+
+async function checkNewThings() {
+    let newItem = await userUtil.loadNewItem(item);
+    if (newItem.length > 0) {
+        console.log("new item came through");
+        item.push(...newItem);
+        updateItemUi(newItem);
+    }
+    let newClaim = await userUtil.loadNewClaim(claim);
+    if (newClaim.length > 0) {
+        console.log("new claim came through");
+        claim.push(...newClaim);
+        updateClaimUi(newClaim);
+    }
+    let newClaimReq = await userUtil.loadNewClaimReq(claimReq);
+    if (newClaimReq.length > 0) {
+        console.log("new claim request came through");
+        claimReq.push(...newClaimReq);
+        updateClaimReqUi(newClaimReq);
+    }
+    let newChat = await userUtil.loadNewChat(chat);
+    if (newChat.length > 0) {
+        console.log("new chat came through");
+        chat.push(...newChat);
+        updateChatUi(newChat);
+    }
+}
+
+function updateItemUi(newItem) {
+    if (newItem.length <= 0) {
+        return;
+    }
+    let container = document.getElementById('postedItemsContainer');
+    for (const item of newItem) {
+        const dateObj = new Date(item.created_at);
+        const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
+        const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/60?text=No+Image'; 
+        let card = `
+            <div id="item_${item.item_id}" class="item-card">
+                <img src="${imagePath}" alt="${item.title}" style="width: 100%; height: 160px; object-fit: cover;">
+                <div style="padding: 15px;">
+                    <div style="font-size: 0.8rem; font-weight: bold; color: #4f46e5; margin-bottom: 5px;">[${item.status}] ${item.category}</div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">${item.title}</h3>
+                    <p style="font-size: 0.9rem; color: #4b5563; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description}</p>
+                    <div style="font-size: 0.8rem; color: #9ca3af;">Posted on ${dateStr}</div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', card);
+
+        document.getElementById(`item_${item.item_id}`).addEventListener('click', function(e) {
+            window.location.href = `item_detail.php?item_id=${item.item_id}`;
+        });
+    }
+}
+
+function updateClaimUi(newClaim) {
+    if (newClaim.length <= 0) {
+        return;
+    }
+    const container = document.getElementById('claimContainer');
+    for (const claim of newClaim) {
+        const imagePath = claim.img_file ? `/swiftfound/img_upload/${claim.img_file}` : 'https://via.placeholder.com/60?text=No+Image';
+        let card = `
+            <div id="claim_${claim.claim_id}" class="claim-row">
+                <img src="${imagePath}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                <div style="display: flex; width: 100%">
+                    <div>
+                        <strong style="font-size: 1rem; color: #111827;">${claim.title}</strong>
+                        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+                            Your Answer: <em>"${claim.answer_text}"</em>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex-shrink: 0;">
+                    <button>edit</button>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', card);
+    }
+}
+
+function clearClaimReqUi() {
+    document.getElementById('claimReqContainer').innerHTML = "";
+}
+
+function updateClaimReqUi(newClaimReq) {
+    if (newClaimReq.length <= 0) {
+        return;
+    }
+    const container = document.getElementById('claimReqContainer');
+    for (const claim of newClaimReq) {
+        let item = claim.item;
+        let claimer = claim.claimer;
+        let poster = claim.poster;
+        const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/60?text=No+Image';
+        let card = `
+            <div id="claimReq_${claim.claim_id}" class="claim-req-row">
+                <img src="${imagePath}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                <div style="display: flex; width: 100%">
+                    <div>
+                        <strong style="font-size: 1rem; color: #111827;">[${claim.claim_status}] ${item.title}</strong>
+                        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+                            ${claimer.username}'s Answer: <em>"${claim.answer_text}"</em>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex-shrink: 0;">
+                    <button id="openBtn">open chat</button>
+                    <button>view claimer</button>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', card);
+        document.querySelector(`#claimReq_${claim.claim_id} #openBtn`).addEventListener('click', function(e) {
+            openChat(claim);
+        });
+    }
+}
+
+function updateChatUi(newChat) {
+    if (newChat.length <= 0) {
+        return;
+    }
+}
+
+function onClaimEdit(e) {
+
+}
+
+function onViewClaimer(e) {
+
+}
+
+async function openChat(claim) {
+    if(claim.claim_status === "APPROVED") {
+        return;
+    } if(userUtil.openChat(claim)) {
+        // redirect to chat when chat dev is done
+        clearClaimReqUi();
+        claimReq = await userUtil.loadNewClaimReq();
+        updateClaimReqUi(claimReq);
     }
 }
 
 // --- RECENT ACTIVITY LOGIC ---
-async function fetchRecentActivity() {
-    const container = document.querySelector('#recentSect .placeholder-content');
-    container.innerHTML = "<p>Loading recent activity...</p>";
+// async function fetchRecentActivity() {
+//     const container = document.querySelector('#recentSect .placeholder-content');
+//     container.innerHTML = "<p>Loading recent activity...</p>";
     
-    try {
-        const response = await fetch('api/get_recent_activity.php');
-        const data = await response.json();
+//     try {
+//         const response = await fetch('api/get_recent_activity.php');
+//         const data = await response.json();
 
-        if (data.status === 'success') {
-            if (data.recent_items.length === 0) {
-                container.innerHTML = "<p>No recent activity. Start by posting an item!</p>";
-                return;
-            }
+//         if (data.status === 'success') {
+//             if (data.recent_items.length === 0) {
+//                 container.innerHTML = "<p>No recent activity. Start by posting an item!</p>";
+//                 return;
+//             }
 
-            let html = '<ul class="activity-list" style="list-style: none; padding: 0;">';
-            data.recent_items.forEach(item => {
-                const dateObj = new Date(item.created_at);
-                const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
+//             let html = '<ul class="activity-list" style="list-style: none; padding: 0;">';
+//             data.recent_items.forEach(item => {
+//                 const dateObj = new Date(item.created_at);
+//                 const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
                 
-                const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/60?text=No+Image'; 
-                html += `
-                    <li class="activity-item" style="display: flex; align-items: center; gap: 15px; background: #f8f9fa; border-left: 4px solid #4f46e5; padding: 12px 16px; margin-bottom: 10px; border-radius: 4px;">
-                        <img src="${imagePath}" alt="Item image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
-                        <div>
-                            <strong>[${item.found_or_lost}]</strong> ${item.title} 
-                            <span style="color: #6c757d; font-size: 0.9em;">(${item.category})</span>
-                            <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">Posted on ${dateStr}</div>
-                        </div>
-                    </li>
-                `;
-            });
-            html += '</ul>';
+//                 const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/60?text=No+Image'; 
+//                 html += `
+//                     <li class="activity-item" style="display: flex; align-items: center; gap: 15px; background: #f8f9fa; border-left: 4px solid #4f46e5; padding: 12px 16px; margin-bottom: 10px; border-radius: 4px;">
+//                         <img src="${imagePath}" alt="Item image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+//                         <div>
+//                             <strong>[${item.found_or_lost}]</strong> ${item.title} 
+//                             <span style="color: #6c757d; font-size: 0.9em;">(${item.category})</span>
+//                             <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">Posted on ${dateStr}</div>
+//                         </div>
+//                     </li>
+//                 `;
+//             });
+//             html += '</ul>';
 
-            container.innerHTML = html;
-        } else {
-            container.innerHTML = `<p class="error" style="color: red;">Error: ${data.message}</p>`;
-        }
-    } catch (error) {
-        console.error("Failed to fetch activity:", error);
-        container.innerHTML = "<p style='color: red;'>Failed to load recent activity.</p>";
-    }
-}
-
-// --- POSTED ITEMS LOGIC ---
-async function fetchPostedItems() {
-    const section = document.getElementById('postedSect');
-    
-    let container = document.getElementById('postedItemsContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'postedItemsContainer';
-        section.appendChild(container);
-    }
-
-    container.innerHTML = "<p>Loading your items...</p>";
-
-    try {
-        const response = await fetch('api/get_posted_items.php');
-        const data = await response.json();
-
-        if (data.status === 'success') {
-            if (data.items.length === 0) {
-                container.innerHTML = "<p>You haven't posted any items yet.</p>";
-                return;
-            }
-
-            let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">';
-            
-            data.items.forEach(item => {
-                const dateObj = new Date(item.created_at);
-                const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
-                
-                const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/250x150?text=No+Image';
-
-                html += `
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <img src="${imagePath}" alt="${item.title}" style="width: 100%; height: 160px; object-fit: cover;">
-                        <div style="padding: 15px;">
-                            <div style="font-size: 0.8rem; font-weight: bold; color: #4f46e5; margin-bottom: 5px;">[${item.found_or_lost}] ${item.category}</div>
-                            <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">${item.title}</h3>
-                            <p style="font-size: 0.9rem; color: #4b5563; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description}</p>
-                            <div style="font-size: 0.8rem; color: #9ca3af;">Posted on ${dateStr}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-
-            container.innerHTML = html;
-        } else {
-            container.innerHTML = `<p style="color: red;">Error: ${data.message}</p>`;
-        }
-    } catch (error) {
-        console.error("Failed to fetch posted items:", error);
-        container.innerHTML = "<p style='color: red;'>Failed to load items. Check your connection.</p>";
-    }
-}
-
-// --- NEW ACTIVE CLAIMS LOGIC ---
-async function fetchMyClaims() {
-    const grid = document.querySelector('#claimsSect .claim-grid');
-    grid.innerHTML = "<p>Loading your claims...</p>";
-
-    try {
-        const response = await fetch('api/get_my_claims.php');
-        const data = await response.json();
-
-        if (data.status === 'success') {
-            let pendingHtml = '<section><h3>Pending</h3><div style="display:flex; flex-direction:column; gap:10px;">';
-            let approvedHtml = '<section><h3>Approved</h3><div style="display:flex; flex-direction:column; gap:10px;">';
-            let rejectedHtml = '<section><h3>Rejected</h3><div style="display:flex; flex-direction:column; gap:10px;">';
-
-            let pendingCount = 0, approvedCount = 0, rejectedCount = 0;
-
-            data.claims.forEach(claim => {
-                const imagePath = claim.img_file ? `/swiftfound/img_upload/${claim.img_file}` : 'https://via.placeholder.com/60?text=No+Image';
-                
-                let cardHtml = `
-                    <div style="display: flex; gap: 15px; background: #fff; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; align-items: center;">
-                        <img src="${imagePath}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                        <div>
-                            <strong style="font-size: 1rem; color: #111827;">${claim.title}</strong>
-                            <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
-                                Your Answer: <em>"${claim.answer_text}"</em>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                if (claim.is_approved == 0) {
-                    pendingHtml += cardHtml;
-                    pendingCount++;
-                } else if (claim.is_approved == 1) {
-                    approvedHtml += cardHtml;
-                    approvedCount++;
-                } else {
-                    rejectedHtml += cardHtml;
-                    rejectedCount++;
-                }
-            });
-
-            if(pendingCount === 0) pendingHtml += "<p style='color: #6b7280; font-size: 0.9rem;'>No pending claims.</p>";
-            if(approvedCount === 0) approvedHtml += "<p style='color: #6b7280; font-size: 0.9rem;'>No approved claims.</p>";
-            if(rejectedCount === 0) rejectedHtml += "<p style='color: #6b7280; font-size: 0.9rem;'>No rejected claims.</p>";
-
-            pendingHtml += '</div></section>';
-            approvedHtml += '</div></section>';
-            rejectedHtml += '</div></section>';
-
-            grid.innerHTML = pendingHtml + approvedHtml + rejectedHtml;
-        } else {
-            grid.innerHTML = `<p style="color: red;">Error: ${data.message}</p>`;
-        }
-    } catch (error) {
-        console.error("Failed to fetch claims:", error);
-        grid.innerHTML = "<p style='color: red;'>Failed to load claims. Ensure get_my_claims.php is saved.</p>";
-    }
-}
+//             container.innerHTML = html;
+//         } else {
+//             container.innerHTML = `<p class="error" style="color: red;">Error: ${data.message}</p>`;
+//         }
+//     } catch (error) {
+//         console.error("Failed to fetch activity:", error);
+//         container.innerHTML = "<p style='color: red;'>Failed to load recent activity.</p>";
+//     }
+// }

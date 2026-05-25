@@ -18,6 +18,7 @@ switch ($call_state) {
         $password = $_POST['pass'];
         if (!userExists($username)) {
             if (addUser($username, $password)) {
+                $response['user'] = findUser($username, $password);
                 $response['is_added'] = "yes";
                 $response['error_log'] = 'User added successfully';
             } else {
@@ -86,17 +87,20 @@ switch ($call_state) {
     case "USER_CLAIMS":
         $user_id = isset($_SESSION['user_id'])? $_SESSION['user_id']: null;
         if (!$user_id) {
-            die("you no login dada");
+            $response['claims'] = [];
+            $response['error_log'] = "not logged in";
+        } else {
+            $response['claims'] = getUserItemClaims($user_id);
         }
-        $response['claims'] = getUserItemclaims($user_id);
         break;
 
-    case "USER_CLAIMED":
+    case 'USER_CLAIM_REQ':
+    case "USER_CLAIMED": // dont like name
         $user_id = isset($_SESSION['user_id'])? $_SESSION['user_id']: null;
         if (!$user_id) {
             die("you no login dada");
         }
-        $response['items'] = getUserItemclaimed($user_id);
+        $response['claim_req'] = getUserItemclaimed($user_id);
         break;
 
     case "GET_USER":
@@ -155,6 +159,16 @@ switch ($call_state) {
             $response['status'] = 'failed';
             $response['message'] = 'Unable to update profile image.';
         }
+        break;
+
+    case 'USER_CHAT':
+        if (!isset($_SESSION['user_id'])) {
+            $response['error_log'] = "no login";
+            $response['chats'] = [];
+            break;
+        }
+        $user_id = $_SESSION['user_id'];
+        $response['chats'] = getUserChat($user_id);
         break;
 
     default:

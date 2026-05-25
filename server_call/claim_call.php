@@ -20,6 +20,16 @@ switch ($call_state) {
         $response['is_added'] = addClaim($user_id, $item_id, $answer_text);
         $response['error_log'] = 'blah blah';
         break;
+
+    case 'UPDATE_STATUS':
+        $claim_id = $_POST['claim_id'];
+        $status = $_POST['status'];
+        if (updateClaimStatus($claim_id, $status)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
     
     default:
         $response['error_log'] = "state wong >:(";

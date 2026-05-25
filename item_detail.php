@@ -83,6 +83,17 @@
     </div>
 </div>
 
+<div id="successModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h2>Claim Success</h2>
+        <p>Your claim have been recorded, you have to wait for the poster to approve to start chatting</p>
+
+        <div class="modal-actions">
+            <button id="btnOk" class="btn-claim">OK ;-)</button>
+        </div>
+    </div>
+</div>
+
 <!-- Report Modal -->
 <div id="reportModal" class="modal-overlay" style="display: none;">
     <div class="modal-card">

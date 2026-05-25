@@ -59,7 +59,7 @@ async function onSignupSubmit(event) {
         return;
     }
     if (data2.is_added === 'yes') {
-        await saveLogin(data.user_id);
+        await saveLogin(data2.user.user_id);
         window.location.href = "/swiftfound/home.php";
     } else {
         alert("Add User Error: " + data2.error_log);
