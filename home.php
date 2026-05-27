@@ -35,10 +35,10 @@
                     <li id='postedBtn' class="nav-buttons">My Posted Items</li>
                     <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
                     <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
-                    <li id='chatBtn' class="nav-buttons">Chat</li>
                 </ul>   
                 
                 <div class="action-buttons">
+                    <a class="other-buttons chat-btn" href="chat.php">Chat</a>
                     <a class="other-buttons primary-btn" href="item_form.php">Post Item</a>
                     <a class="other-buttons secondary-btn" href="browse.php">Browse Items</a>
                 </div>
@@ -71,10 +71,6 @@
             <div id="claimReqSect" class="tab-content" style="display:none;">
                 <h1>Claim Requests</h1>
                 <div id="claimReqContainer" class="claim-grid"></div>
-            </div>
-
-            <div id="chatSect" class="tab-content" style="display:none;">
-                <h1>Messages</h1>
             </div>
         </main>
     </div>

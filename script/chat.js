@@ -28,11 +28,14 @@ export async function chatLoad() {
                         <img id="avatarImg" class="avatar-image" alt="Profile avatar" />
                         <span id="avatarInitial" class="avatar-initial">F</span>
                     </div>
-                    <div>
+                    <div style="flex: 1;">
                         <div class="contact-info">
-                            <div class="contact-name">${cont.username}</div>
+                            <div class="contact-name">
+                                <span class="contact-username">${cont.username}</span>
+                                <span class="contact-item-title">${cont.item.item_title}</span>
+                            </div>
                         </div>
-                        <div class="contact-preview">claiming ${cont.isClaiming? `${cont.username}'s`: "your"} item: ${cont.item.item_title}</div>
+                        <div class="contact-preview">claiming ${cont.isClaiming? `${cont.username}'s`: "your"} item</div>
                     </div>
                 </div> 
                 <div class="contact-item-img-container">
@@ -59,39 +62,20 @@ export async function chatLoad() {
             }
         }
 
-        let contactChat = document.getElementById(`chat_${cont.contact_id}`);
-        if (!contactChat) {
-            let newChat = `
-                <div id="chat_${cont.contact_id}" class="chat-container">
-                    <div class="chat-header">
-                        <div id="headerAvatar" class="header-avatar">
-                            <img id="headerAvatarImg" class="avatar-image" alt="Profile avatar" />
-                            <span id="headerAvatarInitial" class="avatar-initial">F</span>
-                        </div>
-                        <div class="active-user">${cont.username}</div>
-                    </div>
-                    
-                    <div class="message-area"></div>
-                </div>
-            `;
-            document.getElementById('chatCont').insertAdjacentHTML('beforeend', newChat);
-            contactChat = document.getElementById(`chat_${cont.contact_id}`);
-            contactChat.style.display = "none";
-        }
-        let messageCont = contactChat.querySelector(".message-area");
         for (const message of cont.chat) {
-            let isSender = message.sender.user_id === user.user_id;
-            let newMessage = `
-                <div class="message ${isSender? "sent": "recieved"}">
-                    ${message.message_content}
-                    <span class="timestamp">10:14 AM</span>
-                </div>
-            `;
-            messageCont.insertAdjacentHTML('beforeend', newMessage);
+            drawNewChat(message, cont);
         }
     }
 
-    activateChat(contact[0].contact_id);
+    const urlParams = new URLSearchParams(window.location.search);
+    let opening = urlParams.get('opening');
+    if (opening) {
+        activateChat(opening);
+    } else if(contact.length > 0) {
+        activateChat(contact[0].contact_id);
+    } else {
+        // do someting
+    }
 
     document.getElementById('sendBtn').addEventListener('click', onSendMessage);
     document.getElementById('messageTxt').addEventListener('keydown', function(e) {
@@ -106,40 +90,106 @@ export async function chatLoad() {
 async function checkNewMessages() {
     let newChat = await userUtil.loadNewChat(chat);
     for (const chat of newChat) {
+        console.log(chat);
         processChat(chat);
-        drawNewChat(chat);
+        for (const _cont of contact) {
+            if (_cont.contact_id === chat.claim_id) {
+                drawNewChat(chat, _cont);
+                break;
+            }
+        }
     }
     chat.push(...newChat);
 }
 
-function drawNewChat(chat) {
+let latestDateDrawn = {};
+function drawNewChat(chat, contact) {
+    if (!(contact.contact_id in latestDateDrawn)) {
+        latestDateDrawn[contact.contact_id] = new Date("2026-01-01");
+    }
     let cont = null;
-    let isSender = false;
-    for (const _cont of contact) {
-        if (_cont.user_id === chat.sender.user_id) {
-            cont = _cont;
-            isSender = false;
-            break;
-        } else if (_cont.user_id === chat.reciever.user_id) {
-            cont = _cont;
-            isSender = true;
-            break;
-        }
+    let isSender = chat.sender_id === user.user_id;
+    let contactChat = document.getElementById(`chat_${contact.contact_id}`);
+    if (!contactChat) {
+        let newChat = `
+            <div id="chat_${contact.contact_id}" class="chat-container">
+                <div class="chat-header">
+                    <div id="headerAvatar" class="header-avatar">
+                        <img id="headerAvatarImg" class="avatar-image" alt="Profile avatar" />
+                        <span id="headerAvatarInitial" class="avatar-initial">F</span>
+                    </div>
+                    <div class="active-user">${contact.username}</div>
+                </div>
+                
+                <div class="message-area"></div>
+            </div>
+        `;
+        document.getElementById('chatCont').insertAdjacentHTML('beforeend', newChat);
+        contactChat = document.getElementById(`chat_${contact.contact_id}`);
+        contactChat.style.display = "none";
     }
-    if (!cont) {
-        throw new Error('cant find contact');
-        return;
-    }
-    let contactChat = document.getElementById(`chat_${cont.contact_id}`);
+    let chatDate = new Date(chat.sent_at);
+    const timeString = chatDate.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
     let messageCont = contactChat.querySelector(".message-area");
     let newMessage = `
         <div class="message ${isSender? "sent": "recieved"}">
             ${chat.message_content}
-            <span class="timestamp">10:14 AM</span>
+            <span class="timestamp">${timeString}</span>
         </div>
     `;
+    if (isDateNewer(chatDate, latestDateDrawn[contact.contact_id])) {
+        latestDateDrawn[contact.contact_id] = chatDate;
+        let dateDivider = `
+            <div class="chat-date-divider">
+                <span class="chat-date-badge">${dateToNiceString(chatDate)}</span>
+            </div>
+        `;
+        newMessage = dateDivider + newMessage;
+    }
     messageCont.insertAdjacentHTML('beforeend', newMessage);
     messageCont.scrollTop = messageCont.scrollHeight;
+}
+
+function isDateNewer(date, toCompare) {
+    const d1 = new Date(date).setHours(0, 0, 0, 0);
+    const d2 = new Date(toCompare).setHours(0, 0, 0, 0);
+    return d1 > d2;
+}
+
+function dateToNiceString(date) {
+    // 1. Create a "Today" reference and flatten its time to midnight
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // 2. Flatten the input date's time to midnight as well
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+    
+    // 3. Calculate the absolute difference in time (in milliseconds)
+    const differenceInTime = today.getTime() - targetDate.getTime();
+    
+    // 4. Convert milliseconds to full calendar days (1 day = 24h * 60m * 60s * 1000ms)
+    const differenceInDays = Math.round(differenceInTime / (1000 * 60 * 60 * 24));
+    
+    // 5. Check if it falls within our 3-day window
+    if (differenceInDays === 0) {
+        return "Today";
+    } else if (differenceInDays === 1) {
+        return "Yesterday";
+    } else if (differenceInDays > 1 && differenceInDays <= 3) {
+        // Returns "Monday", "Tuesday", etc.
+        return targetDate.toLocaleDateString('en-US', { weekday: 'long' });
+    } else {
+        // 6. Older than 3 days: Format as d/m/yyyy (No leading zeroes)
+        const day = targetDate.getDate();
+        const month = targetDate.getMonth() + 1; // getMonth() is 0-indexed
+        const year = targetDate.getFullYear();
+        
+        return `${day}/${month}/${year}`;
+    }
 }
 
 function processChat(chat) {
@@ -174,6 +224,9 @@ function activateChat(contactId) {
     let i = 0;
     for (const cont of contact) {
         if (cont.contact_id === contactId) {
+            const url = new URL(window.location);
+            url.searchParams.set('opening', cont.contact_id);
+            window.history.pushState({}, '', url);
             activeContact = i;
             continue;
         }

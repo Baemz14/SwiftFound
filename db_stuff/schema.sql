@@ -3,13 +3,19 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 21, 2026 at 05:33 PM
+-- Generation Time: May 27, 2026 at 01:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `swiftfound_db`
@@ -40,7 +46,7 @@ CREATE TABLE `claim` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `item_id` int(11) UNSIGNED NOT NULL,
   `answer_text` varchar(255) NOT NULL,
-  `claim_status` enum('PENDING','APPROVED','REJECTED','') NOT NULL
+  `claim_status` enum('PENDING','APPROVED','REJECTED','CHATTING') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -58,7 +64,7 @@ CREATE TABLE `item` (
   `location` varchar(255) NOT NULL,
   `img_file` varchar(255) NOT NULL,
   `secret_question` varchar(255) NOT NULL,
-  `item_status` enum('PENDING','RESOLVED','ABANDONED','') NOT NULL,
+  `status` enum('PENDING','RESOLVED','ABANDONED','') NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -74,8 +80,8 @@ CREATE TABLE `message` (
   `sender_id` int(11) UNSIGNED NOT NULL,
   `reciever_id` int(11) UNSIGNED NOT NULL,
   `message_content` text NOT NULL,
-  `is_read` tinyint(1) NOT NULL,
-  `sent_at` datetime NOT NULL
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `sent_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -193,3 +199,7 @@ ALTER TABLE `message`
   ADD CONSTRAINT `fk_message_reciever` FOREIGN KEY (`reciever_id`) REFERENCES `user` (`user_id`),
   ADD CONSTRAINT `fk_message_sender` FOREIGN KEY (`sender_id`) REFERENCES `user` (`user_id`);
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

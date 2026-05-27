@@ -151,6 +151,30 @@ body {
     font-weight: 600;
     font-size: 0.95rem;
     margin-bottom: 3px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    width: 100%;
+}
+
+.contact-username {
+    color: #1a1a1a;
+    flex-shrink: 0; /* Ensures username never gets squished */
+    margin-right: 10px;
+}
+
+.contact-item-title {
+    color: var(--primary-color, #007bff); /* Highlights the item in your primary color */
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-right: 3px;
+    
+    /* Elegant fallback: Truncates item title with '...' if it is too long */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
 }
 
 .contact-preview {
@@ -292,4 +316,43 @@ body {
 
 .chat-input-area button:hover {
     background-color: #0056b3;
+}
+
+.chat-date-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0; /* Space out the divider from messages above and below */
+    width: 100%;
+}
+
+/* The thin gray lines on the left and right sides */
+.chat-date-divider::before,
+.chat-date-divider::after {
+    content: '';
+    flex: 1; /* Forces both lines to stretch and fill all available width */
+    border-bottom: 1px solid #e0e0e0; /* Match your app's border color */
+}
+
+/* Spacing out the left line from the text */
+.chat-date-divider::before {
+    margin-right: 15px;
+}
+
+/* Spacing out the right line from the text */
+.chat-date-divider::after {
+    margin-left: 15px;
+}
+
+/* The central text badge styling */
+.chat-date-badge {
+    background-color: #e4e6eb; /* Soft, readable gray background */
+    color: #4b4b4b;            /* Dark gray text for contrast */
+    padding: 6px 16px;
+    border-radius: 16px;       /* Makes the container a pill shape */
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;       /* Prevents the date from wrapping into two lines */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle depth */
 }

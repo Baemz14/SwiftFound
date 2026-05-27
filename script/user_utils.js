@@ -96,7 +96,7 @@ export async function openChat(claim) {
 
     let formData = new FormData();
     formData.append('claim_id', claim.claim_id);
-    formData.append('status', "APPROVED");
+    formData.append('status', "CHATTING");
     let data = await callServer('server_call/claim_call.php', formData, "UPDATE_STATUS");
     if (!data['is_success']) {
         console.log(`server error: ${data['error_log']}`);

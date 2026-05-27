@@ -7,15 +7,13 @@ const btnIdToSect = {
     'recentBtn': 'recentSect',
     'postedBtn': 'postedSect',
     'claimsBtn': 'claimsSect',
-    'claimReqBtn': 'claimReqSect',
-    'chatBtn': 'chatSect'
+    'claimReqBtn': 'claimReqSect'
 };
 const btnIdToText = {
     'recentBtn': 'recent',
     'postedBtn': 'posted',
     'claimsBtn': 'claims',
-    'claimReqBtn': 'claimReq',
-    'chatBtn': 'chat'
+    'claimReqBtn': 'claimReq'
 }
 
 let item = [];
@@ -134,10 +132,6 @@ export async function homeLoad() {
     });
     document.getElementById("claimReqBtn").addEventListener('click', function() {
         activateSection("claimReqBtn");
-    });
-    document.getElementById("chatBtn").addEventListener('click', function() {
-        window.location.href = "chat.php";
-        activateSection("chatBtn");
     });
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -258,6 +252,7 @@ function updateClaimReqUi(newClaimReq) {
     if (newClaimReq.length <= 0) {
         return;
     }
+    console.log(newClaimReq);
     const container = document.getElementById('claimReqContainer');
     for (const claim of newClaimReq) {
         let item = claim.item;
@@ -276,7 +271,7 @@ function updateClaimReqUi(newClaimReq) {
                     </div>
                 </div>
                 <div style="flex-shrink: 0;">
-                    <button id="openBtn">open chat</button>
+                    <button id="openBtn">${claim.claim_status === "PENDING"? "approve and": ""} open chat</button>
                     <button>view claimer</button>
                 </div>
             </div>
@@ -303,14 +298,13 @@ function onViewClaimer(e) {
 }
 
 async function openChat(claim) {
-    if(claim.claim_status === "APPROVED") {
-        return;
-    } if(userUtil.openChat(claim)) {
-        // redirect to chat when chat dev is done
-        clearClaimReqUi();
-        claimReq = await userUtil.loadNewClaimReq();
-        updateClaimReqUi(claimReq);
+    if(claim.claim_status !== "CHATTING") {
+        if (!userUtil.openChat(claim)) {
+            alert('o no something went wong!');
+            throw new Error('server error opening chat');
+        }
     }
+    window.location.href = `/swiftfound/chat.php?opening=${claim.claim_id}`;
 }
 
 // --- RECENT ACTIVITY LOGIC ---
