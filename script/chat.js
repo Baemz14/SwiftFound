@@ -85,12 +85,36 @@ export async function chatLoad() {
     });
 
     setInterval(checkNewMessages, 1000);
+
+    // 1. Define the tripwire rules
+    const rules = {
+        root: document.querySelector('.message-area'), // Watch inside the chat box
+        threshold: 0.5 // Trigger when half of the message bubble is visible
+    };
+    // 2. Define the action to take when the tripwire is crossed
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // 'isIntersecting' is a boolean: true = walked into view, false = scrolled out
+            if (entry.isIntersecting) {
+                console.log("This message is now being read by the user!");
+                
+                let messageDiv = entry.target;
+                // Run your database fetch update code here...
+                
+                // Crucial: Stop watching this message since it's already read
+                observer.unobserve(messageDiv);
+            }
+        });
+    }, rules);
+    // 3. Tell the observer which specific items to track
+    const unreadBubbles = document.querySelectorAll('.message.received:not(.read)');
+    unreadBubbles.forEach(bubble => observer.observe(bubble));
 }
 
 async function checkNewMessages() {
     let newChat = await userUtil.loadNewChat(chat);
     for (const chat of newChat) {
-        console.log(chat);
+        //console.log(chat);
         processChat(chat);
         for (const _cont of contact) {
             if (_cont.contact_id === chat.claim_id) {
@@ -100,32 +124,62 @@ async function checkNewMessages() {
         }
     }
     chat.push(...newChat);
+
+    const chatMap = new Map(chat.map((data, index) => [data.message_id, index]));
+    let updatedChat = await userUtil.loadUpdatedChat(chat);
+    if (updatedChat.length > 0) {
+        console.log(updatedChat);
+    }
+    for (const uc of updatedChat) {
+        let i = chatMap.get(uc.message_id);
+        if (chat[i]) {
+            chat[i] = uc;
+            let messageBubble = document.getElementById(`message_${chat[i].message_id}`);
+            let chatDate = new Date(chat[i].sent_at);
+            const timeString = chatDate.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            if (messageBubble) {
+                messageBubble.innerHTML = `
+                    <div class="message-text">${chat[i].message_content}</div>
+                    <div class="message-meta">
+                        <span class="timestamp">${timeString}</span>
+                        ${getReadReceiptStatus(chat[i])}
+                    </div>
+                `;
+            }
+        }
+    }
 }
 
 let latestDateDrawn = {};
-function drawNewChat(chat, contact) {
-    if (!(contact.contact_id in latestDateDrawn)) {
-        latestDateDrawn[contact.contact_id] = new Date("2026-01-01");
+let firstUnreadChat = {};
+function drawNewChat(chat, _contact) {
+    if (!(_contact.contact_id in latestDateDrawn)) {
+        latestDateDrawn[_contact.contact_id] = new Date("2026-01-01");
+    } if (!(_contact.contact_id in firstUnreadChat)) {
+        firstUnreadChat[_contact.contact_id] = null;
     }
     let cont = null;
     let isSender = chat.sender_id === user.user_id;
-    let contactChat = document.getElementById(`chat_${contact.contact_id}`);
+    let contactChat = document.getElementById(`chat_${_contact.contact_id}`);
     if (!contactChat) {
         let newChat = `
-            <div id="chat_${contact.contact_id}" class="chat-container">
+            <div id="chat_${_contact.contact_id}" class="chat-container">
                 <div class="chat-header">
                     <div id="headerAvatar" class="header-avatar">
                         <img id="headerAvatarImg" class="avatar-image" alt="Profile avatar" />
                         <span id="headerAvatarInitial" class="avatar-initial">F</span>
                     </div>
-                    <div class="active-user">${contact.username}</div>
+                    <div class="active-user">${_contact.username}</div>
                 </div>
                 
                 <div class="message-area"></div>
             </div>
         `;
         document.getElementById('chatCont').insertAdjacentHTML('beforeend', newChat);
-        contactChat = document.getElementById(`chat_${contact.contact_id}`);
+        contactChat = document.getElementById(`chat_${_contact.contact_id}`);
         contactChat.style.display = "none";
     }
     let chatDate = new Date(chat.sent_at);
@@ -135,13 +189,29 @@ function drawNewChat(chat, contact) {
     });
     let messageCont = contactChat.querySelector(".message-area");
     let newMessage = `
-        <div class="message ${isSender? "sent": "recieved"}">
-            ${chat.message_content}
-            <span class="timestamp">${timeString}</span>
+        <div id=message_${chat.message_id} class="message ${isSender? "sent": "recieved"}">
+            <div class="message-text">${chat.message_content}</div>
+            <div class="message-meta">
+                <span class="timestamp">${timeString}</span>
+                ${getReadReceiptStatus(chat)}
+            </div>
         </div>
     `;
-    if (isDateNewer(chatDate, latestDateDrawn[contact.contact_id])) {
-        latestDateDrawn[contact.contact_id] = chatDate;
+    if (!firstUnreadChat[_contact.contact_id] && !isSender && chat.is_read == 0) {//make an unread bubble
+        firstUnreadChat[_contact.contact_id] = chat;
+        let unreadDivider = messageCont.querySelector("#unreadDivider");
+        if (unreadDivider) {
+            unreadDivider.remove();
+        }
+        let unreadCard = `
+            <div id="unreadDivider" class="unread-divider">
+                <span class="unread-label">New Messages</span>
+            </div>
+        `;
+        newMessage = unreadCard + newMessage;
+    }
+    if (isDateNewer(chatDate, latestDateDrawn[_contact.contact_id])) {
+        latestDateDrawn[_contact.contact_id] = chatDate;
         let dateDivider = `
             <div class="chat-date-divider">
                 <span class="chat-date-badge">${dateToNiceString(chatDate)}</span>
@@ -151,6 +221,18 @@ function drawNewChat(chat, contact) {
     }
     messageCont.insertAdjacentHTML('beforeend', newMessage);
     messageCont.scrollTop = messageCont.scrollHeight;
+
+    if (contact[activeContact].contact_id === _contact.contact_id) {
+        readContactChat(_contact);
+    }
+}
+
+function getReadReceiptStatus(chat) {
+    // If it's a double checkmark, can also wrap it in a class for blue coloring later
+    if (chat.is_read == 1) {
+        return '<span class="tick read-blue">✓✓</span>';
+    }
+    return '<span class="tick">✓</span>';
 }
 
 function isDateNewer(date, toCompare) {
@@ -218,9 +300,7 @@ function activateChat(contactId) {
     }
     sideContact.classList.add('active');
     chatCont.style.display = "";
-    // TODO: make it so it scrolls to last read
-    let messageCont = chatCont.querySelector(".message-area");
-    messageCont.scrollTop = messageCont.scrollHeight;
+
     let i = 0;
     for (const cont of contact) {
         if (cont.contact_id === contactId) {
@@ -238,6 +318,60 @@ function activateChat(contactId) {
         }
         i++;
     }
+
+    let messageCont = chatCont.querySelector(".message-area");
+    let unreadDivider = messageCont.querySelector("#unreadDivider");
+    let isThereUnread = false;
+    for (const c of contact[activeContact].chat) {
+        if (c.sender_id === user.user_id || c.is_read == 1) {
+            continue;
+        }
+        let lastUnreadChat = firstUnreadChat[contactId];
+        if (lastUnreadChat) {
+            if (lastUnreadChat === c) {
+                continue;
+            } if (unreadDivider) {
+                unreadDivider.remove();
+            }
+            let unreadCard = `
+                <div id="unreadDivider" class="unread-divider">
+                    <span class="unread-label">New Messages</span>
+                </div>
+            `;
+            document.getElementById(`message_${c.message_id}`).insertAdjacentHTML('beforebegin', unreadCard);
+            unreadDivider = messageCont.querySelector("#unreadDivider");
+            firstUnreadChat[contactId] = c;
+            isThereUnread = true;
+            break;
+        }
+    } if(!isThereUnread) {
+        if(unreadDivider) {
+            unreadDivider.remove();
+        }
+    }
+    if (unreadDivider) {
+        unreadDivider.scrollIntoView({
+            behavior: 'auto', // Use 'smooth' if you want a clean sliding animation
+            block: 'nearest'  // Aligns the bubble cleanly within the view boundaries
+        });
+    } else {
+        messageCont.scrollTop = messageCont.scrollHeight;
+    }
+    readContactChat(contact[activeContact]);
+}
+
+function isChatNewer(chat, isNewer) {
+    return isNewer.sent_at > chat.sent_at;
+}
+
+function readContactChat(contact) {
+    let contactChat = [];
+    for (const c of contact.chat) {
+        if (c.sender_id === contact.user_id) {
+            contactChat.push(c);
+        }
+    }
+    userUtil.setChatsRead(contactChat);
 }
 
 function isContactLoaded(newContact) {

@@ -142,3 +142,43 @@ export async function sendMessage(
     }
     return true;
 }
+
+export async function setChatsRead(chats) {
+    let chatIds = [];
+    for (const c of chats) {
+        chatIds.push(c.message_id);
+    }
+    if (chatIds.length <= 0) {
+        return false;
+    }
+    let formData = new FormData();
+    formData.append('chat_ids', JSON.stringify(chatIds));
+    let data = await callServer('server_call/chat_call.php', formData, "SET_CHATS_READ");
+    if (!data['is_success']) {
+        throw new Error(`server, set chats read error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function loadUpdatedChat(loadedChat) {
+    let data = await callServer("server_call/user_call.php", null, "USER_CHAT");
+    if (data['chats'].length <= 0) {
+        return [];
+    }
+    const newChatMap = new Map(data['chats'].map(data => [data.message_id, data]));   
+    let updatedChats = [];
+    for (const c of loadedChat) {
+        let newC = newChatMap.get(c.message_id);
+        if (c.message_content == "hellolo") {
+            console.log(c);
+            console.log(newC);
+        }
+        if (!newC) {
+            continue;
+        } if (newC.is_read != c.is_read) {
+            updatedChats.push(newC);
+        }
+    }
+    return updatedChats;
+}

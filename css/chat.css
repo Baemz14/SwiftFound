@@ -279,6 +279,25 @@ body {
     display: block;
 }
 
+.message-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    float: right; /* Pushes the meta info to the bottom right corner of the bubble */
+    margin-top: 4px;
+    margin-left: 8px;
+}
+
+.tick {
+    color: #df98ef; /* Subtle gray for delivered/unread single tick */
+    font-weight: bold;
+}
+
+.tick.read-blue {
+    color: #34b7f1; /* The classic WhatsApp-style active blue for read double ticks */
+}
+
 /* --- CHAT INPUT FOOTER --- */
 .chat-input-area {
     padding: 15px 20px;
@@ -355,4 +374,35 @@ body {
     letter-spacing: 0.3px;
     white-space: nowrap;       /* Prevents the date from wrapping into two lines */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle depth */
+}
+
+.unread-divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+    width: 100%;
+    position: relative;
+}
+
+/* The striking accent line that spans across the container */
+.unread-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid #ff4d4d; /* Bright alert red/crimson line */
+    opacity: 0.85;
+}
+
+/* The "New Messages" text badge */
+.unread-label {
+    background-color: #ff4d4d; /* Matches the line color */
+    color: #ffffff;            /* White text for sharp contrast */
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase; /* Clean, professional dashboard look */
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 4px;        /* Slightly squared edges */
+    margin-right: 12px;        /* Small gap before the red line continues */
+    box-shadow: 0 2px 4px rgba(255, 77, 77, 0.2); /* Soft glow */
+    white-space: nowrap;
 }

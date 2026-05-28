@@ -33,6 +33,26 @@ switch ($call_state) {
         }
         $response['is_success'] = true;
         break;
+
+    case "SET_CHATS_READ":
+        if (isset($_POST['chat_ids'])) {
+            $chat_ids = json_decode($_POST['chat_ids'], true);
+            if (count($chat_ids) <= 0) {
+                $response['is_success'] = false;
+                $response['error_log'] = "chat ids passed length is 0";
+                break;
+            } if (setChatsRead($chat_ids)) {
+                $response['is_success'] = true;
+                $response['error_log'] = "non ting";
+            } else {
+                $response['is_success'] = false;
+                $response['error_log'] = "controller error";
+            }
+            break;
+        }
+        $response['is_success'] = false;
+        $response['error_log'] = "chat ids is not passed";
+        break;
     
     default:
         $response['error_log'] = "state wong >:(";

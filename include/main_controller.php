@@ -269,4 +269,11 @@ function getUserChat($user_id) {
 
     return $chats;
 }
+
+function setChatsRead($chat_ids) {
+    global $conn;
+    $id_string = implode(',', $chat_ids);
+    $sql = "UPDATE message SET is_read = 1 WHERE message_id IN ($id_string)";
+    return mysqli_query($conn, $sql) > 0;
+}
 ?>
