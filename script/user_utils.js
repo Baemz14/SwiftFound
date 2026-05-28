@@ -88,6 +88,30 @@ export async function loadNewChat(loadedChat=null) {
     return data['chats']; 
 }
 
+export async function getUnreadMessageCount(loadedChat=null) {
+    let user = await loadUserData();
+    if (!user) {
+        return 0;
+    }
+    let chats = loadedChat;
+    if (!chats) {
+        chats = await loadNewChat();
+    }
+    return countUnreadMessages(chats, user.user_id);
+}
+
+export function countUnreadMessages(chats, user_id) {
+    if (!Array.isArray(chats)) {
+        return 0;
+    }
+    return chats.reduce((count, msg) => {
+        if (msg.sender_id !== user_id && msg.is_read == 0) {
+            return count + 1;
+        }
+        return count;
+    }, 0);
+}
+
 export async function openChat(claim) {
     let claimerId = claim.claimer.user_id;
     let posterId = claim.poster.user_id;

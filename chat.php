@@ -25,9 +25,15 @@
 
     <div class="main-wrapper">
         <div class="sidebar">
-            <div class="sidebar-header">Messages</div>
+            <div class="sidebar-tabs">
+                <button class="sidebar-tab active" data-tab="myClaims">My Claims
+                    <span class="btn-unread-badge" id="unread_claim">1</span>
+                </button>
+                <button class="sidebar-tab" data-tab="claimRequests">Claim Requests
+                    <span class="btn-unread-badge" id="unread_request">2</span>
+                </button>
+            </div>
             <div id="contactCont" class="contact-list">
-
             </div>
         </div>
         <div style="flex: 1; display: flex; flex-direction: column;">

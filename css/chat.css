@@ -85,6 +85,74 @@ body {
     overflow-y: auto;
 }
 
+.contact-preview-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+}
+
+.contact-unread-badge {
+    min-width: 24px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #ff4d4d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.btn-unread-badge {
+    min-width: 20px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #ff4d4d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+/* Sidebar Tabs */
+.sidebar-tabs {
+    display: flex;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    gap: 0;
+}
+
+.sidebar-tab {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    background-color: #f8f9fa;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.sidebar-tab:hover {
+    background-color: #f0f1f3;
+}
+
+.sidebar-tab.active {
+    background-color: #ffffff;
+    color: #007bff;
+    border-bottom-color: #007bff;
+}
+
 .avatar {
     width: 45px;
     height: 45px;
