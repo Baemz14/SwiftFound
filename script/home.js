@@ -19,7 +19,7 @@ const btnIdToText = {
 let item = [];
 let claim = [];
 let claimReq = [];
-let chat = [];
+let chatNotiCount = 0;
 
 export async function homeLoad() {
     let user = await loadUserData();
@@ -32,12 +32,12 @@ export async function homeLoad() {
     item = await userUtil.loadNewItem();
     claim = await userUtil.loadNewClaim();
     claimReq = await userUtil.loadNewClaimReq();
-    chat = await userUtil.loadNewChat();
+    chatNotiCount = await userUtil.getUnreadMessageCount();
 
     updateItemUi(item);
     updateClaimUi(claim);
     updateClaimReqUi(claimReq);
-    updateChatUi(chat);
+    updateChatNotiCount(chatNotiCount);
 
     document.getElementById("usernameTxt").innerText = user['username'];
     const sidebarName = document.getElementById("sidebarUsername");
@@ -181,11 +181,21 @@ async function checkNewThings() {
         claimReq.push(...newClaimReq);
         updateClaimReqUi(newClaimReq);
     }
-    let newChat = await userUtil.loadNewChat(chat);
-    if (newChat.length > 0) {
-        console.log("new chat came through");
-        chat.push(...newChat);
-        updateChatUi(newChat);
+    let newNotiCount = await userUtil.getUnreadMessageCount();
+    if (newNotiCount !== chatNotiCount) {
+        console.log(`new noti count: ${newNotiCount}`);
+        chatNotiCount = newNotiCount;
+        updateChatNotiCount(chatNotiCount);
+    }
+}
+
+function updateChatNotiCount(count) {
+    const badge = document.getElementById('unread_chat');
+    if (count > 0) {
+        badge.innerText = count > 99 ? '99+' : count;
+        badge.style.display = 'inline-block';
+    } else {
+        badge.style.display = 'none';
     }
 }
 

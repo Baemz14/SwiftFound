@@ -38,7 +38,9 @@
                 </ul>   
                 
                 <div class="action-buttons">
-                    <a class="other-buttons chat-btn" href="chat.php">Chat</a>
+                    <a class="other-buttons chat-btn" href="chat.php">Chat
+                        <span class="btn-unread-badge" id="unread_chat">1</span>
+                    </a>
                     <a class="other-buttons primary-btn" href="item_form.php">Post Item</a>
                     <a class="other-buttons secondary-btn" href="browse.php">Browse Items</a>
                 </div>

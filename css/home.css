@@ -311,3 +311,18 @@ hr {
 .claim-req-row {
     display: flex; gap: 15px; background: #fff; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; align-items: center;
 }
+
+.btn-unread-badge {
+    min-width: 7px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #ff4d4d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    margin-left: 8px;
+}

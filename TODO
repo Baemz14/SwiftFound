@@ -2,6 +2,7 @@ buat image boleh process sebelum upload, so macam kasi user crop utk kawal semua
 
 bug fix:
 home buat kau ade butang/tab lebih buat scroll, kalu skang butang lebih terkeluar nmpk hudoh
+skarang boleh jadi code injection so mcm kalu user type ' blh jadi error
 
 chat TODO:
 boleh bukak item detail bile tekan gamba item
