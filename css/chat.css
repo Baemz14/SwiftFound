@@ -303,6 +303,7 @@ body {
 .chat-header .active-user {
     font-weight: bold;
     font-size: 1.05rem;
+    flex: 1;
 }
 
 .message-area {
@@ -473,4 +474,8 @@ body {
     margin-right: 12px;        /* Small gap before the red line continues */
     box-shadow: 0 2px 4px rgba(255, 77, 77, 0.2); /* Soft glow */
     white-space: nowrap;
+}
+
+.chat-header-btn-group {
+    margin-right: 10px;
 }

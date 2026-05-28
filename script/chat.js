@@ -198,11 +198,20 @@ function drawNewChat(chat, _contact) {
                         <span id="headerAvatarInitial" class="avatar-initial">F</span>
                     </div>
                     <div class="active-user">${_contact.username}</div>
+                    <div class="chat-header-btn-group">
+                        <button id="ownerBtn" class="">confirm owner</button>
+                        <button id="resolveBtn" class="">confirm resolution</button>
+                        <button id="rejectBtn" class="">reject</button>
+                    </div>
                 </div>
                 
                 <div class="message-area"></div>
             </div>
         `;
+        // owner btn to confirm contact is owner, resolve btn to confirm claim resolved, 
+        // reject btn to reject claim. only show if user is claimer or owner respectively and claim not resolved yet
+        // make popup confirmation for each action to prevent misclicks, and for owner confirm also ask for item condition (same, worse, better)
+        // for owner confirm, make sure to let user know that this action will reject all other claims on the same item
         document.getElementById('chatCont').insertAdjacentHTML('beforeend', newChat);
         contactChat = document.getElementById(`chat_${_contact.contact_id}`);
         contactChat.style.display = "none";
