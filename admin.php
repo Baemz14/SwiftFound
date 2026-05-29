@@ -1,7 +1,9 @@
 <?php
 session_start();
 $error = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Current security key: TAPAH2026
     if ($_POST['pass'] === "TAPAH2026") {
         $_SESSION['admin_auth'] = true;
         header("Location: admin_dashboard.php");
@@ -17,40 +19,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftFound | Admin Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
     <div class="admin-card">
         <div class="admin-header">
             <div class="admin-logo">SwiftFound</div>
-            <span class="badge">Staff Portal</span>
+            <span class="badge">Staff Only</span>
         </div>
         
         <h1>Admin Portal</h1>
-        <p class="subtitle">Secure encrypted access for Tapah Campus Staff.</p>
+        <p class="subtitle">Enter security key to access management tools.</p>
 
         <?php if($error): ?>
-            <div class="error-box">
-                <span class="error-icon">⚠️</span> <?php echo $error; ?>
-            </div>
+            <div class="error-box"><?php echo $error; ?></div>
         <?php endif; ?>
 
         <form method="POST" action="" id="loginForm">
             <div class="input-group">
                 <label>SECURITY KEY</label>
-                <div class="input-wrapper">
-                    <input type="password" name="pass" id="passInput" placeholder="••••••••" required autofocus>
-                </div>
+                <input type="password" name="pass" placeholder="••••••••" required autofocus>
             </div>
-            <button type="submit" class="primary-btn" id="authBtn">
-                <span class="btn-text">Authorize Access</span>
-                <div class="loader" id="loader"></div>
-            </button>
+            <button type="submit" class="primary-btn">Authorize Access</button>
         </form>
 
         <div class="admin-footer">
-            <a href="home.php" class="back-link">← Return to User Dashboard</a>
+            <a href="home.php">← Back to Homepage</a>
         </div>
     </div>
 
