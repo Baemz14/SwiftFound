@@ -11,14 +11,25 @@ switch ($call_state) {
     case 'ADD_CLAIM':
         $user_id = $_SESSION['user_id'];
         if (!$user_id) {
+            $response['is_added'] = false;
             $response['error_log'] = 'you no login dada';
             break;
         }
         $item_id = $_POST['item_id'];
         $answer_text = $_POST['answer_text'];
-        $response['add_status'] = addClaim($user_id, $item_id, $answer_text)? "success": "failed";
+        $response['is_added'] = addClaim($user_id, $item_id, $answer_text);
         $response['error_log'] = 'blah blah';
         break;
+
+    case 'UPDATE_STATUS':
+        $claim_id = $_POST['claim_id'];
+        $status = $_POST['status'];
+        if (updateClaimStatus($claim_id, $status)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
     
     default:
         $response['error_log'] = "state wong >:(";
