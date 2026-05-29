@@ -218,6 +218,30 @@ function updateClaimStatus($claim_id, $status) {
     return mysqli_query($conn, $sql);
 }
 
+function confirmClaimOwner($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'OWNER_CONFIRM' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE claim SET claim_status = 'REJECTED' 
+        WHERE claim_id != '$claim_id' 
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id')";
+    return mysqli_query($conn, $sql);
+}
+
+function resolveClaim($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'RESOLVED' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE claim SET claim_status = 'REJECTED' 
+        WHERE claim_id != '$claim_id' 
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id')";
+    return mysqli_query($conn, $sql);
+}
+
 function getUserChat($user_id) {
     global $conn;
     $sql = "SELECT 
@@ -234,13 +258,16 @@ function getUserChat($user_id) {
                 item.title AS item_title,
                 item.img_file AS item_img,
 
-                claim.user_id AS claimer_id
+                claim.user_id AS claimer_id,
+                claim.claim_id AS claim_id,
+                claim.claim_status AS claim_status
             FROM message m
             INNER JOIN user sender ON m.sender_id = sender.user_id
             INNER JOIN user reciever ON m.reciever_id = reciever.user_id
             INNER JOIN claim ON m.claim_id = claim.claim_id
             INNER JOIN item ON claim.item_id = item.item_id
-            WHERE m.sender_id = '$user_id' OR m.reciever_id = '$user_id'
+            WHERE (m.sender_id = '$user_id' OR m.reciever_id = '$user_id') AND
+                claim.claim_status != 'PENDING'
             ORDER BY m.sent_at ASC";
 
     $result = mysqli_query($conn, $sql);
@@ -262,6 +289,11 @@ function getUserChat($user_id) {
             'item_id' => $row['item_id'],
             'item_title' => $row['item_title'],
             'item_img' => $row['item_img']
+        ];
+        $row['claim'] = [
+            'claim_id' => $row['claim_id'],
+            'claimer_id' => $row['claimer_id'],
+            'claim_status' => $row['claim_status']
         ];
         
         $chats[] = $row;

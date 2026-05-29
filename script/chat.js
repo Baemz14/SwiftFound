@@ -1,17 +1,46 @@
 import * as userUtil from "/swiftfound/script/user_utils.js";
 import { callServer } from "/swiftfound/include/call_server.js";
+import * as chatUtils from "/swiftfound/script/chat_utils.js";
+let onResolveClaim = chatUtils.onResolveClaim;
+let closeResolveClaimModal = chatUtils.closeResolveClaimModal;
+let onCancelClaim = chatUtils.onCancelClaim;
+let closeCancelClaimModal = chatUtils.closeCancelClaimModal;
+let onConfirmOwner = chatUtils.onConfirmOwner;
+let closeConfirmOwnerModal = chatUtils.closeConfirmOwnerModal;
+let onRejectClaim = chatUtils.onRejectClaim;
+let closeRejectClaimModal = chatUtils.closeRejectClaimModal;
+let getReadReceiptStatus = chatUtils.getReadReceiptStatus;
+let formatStatusLabel = chatUtils.formatStatusLabel;
+let shouldAllowSend = chatUtils.shouldAllowSend;
+let closeStatusDropdown = chatUtils.closeStatusDropdown;
+let isDateNewer = chatUtils.isDateNewer;
+let dateToNiceString = chatUtils.dateToNiceString;
+let getLatestMessagePreview = chatUtils.getLatestMessagePreview;
+let getContactUnreadCount = chatUtils.getContactUnreadCount;
+let updateContactUnreadBadge = chatUtils.updateContactUnreadBadge;
+let getFirstUnreadMessage = chatUtils.getFirstUnreadMessage;
+let renderUnreadDivider = chatUtils.renderUnreadDivider;
+let readContactChat = chatUtils.readContactChat;
+let isChatNewer = chatUtils.isChatNewer;
+let hideAllChats = chatUtils.hideAllChats;
+let isContactLoaded = chatUtils.isContactLoaded;
+let contactIndex = chatUtils.contactIndex;
+let updateTopBarUnreadCount = chatUtils.updateTopBarUnreadCount;
+import * as chatEvents from "/swiftfound/script/chat_events.js";
 
 let chat = [];
 let contact = [];
 let user = null;
 let activeContact = 0;
-let activeTab = 'myClaims';
+let activeTab = 'myClaims'; // default active tab
+let activeStatus = 'all'; // default active status
 
 export async function chatLoad() {
     user = await userUtil.loadUserData();
     if (!user) {
         window.location.href = 'login.php';
     }
+    chatUtils.setUser(user);
     
     chat = await userUtil.loadNewChat();
     for (const c of chat) {
@@ -36,18 +65,46 @@ export async function chatLoad() {
             switchTab(this.dataset.tab);
         });
     });
-    
-    // Initialize active tab display
-    updateContactsDisplay();
+
+    document.querySelectorAll('.status-tab').forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            if (this.classList.contains('dropdown-toggle')) {
+                document.getElementById('statusDropdownMenu').classList.toggle('show');
+                return;
+            }
+            switchStatus(this.dataset.status, this);
+        });
+    });
+
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function() {
+            switchStatus(this.dataset.status, document.getElementById('statusDropdownToggle'));
+            document.getElementById('statusDropdownMenu').classList.remove('show');
+        });
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('#statusDropdown')) {
+            document.getElementById('statusDropdownMenu').classList.remove('show');
+        }
+    });
 
     const urlParams = new URLSearchParams(window.location.search);
     let opening = urlParams.get('opening');
     if (opening) {
+        let tab = contact.find(c => c.contact_id === opening).isClaiming? 'myClaims' : 'claimRequests';
+        if (activeTab !== tab) {
+            switchTab(tab, false);
+            console.log(`auto switching to tab ${tab}`);
+        }
+        console.log(`auto activating chat for opening param ${opening}`);
         activateChat(opening);
+        updateContactsDisplay(false);
     } else if(contact.length > 0) {
         activateChat(contact[0].contact_id);
+        updateContactsDisplay(false);
     } else {
-        // do someting
+        updateContactsDisplay();
     }
 
     document.getElementById('sendBtn').addEventListener('click', onSendMessage);
@@ -58,30 +115,6 @@ export async function chatLoad() {
     });
 
     setInterval(checkNewMessages, 1000);
-
-    // 1. Define the tripwire rules
-    const rules = {
-        root: document.querySelector('.message-area'), // Watch inside the chat box
-        threshold: 0.5 // Trigger when half of the message bubble is visible
-    };
-    // 2. Define the action to take when the tripwire is crossed
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            // 'isIntersecting' is a boolean: true = walked into view, false = scrolled out
-            if (entry.isIntersecting) {
-                console.log("This message is now being read by the user!");
-                
-                let messageDiv = entry.target;
-                // Run your database fetch update code here...
-                
-                // Crucial: Stop watching this message since it's already read
-                observer.unobserve(messageDiv);
-            }
-        });
-    }, rules);
-    // 3. Tell the observer which specific items to track
-    const unreadBubbles = document.querySelectorAll('.message.received:not(.read)');
-    unreadBubbles.forEach(bubble => observer.observe(bubble));
 }
 
 function drawNewContact(contact) {
@@ -91,7 +124,7 @@ function drawNewContact(contact) {
         let contactCont = document.getElementById("contactCont");
         
         let card = `
-            <div id="contact_${contact.contact_id}" class="contact-item" data-contact-type="${contactType}" style="justify-content: space-between; width: 100%;">
+            <div id="contact_${contact.contact_id}" class="contact-item" data-contact-type="${contactType}" data-chat-status="${contact.claimStatus}" style="justify-content: space-between; width: 100%;">
                 <div class="contact-left-group">
                     <div id="avatar" class="avatar">
                         <img id="avatarImg" class="avatar-image" alt="Profile avatar" />
@@ -105,7 +138,10 @@ function drawNewContact(contact) {
                             </div>
                         </div>
                         <div class="contact-preview-row">
-                            <div class="contact-preview" id="preview_${contact.contact_id}">${getLatestMessagePreview(contact)}</div>
+                            <div>
+                                <div class="contact-preview" id="preview_${contact.contact_id}">${getLatestMessagePreview(contact)}</div>
+                                <span class="contact-status-chip status-${contact.claimStatus.toLowerCase()}">${formatStatusLabel(contact.claimStatus)}</span>
+                            </div>
                             <span class="contact-unread-badge" id="unread_${contact.contact_id}" style="display: ${getContactUnreadCount(contact) > 0 ? '' : 'none'};">${getContactUnreadCount(contact) || ''}</span>
                         </div>
                     </div>
@@ -190,6 +226,14 @@ function drawNewChat(chat, _contact) {
     let isSender = chat.sender_id === user.user_id;
     let contactChat = document.getElementById(`chat_${_contact.contact_id}`);
     if (!contactChat) {
+        let claimReqBtns = `
+            ${_contact.claimStatus == 'OWNER_CONFIRM' ? 
+                '<button id="resolveBtn" class="btn-primary">confirm resolution</button> <button id="cancelBtn" class="btn-secondary">cancel</button>' : 
+                '<button id="ownerBtn" class="btn-primary">confirm owner</button> <button id="rejectBtn" class="btn-danger">reject</button>'}
+        `;
+        let claimingBtns = `
+            <button id="cancelBtn" class="btn-secondary">cancel claim</button>
+        `;
         let newChat = `
             <div id="chat_${_contact.contact_id}" class="chat-container">
                 <div class="chat-header">
@@ -198,10 +242,9 @@ function drawNewChat(chat, _contact) {
                         <span id="headerAvatarInitial" class="avatar-initial">F</span>
                     </div>
                     <div class="active-user">${_contact.username}</div>
+                    <span class="chat-status-chip status-${_contact.claimStatus.toLowerCase()}">${formatStatusLabel(_contact.claimStatus)}</span>
                     <div class="chat-header-btn-group">
-                        <button id="ownerBtn" class="">confirm owner</button>
-                        <button id="resolveBtn" class="">confirm resolution</button>
-                        <button id="rejectBtn" class="">reject</button>
+                        ${_contact.isClaiming ? claimingBtns : claimReqBtns}
                     </div>
                 </div>
                 
@@ -214,6 +257,10 @@ function drawNewChat(chat, _contact) {
         // for owner confirm, make sure to let user know that this action will reject all other claims on the same item
         document.getElementById('chatCont').insertAdjacentHTML('beforeend', newChat);
         contactChat = document.getElementById(`chat_${_contact.contact_id}`);
+        contactChat.querySelector('#resolveBtn')?.addEventListener('click', () => onResolveClaim(_contact));
+        contactChat.querySelector('#cancelBtn')?.addEventListener('click', () => onCancelClaim(_contact));
+        contactChat.querySelector('#ownerBtn')?.addEventListener('click', () => onConfirmOwner(_contact));
+        contactChat.querySelector('#rejectBtn')?.addEventListener('click', () => onRejectClaim(_contact));
         contactChat.style.display = "none";
     }
     let chatDate = new Date(chat.sent_at);
@@ -242,7 +289,6 @@ function drawNewChat(chat, _contact) {
                 <span class="unread-label">New Messages</span>
             </div>
         `;
-        console.log(`drawing unread divider above ${chat.message_content}`);
         newMessage = unreadCard + newMessage;
     }
     let hasUnreadDivider = false;
@@ -265,202 +311,49 @@ function drawNewChat(chat, _contact) {
     }
 
     if (contact[activeContact].contact_id === _contact.contact_id) {
-        readContactChat(_contact);
+        readContactChat(_contact, contact);
     }
     // Update the contact preview with latest message and unread count
     let previewElement = document.getElementById(`preview_${_contact.contact_id}`);
     if (previewElement) {
         previewElement.textContent = getLatestMessagePreview(_contact);
     }
-    updateContactUnreadBadge(_contact);
+    updateContactUnreadBadge(_contact, contact);
 }
 
-function getReadReceiptStatus(chat) {
-    // If it's a double checkmark, can also wrap it in a class for blue coloring later
-    if (chat.is_read == 1) {
-        return '<span class="tick read-blue">✓✓</span>';
-    }
-    return '<span class="tick">✓</span>';
-}
-
-function isDateNewer(date, toCompare) {
-    const d1 = new Date(date).setHours(0, 0, 0, 0);
-    const d2 = new Date(toCompare).setHours(0, 0, 0, 0);
-    return d1 > d2;
-}
-
-function dateToNiceString(date) {
-    // 1. Create a "Today" reference and flatten its time to midnight
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // 2. Flatten the input date's time to midnight as well
-    const targetDate = new Date(date);
-    targetDate.setHours(0, 0, 0, 0);
-    
-    // 3. Calculate the absolute difference in time (in milliseconds)
-    const differenceInTime = today.getTime() - targetDate.getTime();
-    
-    // 4. Convert milliseconds to full calendar days (1 day = 24h * 60m * 60s * 1000ms)
-    const differenceInDays = Math.round(differenceInTime / (1000 * 60 * 60 * 24));
-    
-    // 5. Check if it falls within our 3-day window
-    if (differenceInDays === 0) {
-        return "Today";
-    } else if (differenceInDays === 1) {
-        return "Yesterday";
-    } else if (differenceInDays > 1 && differenceInDays <= 3) {
-        // Returns "Monday", "Tuesday", etc.
-        return targetDate.toLocaleDateString('en-US', { weekday: 'long' });
-    } else {
-        // 6. Older than 3 days: Format as d/m/yyyy (No leading zeroes)
-        const day = targetDate.getDate();
-        const month = targetDate.getMonth() + 1; // getMonth() is 0-indexed
-        const year = targetDate.getFullYear();
-        
-        return `${day}/${month}/${year}`;
-    }
-}
-
-function getLatestMessagePreview(contact) {
-    if (!contact.chat || contact.chat.length === 0) {
-        return "No messages yet";
-    }
-    
-    let latestMsg = contact.chat[contact.chat.length - 1];
-    let senderName = latestMsg.sender_id === user.user_id ? "You" : contact.username;
-    let preview = `${senderName}: ${latestMsg.message_content}`;
-    
-    // Truncate if too long
-    if (preview.length > 50) {
-        preview = preview.substring(0, 47) + "...";
-    }
-    
-    return preview;
-}
-
-function getContactUnreadCount(contact) {
-    if (!contact.chat || contact.chat.length === 0) {
-        return 0;
-    }
-    return contact.chat.reduce((count, msg) => {
-        if (msg.sender_id !== user.user_id && msg.is_read == 0) {
-            return count + 1;
-        }
-        return count;
-    }, 0);
-}
-
-function updateTopBarUnreadCount() {
-    const claimBadge = document.getElementById('unread_claim');
-    const requestBadge = document.getElementById('unread_request');
-    const claimCount = contact.filter(c => c.isClaiming).reduce((sum, c) => sum + getContactUnreadCount(c), 0);
-    const requestCount = contact.filter(c => !c.isClaiming).reduce((sum, c) => sum + getContactUnreadCount(c), 0);
-    if (claimCount > 0) {
-        claimBadge.textContent = claimCount;
-        claimBadge.style.display = '';
-    } else {
-        claimBadge.style.display = 'none';
-    }
-    if (requestCount > 0) {
-        requestBadge.textContent = requestCount;
-        requestBadge.style.display = '';
-    } else {
-        requestBadge.style.display = 'none';
-    }
-}
-
-function updateContactUnreadBadge(contact) {
-    let badge = document.getElementById(`unread_${contact.contact_id}`);
-    if (!badge) return;
-
-    const count = getContactUnreadCount(contact);
-    if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = '';
-    } else {
-        badge.style.display = 'none';
-    }
-    updateTopBarUnreadCount();
-}
-
-function getFirstUnreadMessage(contact) {
-    if (!contact || !Array.isArray(contact.chat)) {
-        return null;
-    }
-    return contact.chat.find(msg => msg.sender_id !== user.user_id && msg.is_read == 0) || null;
-}
-
-function renderUnreadDivider(contactId) {
-    const chatCont = document.getElementById(`chat_${contactId}`);
-    if (!chatCont) {
-        return null;
-    }
-    const messageCont = chatCont.querySelector('.message-area');
-    if (!messageCont) {
-        return null;
-    }
-
-    const existingDivider = messageCont.querySelector(`#unreadDivider_${contactId}`);
-    const contactObj = contact.find(c => c.contact_id === contactId);
-    const firstUnreadMessage = getFirstUnreadMessage(contactObj);
-
-    if (!firstUnreadMessage) {
-        if (existingDivider) {
-            existingDivider.remove();
-        }
+function updateChatInputState(contact) {
+    const inputArea = document.querySelector('.chat-input-area');
+    const notice = document.getElementById('chatDisabledNotice');
+    if (!contact) {
+        inputArea.style.display = 'none';
+        notice.style.display = 'block';
+        notice.textContent = 'Select a chat to see messages.';
         return;
     }
 
-    const firstUnreadMessageElement = document.getElementById(`message_${firstUnreadMessage.message_id}`);
-    if (existingDivider && firstUnreadMessageElement && existingDivider.nextElementSibling === firstUnreadMessageElement) {
-        return existingDivider;
-    }
-
-    if (existingDivider) {
-        existingDivider.remove();
-    }
-
-    const unreadCard = `
-        <div id="unreadDivider_${contactId}" class="unread-divider">
-            <span class="unread-label">New Messages</span>
-        </div>
-    `;
-
-    if (firstUnreadMessageElement && messageCont.contains(firstUnreadMessageElement)) {
-        firstUnreadMessageElement.insertAdjacentHTML('beforebegin', unreadCard);
+    if (shouldAllowSend(contact.claimStatus)) {
+        inputArea.style.display = 'flex';
+        notice.style.display = 'none';
     } else {
-        messageCont.insertAdjacentHTML('beforeend', unreadCard);
+        inputArea.style.display = 'none';
+        notice.style.display = 'block';
+        notice.textContent = `This chat is archived as ${formatStatusLabel(contact.claimStatus)}. Messages cannot be sent.`;
     }
-
-    return messageCont.querySelector(`#unreadDivider_${contactId}`);
 }
 
-function readContactChat(contact) {
-    let contactChat = [];
-    for (const c of contact.chat) {
-        if (c.sender_id === contact.user_id && c.is_read == 0) {
-            contactChat.push(c);
-            c.is_read = 1;
-            const messageBubble = document.getElementById(`message_${c.message_id}`);
-            if (messageBubble) {
-                const timestampEl = messageBubble.querySelector('.timestamp');
-                const timestampText = timestampEl ? timestampEl.textContent : '';
-                const metaEl = messageBubble.querySelector('.message-meta');
-                if (metaEl) {
-                    metaEl.innerHTML = `
-                        <span class="timestamp">${timestampText}</span>
-                        ${getReadReceiptStatus(c)}
-                    `;
-                }
-                messageBubble.classList.add('read');
-            }
-        }
+function switchStatus(status, button, forceFirstOpen = true) {
+    activeStatus = status;
+    document.querySelectorAll('.status-tab').forEach(tab => tab.classList.remove('active'));
+    if (button) {
+        button.classList.add('active');
     }
-    updateContactUnreadBadge(contact);
-    if (contactChat.length > 0) {
-        userUtil.setChatsRead(contactChat).catch(console.error);
+    if (!button || button.classList.contains('dropdown-toggle')) {
+        document.getElementById('statusDropdownToggle').classList.add('active');
     }
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.status === status);
+    });
+    updateContactsDisplay(forceFirstOpen);
 }
 
 function processChat(chat) {
@@ -468,25 +361,48 @@ function processChat(chat) {
     let newContact = isSender? chat.reciever: chat.sender;
     newContact.contact_id = chat.claim_id;
     let contactI = -1;
-    if (!isContactLoaded(newContact)) {
+    if (!isContactLoaded(newContact, contact)) {
         newContact.isClaiming = chat.claimer_id === user.user_id;
         newContact.item = chat.item;
         newContact.chat = [chat];
+        newContact.claimStatus = chat.claim_status;
+        newContact.claim = {
+            claim_id: chat.claim_id,
+            claim_status: chat.claim_status
+        }
         contact.push(newContact);
+        chatUtils.setContactList(contact);
         contactI = contact.length - 1;
         drawNewContact(newContact);
     } else {
-        contactI = contactIndex(newContact);
+        contactI = contactIndex(newContact, contact);
         contact[contactI].chat.push(chat);
     }
 }
 
 function activateChat(contactId) {
+    //console.log(`activating chat for contact ${contactId}`);
+    if (!activeTab || !activeStatus) {
+        // auto switch to tab containing the contact if not already in it
+        // for (const cont of contact) {
+        //     if (cont.contact_id === contactId) {
+        //         let tabName = cont.isClaiming ? 'myClaims' : 'claimRequests';
+        //         if (activeTab !== tabName) {
+        //             switchTab(tabName);
+        //         }
+        //         break;
+        //     }
+        // }
+    }
     // Find the contact and switch to the correct tab
     for (const cont of contact) {
         if (cont.contact_id === contactId) {
+            //console.log(`auto switching to tab for contact ${contactId}`);
             let tabName = cont.isClaiming ? 'myClaims' : 'claimRequests';
-            switchTab(tabName);
+            if (activeTab !== tabName) {
+                //console.log(`auto switching to tab ${tabName} for contact ${contactId}`);
+                switchTab(tabName);
+            }
             break;
         }
     }
@@ -503,6 +419,8 @@ function activateChat(contactId) {
         block: 'nearest'  // Aligns the bubble cleanly within the view boundaries
     });
     chatCont.style.display = "";
+    //throw new Error(sideContact.classList);
+    //console.log(sideContact.classList);
 
     let i = 0;
     for (const cont of contact) {
@@ -510,6 +428,7 @@ function activateChat(contactId) {
             const url = new URL(window.location);
             url.searchParams.set('opening', cont.contact_id);
             window.history.pushState({}, '', url);
+            //throw new Error(`activating chat for contact ${cont.contact_id}`);
             activeContact = i;
             continue;
         }
@@ -523,7 +442,7 @@ function activateChat(contactId) {
     }
 
     const messageCont = chatCont.querySelector('.message-area');
-    let unreadDivider = renderUnreadDivider(contactId);
+    let unreadDivider = renderUnreadDivider(contactId, contact);
 
     if (unreadDivider) {
         unreadDivider.scrollIntoView({
@@ -534,14 +453,11 @@ function activateChat(contactId) {
         messageCont.scrollTop = messageCont.scrollHeight;
     }
 
-    readContactChat(contact[activeContact]);
+    readContactChat(contact[activeContact], contact);
+    updateChatInputState(contact[activeContact]);
 }
 
-function isChatNewer(chat, isNewer) {
-    return isNewer.sent_at > chat.sent_at;
-}
-
-function switchTab(tabName) {
+function switchTab(tabName, forceFirstOpen = true) {
     activeTab = tabName;
     
     // Update tab button styles
@@ -551,44 +467,31 @@ function switchTab(tabName) {
     document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
     
     // Update contacts display
-    updateContactsDisplay();
+    updateContactsDisplay(forceFirstOpen);
 }
 
-function updateContactsDisplay() {
+function updateContactsDisplay(forceOpenFirst = true) {
+    let firstVisibleContactId = null;
+
     document.querySelectorAll('.contact-item').forEach(item => {
-        let contactType = item.dataset.contactType;
-        if (contactType === activeTab) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
+        const contactType = item.dataset.contactType;
+        const status = item.dataset.chatStatus;
+        const isTypeMatch = contactType === activeTab;
+        const isStatusMatch = activeStatus === 'all' || status === activeStatus;
+        const shouldShow = isTypeMatch && isStatusMatch;
+        item.style.display = shouldShow ? '' : 'none';
+
+        if (!firstVisibleContactId && shouldShow) {
+            firstVisibleContactId = item.id.replace('contact_', '');
         }
     });
-}
 
-// function readContactChat(contact) {
-//     let contactChat = [];
-//     for (const c of contact.chat) {
-//         if (c.sender_id === contact.user_id) {
-//             contactChat.push(c);
-//         }
-//     }
-//     userUtil.setChatsRead(contactChat);
-// }
-
-function isContactLoaded(newContact) {
-    for (const cont of contact) {
-        if (cont.contact_id === newContact.contact_id) {
-            return true;
-        }
-    } return false;
-}
-
-function contactIndex(newContact) {
-    for (let i = 0; i < contact.length; i++) {
-        if (contact[i].contact_id === newContact.contact_id) {
-            return i;
-        }
-    } return -1;
+    if (firstVisibleContactId && forceOpenFirst) {
+        console.log(`activating chat for contact ${firstVisibleContactId} because it's the first visible contact`);
+        activateChat(firstVisibleContactId);
+    } else if (forceOpenFirst) {
+        hideAllChats();
+    }
 }
 
 async function onSendMessage(e) {

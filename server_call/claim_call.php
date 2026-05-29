@@ -30,6 +30,27 @@ switch ($call_state) {
             $response['is_success'] = false;
             $response['error_log'] = "controller error";
         }
+        break;
+
+    case 'CONFIRM_OWNER':
+        $claim_id = $_POST['claim_id'];
+        if (confirmClaimOwner($claim_id)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
+        break;
+
+    case 'RESOLVE_CLAIM':
+        $claim_id = $_POST['claim_id'];
+        if (resolveClaim($claim_id)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
+        break;
     
     default:
         $response['error_log'] = "state wong >:(";

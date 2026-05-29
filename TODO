@@ -1,4 +1,5 @@
 buat image boleh process sebelum upload, so macam kasi user crop utk kawal semua img satu dimension, n mungkin post byk image - baem
+buat user boleh stay sign in
 
 bug fix:
 home buat kau ade butang/tab lebih buat scroll, kalu skang butang lebih terkeluar nmpk hudoh
@@ -27,3 +28,11 @@ item detail TODO:
 kalu isUserPosted = true(item yg kau sendiri post), buat tkde butang claim n report tkde tuka lain mungkin buat edit/delete atau view claims
 kalu isuserClaimed = true(dah claim), buat butang claim tuka pada edit answer n delete claim
 display brapa ramai dah claim item and brapa ramai dah mula chat dgn poster
+
+(baem)
+chat.php -- line 69
+chat contact header buat status nmpk cantik
+item claiming - ada update pada claim status so pastikan user boleh reclaim sebanyak 3 kali, dan display dah berapa byk try
+bug - archived chat (canceled, resolved, rejected) masih ada butang utk cnacel claim, confirm owner and reject
+chat - sort ikut most recent activity
+chat - refresh contact sidebar dan chat contents setiap kali ada status change

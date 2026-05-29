@@ -476,6 +476,278 @@ body {
     white-space: nowrap;
 }
 
+.sidebar-status-filters {
+    padding: 12px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.status-tab {
+    border: none;
+    background-color: #f4f6fb;
+    color: #495057;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.status-tab:hover,
+.status-tab.active {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.status-dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    flex-direction: column;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    min-width: 180px;
+    z-index: 50;
+}
+
+.dropdown-menu.show {
+    display: flex;
+}
+
+.dropdown-item {
+    border: none;
+    background: transparent;
+    text-align: left;
+    width: 100%;
+    padding: 10px 16px;
+    color: #333333;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item.active {
+    background-color: #f0f4ff;
+}
+
+.contact-status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 6px;
+}
+
+.contact-status-chip.status-chatting {
+    display: none;
+}
+
+.chat-status-chip.status-chatting {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.contact-status-chip.status-owner_confirm,
+.chat-status-chip.status-owner_confirm {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.contact-status-chip.status-resolved,
+.chat-status-chip.status-resolved {
+    background-color: #d1fae5;
+    color: #166534;
+}
+
+.contact-status-chip.status-rejected,
+.chat-status-chip.status-rejected {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.contact-status-chip.status-canceled,
+.chat-status-chip.status-canceled {
+    background-color: #fde8e8;
+    color: #9b1c1c;
+}
+
+.chat-disabled-note {
+    padding: 16px 20px;
+    margin: 0 20px 12px;
+    border-radius: 12px;
+    background-color: #fff3cd;
+    color: #664d03;
+    border: 1px solid #ffecb5;
+    font-size: 0.95rem;
+}
+
 .chat-header-btn-group {
     margin-right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.chat-header-btn-group button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.chat-header-btn-group .btn-primary {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.chat-header-btn-group .btn-primary:hover {
+    background-color: #218838;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.chat-header-btn-group .btn-primary.confirm-owner {
+    background-color: #28a745;
+}
+
+.chat-header-btn-group .btn-primary.confirm-owner:hover {
+    background-color: #218838;
+}
+
+.chat-header-btn-group .btn-secondary {
+    background-color: #e4e6eb;
+    color: #333333;
+}
+
+.chat-header-btn-group .btn-secondary:hover {
+    background-color: #d0d2d7;
+}
+
+.chat-header-btn-group .btn-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.chat-header-btn-group .btn-danger:hover {
+    background-color: #c82333;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* --- MODAL STYLES --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    width: 90%;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: #1a1a1a;
+}
+
+.modal-content p {
+    font-size: 0.95rem;
+    color: #555555;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-buttons .btn-primary {
+    background-color: #007bff;
+    color: #ffffff;
+    flex: 1;
+}
+
+.modal-buttons .btn-primary:hover {
+    background-color: #0056b3;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.modal-buttons .btn-secondary {
+    background-color: #e4e6eb;
+    color: #333333;
+    flex: 1;
+}
+
+.modal-buttons .btn-secondary:hover {
+    background-color: #d0d2d7;
 }

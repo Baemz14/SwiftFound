@@ -127,26 +127,13 @@ export async function openChat(claim) {
         return false;
     }
 
-    formData.append('sender_id', posterId);
-    formData.append('reciever_id', claimerId);
-    formData.append('text', posterQuestion);
-    data = await callServer('server_call/chat_call.php', formData, "ADD_CHAT");
-    if (!data['is_success']) {
-        console.log(`server error: ${data['error_log']}`);
+    if (!sendMessage(posterId, claimerId, posterQuestion, claim.claim_id)) {
+        return false;
+    } if (!sendMessage(claimerId, posterId, claimerAnswer, claim.claim_id)) {
         return false;
     }
 
-    formData = new FormData();
-    formData.append('sender_id', claimerId);
-    formData.append('reciever_id', posterId);
-    formData.append('claim_id', claim.claim_id);
-    formData.append('text', claimerAnswer);
-    data = await callServer('server_call/chat_call.php', formData, "ADD_CHAT");
-    if (!data['is_success']) {
-        console.log(`server error: ${data['error_log']}`);
-        return false;
-    }
-
+    console.log("Chat opened successfully");
     return true;
 }
 
@@ -161,7 +148,7 @@ export async function sendMessage(
     formData.append('claim_id', claim_id);
     let data = await callServer('server_call/chat_call.php', formData, "ADD_CHAT");
     if (!data['is_success']) {
-        console.log(`server error: ${data['error_log']}`);
+        throw new Error(`server send message error: ${data['error_log']}`);
         return false;
     }
     return true;
@@ -205,4 +192,50 @@ export async function loadUpdatedChat(loadedChat) {
         }
     }
     return updatedChats;
+}
+
+export async function confirmOwner(claim) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    let data = await callServer('server_call/claim_call.php', formData, "CONFIRM_OWNER");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function rejectClaim(claim) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    formData.append('status', "REJECTED");
+    let data = await callServer('server_call/claim_call.php', formData, "UPDATE_STATUS");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function resolveClaim(claim) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    let data = await callServer('server_call/claim_call.php', formData, "RESOLVE_CLAIM");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function cancelClaim(claim) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    formData.append('status', "CANCELED");
+    let data = await callServer('server_call/claim_call.php', formData, "UPDATE_STATUS");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
 }
