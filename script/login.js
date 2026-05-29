@@ -1,5 +1,5 @@
 import { callServer } from "../include/call_server.js";
-import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
+import { checkIsLoggedIn, saveLogin } from "/swiftfound/script/user_utils.js";
 
 export async function onLoginLoad() {
     let isLoggedIn = await checkIsLoggedIn()
@@ -43,7 +43,6 @@ async function onLoginSubmit(event) {
 
     let data = await callServer('server_call/user_call.php', formData, "FIND_USER");
     if (data.status === 'success') {
-        alert("Login successful");
         await saveLogin(data.user_id);
         window.location.href = "/swiftfound/home.php";
     } else {
@@ -51,15 +50,4 @@ async function onLoginSubmit(event) {
     }
 
     return;
-}
-
-async function saveLogin(user_id) {
-    let formData = new FormData();
-    formData.append('user_id', user_id);
-    let data = await callServer('server_call/user_call.php', formData, "LOGIN");
-    if (data['status'] === 'success') {
-        console.log("Login data saved");
-    } else {
-        alert("Failed to save login data");
-    }
 }

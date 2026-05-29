@@ -1,1 +1,29 @@
-buat image boleh process sebelum upload, so macam kasi user crop utk kawal semua img satu dimension
+buat image boleh process sebelum upload, so macam kasi user crop utk kawal semua img satu dimension, n mungkin post byk image - baem
+
+bug fix:
+home buat kau ade butang/tab lebih buat scroll, kalu skang butang lebih terkeluar nmpk hudoh
+skarang boleh jadi code injection so mcm kalu user type ' blh jadi error
+
+chat TODO:
+boleh bukak item detail bile tekan gamba item
+tambah pilihan utk resolve item / reject claimer / cancel claiming - baem buat
+topbar message yng tunjuk nama contact tepi letak nama item and gamba item
+buat 3 btn utk confirm owner, confirm resolution, reject:
+* owner btn to confirm contact is owner, resolve btn to confirm claim resolved, 
+* reject btn to reject claim. only show if user is claimer or owner respectively and claim not resolved yet
+* make popup confirmation for each action to prevent misclicks, and for owner confirm also ask for item condition (same, worse, better)
+* for owner confirm, make sure to let user know that this action will reject all other claims on the same item
+
+home TODO:
+buat cantik butang
+utk bagian 'claim req' bila 'click approve and open chat' bukak dialog utk confirm dan tunjuk claimer answer dan reputation
+bagian 'my active claims' tunjuk kalu claim tu da approved, chatting atau rejected
+buat active claim n claim request bagi asing setiap status
+
+chat, browse, item_detail, post item TODO:
+buat topbar ada logo, home, browse, post item. buat dua2 site sama so cam nice
+
+item detail TODO:
+kalu isUserPosted = true(item yg kau sendiri post), buat tkde butang claim n report tkde tuka lain mungkin buat edit/delete atau view claims
+kalu isuserClaimed = true(dah claim), buat butang claim tuka pada edit answer n delete claim
+display brapa ramai dah claim item and brapa ramai dah mula chat dgn poster

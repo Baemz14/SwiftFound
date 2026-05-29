@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="error-box"><?php echo $error; ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="">
+        <form method="POST" action="" id="loginForm">
             <div class="input-group">
                 <label>SECURITY KEY</label>
                 <input type="password" name="pass" placeholder="••••••••" required autofocus>
@@ -48,5 +48,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href="home.php">← Back to Homepage</a>
         </div>
     </div>
+
+    <script>
+        // Interactive button feedback
+        const form = document.getElementById('loginForm');
+        const btn = document.getElementById('authBtn');
+        const loader = document.getElementById('loader');
+        const btnText = btn.querySelector('.btn-text');
+
+        form.onsubmit = function() {
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
+            btn.style.opacity = '0.7';
+            btn.style.cursor = 'wait';
+        };
+    </script>
 </body>
 </html>

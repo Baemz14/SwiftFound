@@ -19,9 +19,14 @@
     <div class="app-layout">
         <!-- Sidebar Navigation Card -->
         <nav class="sidebar">
-            <div class="profile-preview">
-                <div class="avatar-placeholder"></div>
+            <div id="profilePanel" class="profile-preview" role="button" tabindex="0">
+                <div id="sidebarAvatar" class="avatar-placeholder">
+                    <img id="sidebarAvatarImg" class="avatar-image" alt="Profile avatar" />
+                    <span id="sidebarAvatarInitial" class="avatar-initial">F</span>
+                </div>
                 <a href="/swiftfound/" class="logo">SwiftFound</a>
+                <p id="sidebarUsername" class="profile-name">User</p>
+                <p class="profile-role">Member Dashboard</p>
             </div>
             
             <div class="not-logout">
@@ -30,10 +35,12 @@
                     <li id='postedBtn' class="nav-buttons">My Posted Items</li>
                     <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
                     <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
-                    <li id='chatBtn' class="nav-buttons">Chat</li>
                 </ul>   
                 
                 <div class="action-buttons">
+                    <a class="other-buttons chat-btn" href="chat.php">Chat
+                        <span class="btn-unread-badge" id="unread_chat">1</span>
+                    </a>
                     <a class="other-buttons primary-btn" href="item_form.php">Post Item</a>
                     <a class="other-buttons secondary-btn" href="browse.php">Browse Items</a>
                 </div>
@@ -53,26 +60,38 @@
 
             <div id="postedSect" class="tab-content" style="display:none;">
                 <h1>My Posted Items</h1>
+                <div id="postedItemsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                </div>
             </div>
 
             <div id="claimsSect" class="tab-content" style="display:none;">
                 <h1>My Claims</h1>
-                <div class="claim-grid">
-                    <section><h3>Pending</h3></section>
-                    <section><h3>Approved</h3></section>
-                    <section><h3>Rejected</h3></section>
+                <div id="claimContainer" class="claim-grid">
                 </div>
             </div>
 
             <div id="claimReqSect" class="tab-content" style="display:none;">
                 <h1>Claim Requests</h1>
-                <p>Manage people claiming your found items.</p>
-            </div>
-
-            <div id="chatSect" class="tab-content" style="display:none;">
-                <h1>Messages</h1>
+                <div id="claimReqContainer" class="claim-grid"></div>
             </div>
         </main>
+    </div>
+
+    <div id="profileModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <h2>My Profile</h2>
+            <p><strong>Username:</strong> <span id="modalUsername">User</span></p>
+            <p><strong>Status:</strong> Member</p>
+            <div class="avatar-upload">
+                <label for="profileAvatarInput">Upload profile photo</label>
+                <input id="profileAvatarInput" type="file" accept="image/*">
+                <button id="saveAvatarBtn" class="primary-btn">Save Avatar</button>
+            </div>
+            <div class="modal-actions">
+                <button id="closeProfileModal" class="secondary-btn">Close</button>
+                <a href="item_form.php" class="primary-btn">Post Item</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
