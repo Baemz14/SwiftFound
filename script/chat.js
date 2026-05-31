@@ -1,12 +1,15 @@
 import * as userUtil from "/swiftfound/script/user_utils.js";
 import { callServer } from "/swiftfound/include/call_server.js";
 import * as chatUtils from "/swiftfound/script/chat_utils.js";
+// moved some functions to chat_utils for better organization
 let onResolveClaim = chatUtils.onResolveClaim;
 let closeResolveClaimModal = chatUtils.closeResolveClaimModal;
 let onCancelClaim = chatUtils.onCancelClaim;
 let closeCancelClaimModal = chatUtils.closeCancelClaimModal;
 let onConfirmOwner = chatUtils.onConfirmOwner;
 let closeConfirmOwnerModal = chatUtils.closeConfirmOwnerModal;
+let onOpenChat = chatUtils.onOpenChat;
+let closeOpenChatModal = chatUtils.closeOpenChatModal;
 let onRejectClaim = chatUtils.onRejectClaim;
 let closeRejectClaimModal = chatUtils.closeRejectClaimModal;
 let getReadReceiptStatus = chatUtils.getReadReceiptStatus;
@@ -259,9 +262,7 @@ function drawNewChat(chat, _contact) {
                             </div>
                         </div>
                     </div>
-                    ${isArchived ? '' : `<div class="chat-header-btn-group">
-                        ${_contact.isClaiming ? claimingBtns : claimReqBtns}
-                    </div>`}
+                    <div class="chat-header-btn-group"></div>
                 </div>
                 
                 <div class="message-area"></div>
@@ -273,10 +274,7 @@ function drawNewChat(chat, _contact) {
         // for owner confirm, make sure to let user know that this action will reject all other claims on the same item
         document.getElementById('chatCont').insertAdjacentHTML('beforeend', newChat);
         contactChat = document.getElementById(`chat_${_contact.contact_id}`);
-        contactChat.querySelector('#resolveBtn')?.addEventListener('click', () => onResolveClaim(_contact));
-        contactChat.querySelector('#cancelBtn')?.addEventListener('click', () => onCancelClaim(_contact));
-        contactChat.querySelector('#ownerBtn')?.addEventListener('click', () => onConfirmOwner(_contact));
-        contactChat.querySelector('#rejectBtn')?.addEventListener('click', () => onRejectClaim(_contact));
+        applyHeaderButtons(_contact, _contact.claimStatus, contactChat);
         contactChat.style.display = "none";
     }
     let chatDate = new Date(chat.sent_at);
@@ -372,6 +370,18 @@ function updateChatInputState(contact) {
         return;
     }
 
+    if (contact.claimStatus === 'PENDING') {
+        inputArea.style.display = 'none';
+        notice.style.display = 'block';
+        if (contact.isClaiming) {
+            notice.innerHTML = `Chat is not open yet. You can cancel this claim if you no longer want to wait.`;
+        } else {
+            notice.innerHTML = `Chat is not open yet. Open the chat if you think this might be the owner or reject this claim. <button id="pendingOpenChatBtn" class="btn-primary">Open Chat</button>`;
+            notice.querySelector('#pendingOpenChatBtn')?.addEventListener('click', () => onOpenChat(contact));
+        }
+        return;
+    }
+
     if (shouldAllowSend(contact.claimStatus)) {
         inputArea.style.display = 'flex';
         notice.style.display = 'none';
@@ -420,11 +430,18 @@ function applyHeaderButtons(contactObj, status, container) {
         return;
     }
 
-    const claimReqBtns = status == 'OWNER_CONFIRM' ?
-        '<button id="resolveBtn" class="btn-primary">confirm resolution</button> <button id="cancelBtn" class="btn-secondary">cancel</button>' :
-        '<button id="ownerBtn" class="btn-primary">confirm owner</button> <button id="rejectBtn" class="btn-danger">reject</button>';
-    const claimingBtns = '<button id="cancelBtn" class="btn-secondary">cancel claim</button>';
-    const html = contactObj.isClaiming ? claimingBtns : claimReqBtns;
+    let html = '';
+    if (status === 'PENDING') {
+        html = contactObj.isClaiming ?
+            '<button id="cancelBtn" class="btn-secondary">cancel claim</button>' :
+            '<button id="openChatBtn" class="btn-primary">Open Chat</button> <button id="rejectBtn" class="btn-danger">Reject</button>';
+    } else if (status === 'OWNER_CONFIRM') {
+        html = '<button id="resolveBtn" class="btn-primary">confirm resolution</button> <button id="cancelBtn" class="btn-secondary">cancel</button>';
+    } else if (contactObj.isClaiming) {
+        html = '<button id="cancelBtn" class="btn-secondary">cancel claim</button>';
+    } else {
+        html = '<button id="ownerBtn" class="btn-primary">confirm owner</button> <button id="rejectBtn" class="btn-danger">reject</button>';
+    }
 
     if (!buttonGroup) {
         buttonGroup = document.createElement('div');
@@ -433,6 +450,7 @@ function applyHeaderButtons(contactObj, status, container) {
     }
     buttonGroup.innerHTML = html;
 
+    buttonGroup.querySelector('#openChatBtn')?.addEventListener('click', () => onOpenChat(contactObj));
     buttonGroup.querySelector('#resolveBtn')?.addEventListener('click', () => onResolveClaim(contactObj));
     buttonGroup.querySelector('#cancelBtn')?.addEventListener('click', () => onCancelClaim(contactObj));
     buttonGroup.querySelector('#ownerBtn')?.addEventListener('click', () => onConfirmOwner(contactObj));

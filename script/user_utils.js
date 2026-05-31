@@ -2,10 +2,6 @@ import { callServer } from "../include/call_server.js";
 import * as chatUtils from "./chat_utils.js";
 
 export async function checkIsLoggedIn() {
-    //let data = await callServer('server_call/user_call.php', null, "GET_SESSDATA");
-    //return data['is_logged_in'];
-    
-    // changed new code
     let user = await loadUserData();
     if(!user) {
         return false;
@@ -36,6 +32,28 @@ export async function saveLogin(user_id) {
     } else {
         alert("Failed to save login data");
     }
+}
+
+export async function claimItem(item_id, poster_id, claimer_id, question, answer) {
+    let formData = new FormData();
+    formData.append('item_id', item_id);
+    formData.append('answer_text', answer);
+    let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
+    if (!data['is_added']) {
+        console.log(`something went wong: ${data['error_log']}`);
+        return false;
+    }
+    let isSent = await sendMessage(poster_id, claimer_id, question, data.claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send question message");
+        return false;
+    }
+    isSent = await sendMessage(claimer_id, poster_id, answer, data.claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send answer message");
+        return false;
+    }
+    return true;
 }
 
 export async function loadNewItem(loadedItem=null) {
@@ -114,11 +132,6 @@ export function countUnreadMessages(chats, user_id) {
 }
 
 export async function openChat(claim) {
-    let claimerId = claim.claimer.user_id;
-    let posterId = claim.poster.user_id;
-    let posterQuestion = claim.item.secret_question;
-    let claimerAnswer = claim.answer_text;
-
     let formData = new FormData();
     formData.append('claim_id', claim.claim_id);
     formData.append('status', "CHATTING");
@@ -127,14 +140,6 @@ export async function openChat(claim) {
         console.log(`server error: ${data['error_log']}`);
         return false;
     }
-
-    if (!sendMessage(posterId, claimerId, posterQuestion, claim.claim_id)) {
-        return false;
-    } if (!sendMessage(claimerId, posterId, claimerAnswer, claim.claim_id)) {
-        return false;
-    }
-
-    console.log("Chat opened successfully");
     return true;
 }
 

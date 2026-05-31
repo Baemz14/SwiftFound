@@ -39,6 +39,11 @@ export function onCancelClaim(_contact) {
     
     modal.classList.add('show');
     
+    document.getElementById('cancelReasonInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            chatEvents.onCancelClaimConfirm(_contact)
+        }
+    });
     confirmBtn.onclick = () => chatEvents.onCancelClaimConfirm(_contact);
     cancelBtn.onclick = () => closeCancelClaimModal();
 }
@@ -78,6 +83,21 @@ export function closeConfirmOwnerModal() {
     modal.classList.remove('show');
 }
 
+export function onOpenChat(_contact) {
+    const modal = document.getElementById('openChatModal');
+    const confirmBtn = document.getElementById('openChatConfirmBtn');
+    const cancelBtn = document.getElementById('openChatCancelBtn');
+
+    modal.classList.add('show');
+    confirmBtn.onclick = () => chatEvents.onOpenChatConfirm(_contact);
+    cancelBtn.onclick = () => closeOpenChatModal();
+}
+
+export function closeOpenChatModal() {
+    const modal = document.getElementById('openChatModal');
+    modal.classList.remove('show');
+}
+
 export function onRejectClaim(_contact) {
     const modal = document.getElementById('rejectClaimModal');
     const confirmBtn = document.getElementById('rejectClaimBtn');
@@ -85,6 +105,11 @@ export function onRejectClaim(_contact) {
     
     modal.classList.add('show');
     
+    document.getElementById('rejectReasonInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            chatEvents.onRejectClaimConfirm(_contact)
+        }
+    });
     confirmBtn.onclick = () => chatEvents.onRejectClaimConfirm(_contact);
     cancelBtn.onclick = () => closeRejectClaimModal();
 }
@@ -239,9 +264,10 @@ function getStatusPriority(status) {
         'OWNER_CONFIRM': 0,
         'OWNER_CONFIRMED': 0,
         'CHATTING': 1,
-        'RESOLVED': 2,
-        'REJECTED': 3,
-        'CANCELED': 4
+        'PENDING': 2,
+        'RESOLVED': 3,
+        'REJECTED': 4,
+        'CANCELED': 5
     };
     return priorityMap[normalized] !== undefined ? priorityMap[normalized] : 5;
 }

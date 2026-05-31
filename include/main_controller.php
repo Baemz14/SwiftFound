@@ -137,11 +137,37 @@ function getItem($item_id) {
     return null;
 }
 
+function getClaim($claim_id) {
+    global $conn;
+    $sql = "SELECT claim.*, item.title, item.img_file, user.username 
+        FROM claim, item, user 
+        WHERE claim.claim_id = '$claim_id' AND 
+            claim.item_id = item.item_id AND 
+            claim.user_id = user.user_id";
+    $result = mysqli_query($conn, $sql);
+
+    if (mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    }
+    
+    return null;
+}
+
 function addClaim($user_id, $item_id, $answer_text) {
     global $conn;
     $sql = "INSERT INTO Claim (user_id, item_id, answer_text)
-        VALUES ('$user_id', '$item_id', '$answer_text')";
-    return mysqli_query($conn, $sql);
+            VALUES ('$user_id', '$item_id', '$answer_text')";
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        return null;
+    }
+    
+    $new_id = mysqli_insert_id($conn);
+    $claim = getClaim($new_id);
+    if ($claim) {
+        return $claim;
+    }
+    return null;
 }
 
 function getUserItemClaims($user_id) {
@@ -266,8 +292,7 @@ function getUserChat($user_id) {
             INNER JOIN user reciever ON m.reciever_id = reciever.user_id
             INNER JOIN claim ON m.claim_id = claim.claim_id
             INNER JOIN item ON claim.item_id = item.item_id
-            WHERE (m.sender_id = '$user_id' OR m.reciever_id = '$user_id') AND
-                claim.claim_status != 'PENDING'
+            WHERE (m.sender_id = '$user_id' OR m.reciever_id = '$user_id')
             ORDER BY m.sent_at ASC";
 
     $result = mysqli_query($conn, $sql);

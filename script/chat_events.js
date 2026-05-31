@@ -3,6 +3,17 @@ import { callServer } from "/swiftfound/include/call_server.js";
 import * as chatUtils from "/swiftfound/script/chat_utils.js";
 import { redrawContacts, updateContactStatus } from "/swiftfound/script/chat.js";
 
+export async function onOpenChatConfirm(_contact) {
+    let isSuccess = await userUtil.openChat(_contact.claim);
+    if (isSuccess) {
+        console.log("Chat opened for contact:", _contact);
+    } else {
+        console.error("Failed to open chat for contact:", _contact);
+    }
+    chatUtils.closeOpenChatModal();
+    updateContactStatus(_contact.contact_id, "CHATTING");
+}
+
 export async function onResolveClaimConfirm(_contact) {
     // Fill in your confirmation logic here
     console.log("Resolved claim for contact:", _contact);

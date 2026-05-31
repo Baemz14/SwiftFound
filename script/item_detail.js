@@ -1,6 +1,7 @@
 import { callServer } from "/swiftfound/include/call_server.js";
 import { CategoryEnumDB, CategoryText, CategoryEnum } from "/swiftfound/enum_constant.js";
 import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
+import * as userUtils from "/swiftfound/script/user_utils.js";
 
 let item = null;
 let user = null;
@@ -87,11 +88,8 @@ async function claimItem(e) {
         alert(`plis give your answer`);
         return;
     }
-    let formData = new FormData();
-    formData.append('item_id', item['item_id']);
-    formData.append('answer_text', answer);
-    let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
-    if (data['is_added']) {
+    let isClaimed = await userUtils.claimItem(item['item_id'], item.user_id, user.user_id, item.secret_question, answer);
+    if (isClaimed) {
         closeClaimModal();
         document.getElementById('successModal').style.display = "";
         document.getElementById('btnOk').addEventListener('click', function() {document.getElementById('successModal').style.display = "none";});

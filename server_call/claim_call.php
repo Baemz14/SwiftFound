@@ -17,8 +17,15 @@ switch ($call_state) {
         }
         $item_id = $_POST['item_id'];
         $answer_text = $_POST['answer_text'];
-        $response['is_added'] = addClaim($user_id, $item_id, $answer_text);
-        $response['error_log'] = 'blah blah';
+        $response['claim'] = null;
+        $claim = addClaim($user_id, $item_id, $answer_text);
+        if ($claim) {
+            $response['is_added'] = true;
+            $response['claim'] = $claim;
+        } else {
+            $response['is_added'] = false;
+            $response['error_log'] = 'controller error';
+        }
         break;
 
     case 'UPDATE_STATUS':

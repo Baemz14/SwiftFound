@@ -81,6 +81,18 @@
         </div>
     </div>
 
+    <!-- Open Chat Modal -->
+    <div id="openChatModal" class="modal">
+        <div class="modal-content">
+            <h2>Open Chat</h2>
+            <p>Open this chat if you think this might be the owner, or reject this claim instead.</p>
+            <div class="modal-buttons">
+                <button id="openChatConfirmBtn" class="btn-primary">Open Chat</button>
+                <button id="openChatCancelBtn" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Reject Claim Modal -->
     <div id="rejectClaimModal" class="modal">
         <div class="modal-content">
