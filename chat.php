@@ -36,6 +36,7 @@
             <div class="sidebar-status-filters">
                 <button class="status-tab active" data-status="all">All</button>
                 <button class="status-tab" data-status="CHATTING">Chatting</button>
+                <button class="status-tab" data-status="PENDING">Pending</button>
                 <button class="status-tab" data-status="OWNER_CONFIRM">Owner Confirm</button>
                 <div class="status-dropdown" id="statusDropdown">
                     <button id="statusDropdownToggle" class="status-tab dropdown-toggle" type="button">Archive ▾</button>
@@ -85,6 +86,7 @@
         <div class="modal-content">
             <h2>Reject Claim</h2>
             <p>Are you sure you want to reject this claim?</p>
+            <input type="text" id="rejectReasonInput" placeholder="Reason for rejection (optional)" aria-label="Reason for rejection">
             <div class="modal-buttons">
                 <button id="rejectClaimBtn" class="btn-danger">Reject</button>
                 <button id="cancelRejectBtn" class="btn-secondary">Cancel</button>
@@ -97,6 +99,7 @@
         <div class="modal-content">
             <h2>Cancel Claim</h2>
             <p>Are you sure you want to cancel this claim?</p>
+            <input type="text" id="cancelReasonInput" placeholder="Reason for cancellation (optional)" aria-label="Reason for cancellation">
             <div class="modal-buttons">
                 <button id="cancelClaimBtn" class="btn-secondary">Cancel Claim</button>
                 <button id="cancelCancelBtn" class="btn-primary">Keep Claim</button>

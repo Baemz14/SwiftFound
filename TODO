@@ -36,3 +36,4 @@ item claiming - ada update pada claim status so pastikan user boleh reclaim seba
 bug - archived chat (canceled, resolved, rejected) masih ada butang utk cnacel claim, confirm owner and reject
 chat - sort ikut most recent activity
 chat - refresh contact sidebar dan chat contents setiap kali ada status change
+chat - archive ada all, utk all yg main hanya tunjuk pending, chatting, owner confirm

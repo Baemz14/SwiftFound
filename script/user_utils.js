@@ -1,4 +1,5 @@
 import { callServer } from "../include/call_server.js";
+import * as chatUtils from "./chat_utils.js";
 
 export async function checkIsLoggedIn() {
     //let data = await callServer('server_call/user_call.php', null, "GET_SESSDATA");
@@ -194,6 +195,24 @@ export async function loadUpdatedChat(loadedChat) {
     return updatedChats;
 }
 
+export async function loadUpdatedClaimStatus(loadedClaim) {
+    let data = await callServer("server_call/user_call.php", null, "USER_CLAIM_REQ");
+    let data2 = await callServer("server_call/user_call.php", null, "USER_CLAIMS");
+    let allClaims = data['claim_req'].concat(data2['claims']);
+    if (allClaims.length <= 0) {
+        return [];
+    }
+    const newClaimReqMap = new Map(allClaims.map(data => [data.claim_id, data]));   
+    let updatedClaim = [];
+    for (const c of loadedClaim) {
+        let newC = newClaimReqMap.get(c.claim_id);
+        if (newC && newC.claim_status !== c.claim_status) {
+            updatedClaim.push(newC);
+        }
+    }
+    return updatedClaim;
+}
+
 export async function confirmOwner(claim) {
     let formData = new FormData();
     formData.append('claim_id', claim.claim_id);
@@ -202,16 +221,26 @@ export async function confirmOwner(claim) {
         console.log(`server error: ${data['error_log']}`);
         return false;
     }
+    let isSent = await sendMessage(claim.poster_id, claim.claimer_id, `${chatUtils.ownerConfirmKey}The poster has confirmed you are the owner. You can start discussing exchange details!`, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send owner confirmation message");
+        return false;
+    }
     return true;
 }
 
-export async function rejectClaim(claim) {
+export async function rejectClaim(claim, reason) {
     let formData = new FormData();
     formData.append('claim_id', claim.claim_id);
     formData.append('status', "REJECTED");
     let data = await callServer('server_call/claim_call.php', formData, "UPDATE_STATUS");
     if (!data['is_success']) {
         console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    let isSent = await sendMessage(claim.poster_id, claim.claimer_id, `${chatUtils.rejectReasonKey}This claim has been rejected. Reason from poster: ${reason}`, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send rejection message");
         return false;
     }
     return true;
@@ -228,13 +257,18 @@ export async function resolveClaim(claim) {
     return true;
 }
 
-export async function cancelClaim(claim) {
+export async function cancelClaim(claim, reason) {
     let formData = new FormData();
     formData.append('claim_id', claim.claim_id);
     formData.append('status', "CANCELED");
     let data = await callServer('server_call/claim_call.php', formData, "UPDATE_STATUS");
     if (!data['is_success']) {
         console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    let isSent = await sendMessage(claim.claimer_id, claim.poster_id, `${chatUtils.cancelReasonKey}This claim has been canceled. Reason from claimer: ${reason}`, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send cancellation message");
         return false;
     }
     return true;

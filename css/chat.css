@@ -165,6 +165,7 @@ body {
     font-weight: bold;
     color: #fff;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .header-avatar {
@@ -224,6 +225,7 @@ body {
     justify-content: space-between;
     align-items: center; 
     width: 100%;
+    min-width: 0;
 }
 
 .contact-username {
@@ -237,12 +239,18 @@ body {
     font-weight: 500;
     font-size: 0.85rem;
     margin-right: 3px;
+    flex: 1 1 0;
+    min-width: 0;
     
     /* Elegant fallback: Truncates item title with '...' if it is too long */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: right;
+}
+
+.contact-preview-row > div {
+    min-width: 0;
 }
 
 .contact-preview {
@@ -298,12 +306,37 @@ body {
     border-bottom: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.chat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.chat-header-title-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 6px;
+}
+
+.chat-header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
 }
 
 .chat-header .active-user {
     font-weight: bold;
     font-size: 1.05rem;
-    flex: 1;
+    flex: none;
+    white-space: nowrap;
 }
 
 .message-area {
@@ -366,6 +399,35 @@ body {
 .tick.read-blue {
     color: #34b7f1; /* The classic WhatsApp-style active blue for read double ticks */
 }
+
+/* --- SPECIAL MESSAGE TYPES --- */
+.message.special-message-reject,
+.message.special-message-cancel {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+.message.sent.special-message-reject,
+.message.sent.special-message-cancel {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+.message.special-message-ownerconfirm {
+    background-color: #e6ffed;
+    color: #136f2d;
+    border: 1px solid #8bd18b;
+}
+
+.message.sent.special-message-ownerconfirm {
+    background-color: #e6ffed;
+    color: #136f2d;
+    border: 1px solid #8bd18b;
+}
+
+/* Add more special message types here: special-message-canceled, special-message-resolved, etc. */
 
 /* --- CHAT INPUT FOOTER --- */
 .chat-input-area {
@@ -556,6 +618,19 @@ body {
     margin-top: 6px;
 }
 
+.chat-status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
 .contact-status-chip.status-chatting {
     display: none;
 }
@@ -563,12 +638,30 @@ body {
 .chat-status-chip.status-chatting {
     background-color: #dbeafe;
     color: #1d4ed8;
+    box-shadow: 0 1px 3px rgba(29, 78, 216, 0.15);
 }
 
 .contact-status-chip.status-owner_confirm,
-.chat-status-chip.status-owner_confirm {
+.chat-status-chip.status-owner_confirm,
+.contact-status-chip.status-owner_confirmed,
+.chat-status-chip.status-owner_confirmed {
     background-color: #d4edda;
     color: #155724;
+}
+
+.chat-status-chip.status-owner_confirm,
+.chat-status-chip.status-owner_confirmed {
+    box-shadow: 0 1px 3px rgba(21, 87, 36, 0.15);
+}
+
+.contact-status-chip.status-pending,
+.chat-status-chip.status-pending {
+    background-color: #fff4e5;
+    color: #9f6000;
+}
+
+.chat-status-chip.status-pending {
+    box-shadow: 0 1px 3px rgba(159, 96, 0, 0.15);
 }
 
 .contact-status-chip.status-resolved,
@@ -577,16 +670,31 @@ body {
     color: #166534;
 }
 
+.chat-status-chip.status-resolved {
+    box-shadow: 0 1px 3px rgba(22, 101, 52, 0.15);
+}
+
 .contact-status-chip.status-rejected,
 .chat-status-chip.status-rejected {
     background-color: #fee2e2;
     color: #b91c1c;
 }
 
+.chat-status-chip.status-rejected {
+    box-shadow: 0 1px 3px rgba(185, 28, 28, 0.15);
+}
+
 .contact-status-chip.status-canceled,
-.chat-status-chip.status-canceled {
+.chat-status-chip.status-canceled,
+.contact-status-chip.status-cancelled,
+.chat-status-chip.status-cancelled {
     background-color: #fde8e8;
     color: #9b1c1c;
+}
+
+.chat-status-chip.status-canceled,
+.chat-status-chip.status-cancelled {
+    box-shadow: 0 1px 3px rgba(155, 28, 28, 0.15);
 }
 
 .chat-disabled-note {

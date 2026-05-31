@@ -2,6 +2,10 @@ import * as userUtil from "/swiftfound/script/user_utils.js";
 import { callServer } from "/swiftfound/include/call_server.js";
 import * as chatEvents from "/swiftfound/script/chat_events.js";
 
+export const rejectReasonKey = `/r`;
+export const cancelReasonKey = `/c`;
+export const ownerConfirmKey = `/o`;
+
 let user = null;
 export function setUser(u) {
     user = u;
@@ -103,20 +107,24 @@ export function formatStatusLabel(status) {
         case 'CHATTING':
             return 'Chatting';
         case 'OWNER_CONFIRM':
+        case 'OWNER_CONFIRMED':
             return 'Owner Confirm';
         case 'RESOLVED':
             return 'Resolved';
         case 'REJECTED':
             return 'Rejected';
         case 'CANCELED':
+        case 'CANCELLED':
             return 'Canceled';
+        case 'PENDING':
+            return 'Pending';
         default:
             return status || 'Unknown';
     }
 }
 
 export function shouldAllowSend(status) {
-    return status === 'CHATTING' || status === 'OWNER_CONFIRM';
+    return status === 'CHATTING' || status === 'OWNER_CONFIRM' || status === 'OWNER_CONFIRMED';
 }
 
 export function closeStatusDropdown() {
@@ -226,17 +234,19 @@ export function updateContactUnreadBadge(contact, contactList) {
 }
 
 function getStatusPriority(status) {
+    const normalized = (status === 'CANCELLED') ? 'CANCELED' : status;
     const priorityMap = {
         'OWNER_CONFIRM': 0,
+        'OWNER_CONFIRMED': 0,
         'CHATTING': 1,
         'RESOLVED': 2,
         'REJECTED': 3,
         'CANCELED': 4
     };
-    return priorityMap[status] !== undefined ? priorityMap[status] : 5;
+    return priorityMap[normalized] !== undefined ? priorityMap[normalized] : 5;
 }
 
-function sortContacts(contactList) {
+export function sortContacts(contactList) {
     const contactContainer = document.getElementById('contactCont');
     if (!contactContainer) return;
 

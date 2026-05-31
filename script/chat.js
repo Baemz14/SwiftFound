@@ -35,7 +35,10 @@ let activeContact = 0;
 let activeTab = 'myClaims'; // default active tab
 let activeStatus = 'all'; // default active status
 
+const chatKey = [];
+
 export async function chatLoad() {
+    chatKey.push(chatUtils.rejectReasonKey, chatUtils.cancelReasonKey, chatUtils.ownerConfirmKey);
     user = await userUtil.loadUserData();
     if (!user) {
         window.location.href = 'login.php';
@@ -101,10 +104,9 @@ export async function chatLoad() {
         activateChat(opening);
         updateContactsDisplay(false);
     } else if(contact.length > 0) {
-        activateChat(contact[0].contact_id);
-        updateContactsDisplay(false);
-    } else {
         updateContactsDisplay();
+    } else {
+        switchTab(activeTab);
     }
 
     document.getElementById('sendBtn').addEventListener('click', onSendMessage);
@@ -130,7 +132,7 @@ function drawNewContact(contact) {
                         <img id="avatarImg" class="avatar-image" alt="Profile avatar" />
                         <span id="avatarInitial" class="avatar-initial">F</span>
                     </div>
-                    <div style="flex: 1;">
+                    <div style="flex: 1; min-width: 0;">
                         <div class="contact-info">
                             <div class="contact-name">
                                 <span class="contact-username">${contact.username}</span>
@@ -140,7 +142,7 @@ function drawNewContact(contact) {
                         <div class="contact-preview-row">
                             <div>
                                 <div class="contact-preview" id="preview_${contact.contact_id}">${getLatestMessagePreview(contact)}</div>
-                                <span class="contact-status-chip status-${contact.claimStatus.toLowerCase()}">${formatStatusLabel(contact.claimStatus)}</span>
+                                <span class="contact-status-chip ${getStatusCssClass(contact.claimStatus)}">${formatStatusLabel(contact.claimStatus)}</span>
                             </div>
                             <span class="contact-unread-badge" id="unread_${contact.contact_id}" style="display: ${getContactUnreadCount(contact) > 0 ? '' : 'none'};">${getContactUnreadCount(contact) || ''}</span>
                         </div>
@@ -175,7 +177,6 @@ function drawNewContact(contact) {
 async function checkNewMessages() {
     let newChat = await userUtil.loadNewChat(chat);
     for (const chat of newChat) {
-        //console.log(chat);
         processChat(chat);
         for (const _cont of contact) {
             if (_cont.contact_id === chat.claim_id) {
@@ -212,6 +213,13 @@ async function checkNewMessages() {
             }
         }
     }
+
+    let claims = contact.map(c => c.claim);
+    let updatedClaims = await userUtil.loadUpdatedClaimStatus(claims);
+    for (const claim of updatedClaims) {
+        console.log(`claim ${claim.claim_id} has updated status ${claim.claim_status}`);
+        updateContactStatus(claim.claim_id, claim.claim_status);
+    }
 }
 
 let latestDateDrawn = {};
@@ -226,26 +234,34 @@ function drawNewChat(chat, _contact) {
     let isSender = chat.sender_id === user.user_id;
     let contactChat = document.getElementById(`chat_${_contact.contact_id}`);
     if (!contactChat) {
+        const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED'].includes(_contact.claimStatus);
         let claimReqBtns = `
-            ${_contact.claimStatus == 'OWNER_CONFIRM' ? 
+            ${isArchived ? '' :
+            _contact.claimStatus == 'OWNER_CONFIRM' ? 
                 '<button id="resolveBtn" class="btn-primary">confirm resolution</button> <button id="cancelBtn" class="btn-secondary">cancel</button>' : 
                 '<button id="ownerBtn" class="btn-primary">confirm owner</button> <button id="rejectBtn" class="btn-danger">reject</button>'}
         `;
         let claimingBtns = `
-            <button id="cancelBtn" class="btn-secondary">cancel claim</button>
+            ${isArchived ? '' : '<button id="cancelBtn" class="btn-secondary">cancel claim</button>'}
         `;
         let newChat = `
             <div id="chat_${_contact.contact_id}" class="chat-container">
                 <div class="chat-header">
-                    <div id="headerAvatar" class="header-avatar">
-                        <img id="headerAvatarImg" class="avatar-image" alt="Profile avatar" />
-                        <span id="headerAvatarInitial" class="avatar-initial">F</span>
+                    <div class="chat-header-left">
+                        <div id="headerAvatar" class="header-avatar">
+                            <img id="headerAvatarImg" class="avatar-image" alt="Profile avatar" />
+                            <span id="headerAvatarInitial" class="avatar-initial">F</span>
+                        </div>
+                        <div class="chat-header-title-group">
+                            <div class="chat-header-title-row">
+                                <span class="active-user">${_contact.username}</span>
+                                <span class="chat-status-chip ${getStatusCssClass(_contact.claimStatus)}">${formatStatusLabel(_contact.claimStatus)}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="active-user">${_contact.username}</div>
-                    <span class="chat-status-chip status-${_contact.claimStatus.toLowerCase()}">${formatStatusLabel(_contact.claimStatus)}</span>
-                    <div class="chat-header-btn-group">
+                    ${isArchived ? '' : `<div class="chat-header-btn-group">
                         ${_contact.isClaiming ? claimingBtns : claimReqBtns}
-                    </div>
+                    </div>`}
                 </div>
                 
                 <div class="message-area"></div>
@@ -269,9 +285,34 @@ function drawNewChat(chat, _contact) {
         minute: '2-digit'
     });
     let messageCont = contactChat.querySelector(".message-area");
+    
+    // Check if message starts with a special key and determine message type
+    let messageContent = chat.message_content;
+    let messageText = messageContent;
+    let messageType = null;
+    
+    for (const key of chatKey) {
+        if (messageContent.startsWith(key)) {
+            const keyLength = key.length;
+            const restOfMessage = messageContent.substring(keyLength);
+            messageText = restOfMessage;
+            
+            // Determine message type based on key
+            if (key === chatUtils.rejectReasonKey) {
+                messageType = 'reject';
+            } else if (key === chatUtils.cancelReasonKey) {
+                messageType = 'cancel';
+            } else if (key === chatUtils.ownerConfirmKey) {
+                messageType = 'ownerconfirm';
+            }
+            break;
+        }
+    }
+    
+    const messageClass = messageType ? `special-message-${messageType}` : '';
     let newMessage = `
-        <div id=message_${chat.message_id} class="message ${isSender? "sent": "recieved"}">
-            <div class="message-text">${chat.message_content}</div>
+        <div id=message_${chat.message_id} class="message ${isSender? "sent": "recieved"} ${messageClass}">
+            <div class="message-text">${messageText}</div>
             <div class="message-meta">
                 <span class="timestamp">${timeString}</span>
                 ${getReadReceiptStatus(chat)}
@@ -356,6 +397,87 @@ function switchStatus(status, button, forceFirstOpen = true) {
     updateContactsDisplay(forceFirstOpen);
 }
 
+function getStatusCssClass(status) {
+    const normalized = {
+        'OWNER_CONFIRMED': 'owner_confirm',
+        'CANCELLED': 'canceled'
+    }[status] || status.toLowerCase();
+    return `status-${normalized}`;
+}
+
+export function redrawContacts() {
+    chatUtils.sortContacts(contact);
+    updateContactsDisplay(false);
+}
+
+function applyHeaderButtons(contactObj, status, container) {
+    const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED'].includes(status);
+    const header = container.querySelector('.chat-header');
+    let buttonGroup = container.querySelector('.chat-header-btn-group');
+
+    if (isArchived) {
+        buttonGroup?.remove();
+        return;
+    }
+
+    const claimReqBtns = status == 'OWNER_CONFIRM' ?
+        '<button id="resolveBtn" class="btn-primary">confirm resolution</button> <button id="cancelBtn" class="btn-secondary">cancel</button>' :
+        '<button id="ownerBtn" class="btn-primary">confirm owner</button> <button id="rejectBtn" class="btn-danger">reject</button>';
+    const claimingBtns = '<button id="cancelBtn" class="btn-secondary">cancel claim</button>';
+    const html = contactObj.isClaiming ? claimingBtns : claimReqBtns;
+
+    if (!buttonGroup) {
+        buttonGroup = document.createElement('div');
+        buttonGroup.className = 'chat-header-btn-group';
+        header.appendChild(buttonGroup);
+    }
+    buttonGroup.innerHTML = html;
+
+    buttonGroup.querySelector('#resolveBtn')?.addEventListener('click', () => onResolveClaim(contactObj));
+    buttonGroup.querySelector('#cancelBtn')?.addEventListener('click', () => onCancelClaim(contactObj));
+    buttonGroup.querySelector('#ownerBtn')?.addEventListener('click', () => onConfirmOwner(contactObj));
+    buttonGroup.querySelector('#rejectBtn')?.addEventListener('click', () => onRejectClaim(contactObj));
+}
+
+export function updateContactStatus(contactId, status) {
+    let updatedContact = null;
+    contact.forEach(c => {
+        if (c.contact_id === contactId) {
+            c.claim.claim_status = status;
+            c.claimStatus = status;
+            updatedContact = c;
+        }
+    });
+
+    const sideContact = document.getElementById(`contact_${contactId}`);
+    if (sideContact) {
+        sideContact.dataset.chatStatus = status;
+        const statusChip = sideContact.querySelector('.contact-status-chip');
+        if (statusChip) {
+            statusChip.textContent = formatStatusLabel(status);
+            statusChip.className = `contact-status-chip ${getStatusCssClass(status)}`;
+        }
+    }
+
+    const chatHeaderChip = document.querySelector(`#chat_${contactId} .chat-status-chip`);
+    if (chatHeaderChip) {
+        chatHeaderChip.textContent = formatStatusLabel(status);
+        chatHeaderChip.className = `chat-status-chip ${getStatusCssClass(status)}`;
+    }
+
+    const chatContainer = document.getElementById(`chat_${contactId}`);
+    if (chatContainer && updatedContact) {
+        applyHeaderButtons(updatedContact, status, chatContainer);
+    }
+
+    const active = contact[activeContact];
+    if (active && active.contact_id === contactId) {
+        updateChatInputState(active);
+    }
+
+    chatUtils.sortContacts(contact);
+}
+
 function processChat(chat) {
     let isSender = user.user_id === chat.sender.user_id;
     let newContact = isSender? chat.reciever: chat.sender;
@@ -368,7 +490,9 @@ function processChat(chat) {
         newContact.claimStatus = chat.claim_status;
         newContact.claim = {
             claim_id: chat.claim_id,
-            claim_status: chat.claim_status
+            claim_status: chat.claim_status,
+            claimer_id: chat.claimer_id,
+            poster_id: chat.claimer_id === chat.sender.user_id? chat.reciever.user_id : chat.sender.user_id,
         }
         contact.push(newContact);
         chatUtils.setContactList(contact);
@@ -381,19 +505,6 @@ function processChat(chat) {
 }
 
 function activateChat(contactId) {
-    //console.log(`activating chat for contact ${contactId}`);
-    if (!activeTab || !activeStatus) {
-        // auto switch to tab containing the contact if not already in it
-        // for (const cont of contact) {
-        //     if (cont.contact_id === contactId) {
-        //         let tabName = cont.isClaiming ? 'myClaims' : 'claimRequests';
-        //         if (activeTab !== tabName) {
-        //             switchTab(tabName);
-        //         }
-        //         break;
-        //     }
-        // }
-    }
     // Find the contact and switch to the correct tab
     for (const cont of contact) {
         if (cont.contact_id === contactId) {
@@ -470,7 +581,7 @@ function switchTab(tabName, forceFirstOpen = true) {
     updateContactsDisplay(forceFirstOpen);
 }
 
-function updateContactsDisplay(forceOpenFirst = true) {
+export function updateContactsDisplay(forceOpenFirst = true) {
     let firstVisibleContactId = null;
 
     document.querySelectorAll('.contact-item').forEach(item => {
