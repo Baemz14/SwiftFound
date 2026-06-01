@@ -21,6 +21,16 @@ let claim = [];
 let claimReq = [];
 let chatNotiCount = 0;
 
+function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 export async function homeLoad() {
     let user = await loadUserData();
     if(!user) {
@@ -140,6 +150,8 @@ export async function homeLoad() {
     activateSection(btnId);
 
     setInterval(checkNewThings, 1000);
+
+    setupApproveConfirmModal();
 }
 
 function activateSection(btnId) {
@@ -207,15 +219,15 @@ function updateItemUi(newItem) {
     for (const item of newItem) {
         const dateObj = new Date(item.created_at);
         const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
-        const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/60?text=No+Image'; 
+        const imagePath = item.img_file ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}` : 'https://via.placeholder.com/60?text=No+Image'; 
         let card = `
-            <div id="item_${item.item_id}" class="item-card">
-                <img src="${imagePath}" alt="${item.title}" style="width: 100%; height: 160px; object-fit: cover;">
+            <div id="item_${escapeHtml(item.item_id)}" class="item-card">
+                <img src="${imagePath}" alt="${escapeHtml(item.title)}" style="width: 100%; height: 160px; object-fit: cover;">
                 <div style="padding: 15px;">
-                    <div style="font-size: 0.8rem; font-weight: bold; color: #4f46e5; margin-bottom: 5px;">[${item.status}] ${item.category}</div>
-                    <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">${item.title}</h3>
-                    <p style="font-size: 0.9rem; color: #4b5563; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description}</p>
-                    <div style="font-size: 0.8rem; color: #9ca3af;">Posted on ${dateStr}</div>
+                    <div style="font-size: 0.8rem; font-weight: bold; color: #4f46e5; margin-bottom: 5px;">[${escapeHtml(item.status)}] ${escapeHtml(item.category)}</div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">${escapeHtml(item.title)}</h3>
+                    <p style="font-size: 0.9rem; color: #4b5563; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${escapeHtml(item.description)}</p>
+                    <div style="font-size: 0.8rem; color: #9ca3af;">Posted on ${escapeHtml(dateStr)}</div>
                 </div>
             </div>
         `;
@@ -227,26 +239,40 @@ function updateItemUi(newItem) {
     }
 }
 
+function statusPillHtml(status) {
+    const map = {
+        'PENDING':       ['status-pending',       'Pending'],
+        'CHATTING':      ['status-chatting',       'Chatting'],
+        'OWNER_CONFIRM': ['status-owner-confirm',  'Owner Confirm'],
+        'RESOLVED':      ['status-resolved',       'Resolved'],
+        'REJECTED':      ['status-rejected',       'Rejected'],
+        'CANCELED':      ['status-canceled',       'Canceled'],
+    };
+    const [cls, label] = map[status] || ['status-pending', status];
+    return `<span class="status-pill ${cls}">${label}</span>`;
+}
+
 function updateClaimUi(newClaim) {
     if (newClaim.length <= 0) {
         return;
     }
     const container = document.getElementById('claimContainer');
     for (const claim of newClaim) {
-        const imagePath = claim.img_file ? `/swiftfound/img_upload/${claim.img_file}` : 'https://via.placeholder.com/60?text=No+Image';
+        const imagePath = claim.img_file ? `/swiftfound/img_upload/${escapeHtml(claim.img_file)}` : 'https://via.placeholder.com/60?text=No+Image';
         let card = `
-            <div id="claim_${claim.claim_id}" class="claim-row">
-                <img src="${imagePath}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                <div style="display: flex; width: 100%">
-                    <div>
-                        <strong style="font-size: 1rem; color: #111827;">${claim.title}</strong>
-                        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
-                            Your Answer: <em>"${claim.answer_text}"</em>
-                        </div>
+            <div id="claim_${escapeHtml(claim.claim_id)}" class="claim-row">
+                <img src="${imagePath}" style="width: 52px; height: 52px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <strong style="font-size: 1rem; color: #111827;">${escapeHtml(claim.title)}</strong>
+                        ${statusPillHtml(claim.claim_status)}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+                        Your Answer: <em>&quot;${escapeHtml(claim.answer_text)}&quot;</em>
                     </div>
                 </div>
                 <div style="flex-shrink: 0;">
-                    <button>edit</button>
+                    <button class="row-btn row-btn-secondary">Edit</button>
                 </div>
             </div>
         `;
@@ -267,29 +293,46 @@ function updateClaimReqUi(newClaimReq) {
     for (const claim of newClaimReq) {
         let item = claim.item;
         let claimer = claim.claimer;
-        let poster = claim.poster;
-        const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/60?text=No+Image';
+        const imagePath = item.img_file ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}` : 'https://via.placeholder.com/60?text=No+Image';
+        const isPending = claim.claim_status === 'PENDING';
+        const isChatting = claim.claim_status === 'CHATTING' || claim.claim_status === 'OWNER_CONFIRM';
+        let actionBtn = '';
+        if (isPending) {
+            actionBtn = `<button class="row-btn row-btn-primary" data-open-btn>✓ Approve &amp; Chat</button>`;
+        } else if (isChatting) {
+            actionBtn = `<button class="row-btn row-btn-secondary" data-open-btn>Open Chat</button>`;
+        }
         let card = `
-            <div id="claimReq_${claim.claim_id}" class="claim-req-row">
-                <img src="${imagePath}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                <div style="display: flex; width: 100%">
-                    <div>
-                        <strong style="font-size: 1rem; color: #111827;">[${claim.claim_status}] ${item.title}</strong>
-                        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
-                            ${claimer.username}'s Answer: <em>"${claim.answer_text}"</em>
-                        </div>
+            <div id="claimReq_${escapeHtml(claim.claim_id)}" class="claim-req-row">
+                <img src="${imagePath}" style="width: 52px; height: 52px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <strong style="font-size: 1rem; color: #111827;">${escapeHtml(item.title)}</strong>
+                        ${statusPillHtml(claim.claim_status)}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+                        ${escapeHtml(claimer.username)}&#39;s Answer: <em>&quot;${escapeHtml(claim.answer_text)}&quot;</em>
                     </div>
                 </div>
-                <div style="flex-shrink: 0;">
-                    <button id="openBtn">${claim.claim_status === "PENDING"? "approve and": ""} open chat</button>
-                    <button>view claimer</button>
+                <div style="flex-shrink: 0; display: flex; gap: 6px;">
+                    ${actionBtn}
                 </div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
-        document.querySelector(`#claimReq_${claim.claim_id} #openBtn`).addEventListener('click', function(e) {
-            openChat(claim);
-        });
+        const row = document.getElementById(`claimReq_${claim.claim_id}`);
+        const openBtn = row ? row.querySelector('[data-open-btn]') : null;
+        if (openBtn) {
+            if (isPending) {
+                openBtn.addEventListener('click', function() {
+                    openApproveConfirm(claim);
+                });
+            } else {
+                openBtn.addEventListener('click', function() {
+                    openChat(claim);
+                });
+            }
+        }
     }
 }
 
@@ -307,9 +350,34 @@ function onViewClaimer(e) {
 
 }
 
+let _pendingApprovalClaim = null;
+
+function setupApproveConfirmModal() {
+    const modal = document.getElementById('approveConfirmModal');
+    document.getElementById('confirmApproveCancel').addEventListener('click', () => {
+        modal.style.display = 'none';
+        _pendingApprovalClaim = null;
+    });
+    document.getElementById('confirmApproveOk').addEventListener('click', async () => {
+        if (!_pendingApprovalClaim) return;
+        modal.style.display = 'none';
+        await openChat(_pendingApprovalClaim);
+        _pendingApprovalClaim = null;
+    });
+}
+
+function openApproveConfirm(claim) {
+    _pendingApprovalClaim = claim;
+    document.getElementById('confirmClaimerName').textContent = claim.claimer.username;
+    document.getElementById('confirmClaimerRep').textContent = claim.claimer.reputation ?? '—';
+    document.getElementById('confirmAnswerBox').textContent = claim.answer_text;
+    document.getElementById('approveConfirmModal').style.display = 'flex';
+}
+
 async function openChat(claim) {
-    if(claim.claim_status !== "CHATTING") {
-        if (!userUtil.openChat(claim)) {
+    if (claim.claim_status !== 'CHATTING' && claim.claim_status !== 'OWNER_CONFIRM') {
+        const ok = await userUtil.openChat(claim);
+        if (!ok) {
             alert('o no something went wong!');
             throw new Error('server error opening chat');
         }

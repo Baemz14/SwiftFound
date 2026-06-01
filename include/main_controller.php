@@ -355,10 +355,4 @@ function setChatsRead($chat_ids) {
     $sql = "UPDATE message SET is_read = 1 WHERE message_id IN ($id_string)";
     return mysqli_query($conn, $sql) > 0;
 }
-
-function updateItemStatus($item_id, $status) {
-    global $conn;
-    $sql = "UPDATE item SET status = '$status' WHERE item_id = '$item_id'";
-    return mysqli_query($conn, $sql);
-}
 ?>
