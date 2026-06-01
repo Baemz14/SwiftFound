@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2026 at 03:58 PM
+-- Generation Time: Jun 01, 2026 at 02:32 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,7 +45,7 @@ CREATE TABLE `claim` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `item_id` int(11) UNSIGNED NOT NULL,
   `answer_text` varchar(255) NOT NULL,
-  `claim_status` enum('PENDING','RESOLVED','REJECTED','CHATTING','OWNER_CONFIRM','CANCELED') NOT NULL
+  `claim_status` enum('PENDING','RESOLVED','REJECTED','CHATTING','OWNER_CONFIRM','CANCELED','PENDING_RESOLUTION') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -63,7 +63,7 @@ CREATE TABLE `item` (
   `location` varchar(255) NOT NULL,
   `img_file` varchar(255) NOT NULL,
   `secret_question` varchar(255) NOT NULL,
-  `status` enum('PENDING','RESOLVED','ABANDONED','') NOT NULL,
+  `status` enum('PENDING','RESOLVED','ABANDONED','OWNER_CONFIRM') NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

@@ -21,35 +21,9 @@ export async function onBrowseLoad() {
     let listingsWrapper = document.getElementById("listings_wrapper");
 
     let allItems = (await callServer("/swiftfound/server_call/item_call.php", null, "ALL_ITEMS"))['items'];
+    console.log("Loaded items:", allItems);
     for (let i = 0; i < allItems.length; i++) {
-        let isUserPosted = false;
-        if (user) {
-            isUserPosted = allItems[i]['user_id'] === user['user_id'];
-        }
-        
-        let newCard = `
-            <div id="itemCard_${i}" class="item-card" data-category="${allItems[i]['category']}">
-                <div class="item-card-img">
-                    <img src="/swiftfound/img_upload/${allItems[i]['img_file']}" alt="${allItems[i]['title']}">
-                </div>
-                <div class="card-info">
-                    <div class="category-tag">${CategoryText[CategoryEnum[allItems[i]['category']]]}</div>
-                    <h3>${allItems[i]['title']}</h3>
-                    <div class="card-meta">
-                        <span> loc: ${allItems[i]['location']}</span>
-                    </div>
-                    <div class="posted-by">
-                        posted by <strong>${isUserPosted? "you": allItems[i]['username']}</strong>
-                    </div>
-                </div>
-            </div>
-        `;
-        listingsWrapper.insertAdjacentHTML('beforeend', newCard);
-
-        let itemCard = document.getElementById("itemCard_"+i);
-        itemCard.addEventListener('click', function(){
-            window.location.href = `item_detail.php?item_id=${allItems[i]['item_id']}`;
-        });
+        drawItemCard(allItems[i]);
     }
 
     let categoryFilter = document.getElementById("categoryFilter");
@@ -79,5 +53,38 @@ export async function onBrowseLoad() {
                 console.log("Hiding card with category:", cardCategory);
             }
         });
+    });
+}
+
+function drawItemCard(item) {
+    let listingsWrapper = document.getElementById("listings_wrapper");
+    let isUserPosted = false;
+    if (user) {
+        isUserPosted = item['user_id'] === user['user_id'];
+    }
+    let newCard = `
+        <div id="itemCard_${item.item_id}" class="item-card" data-category="${item['category']}">
+            <div class="item-card-img">
+                <img src="/swiftfound/img_upload/${item['img_file']}" alt="${item['title']}">
+            </div>
+            <div class="card-info">
+                <div class="category-tag">${CategoryText[CategoryEnum[item['category']]]}</div>
+                <h3>${item['title']}</h3>
+                <div class="card-meta">
+                    <span> loc: ${item['location']}</span>
+                </div>
+                <div class="posted-by">
+                    posted by <strong>${isUserPosted? "you": item['username']}</strong>
+                </div>
+                <div class="posted-at">
+                    ${new Date(item.created_at).toLocaleDateString()}
+                </div>
+            </div>
+        </div>
+    `;
+    listingsWrapper.insertAdjacentHTML('beforeend', newCard);
+    let itemCard = document.getElementById("itemCard_"+item.item_id);
+    itemCard.addEventListener('click', function(){
+        window.location.href = `item_detail.php?item_id=${item.item_id}`;
     });
 }

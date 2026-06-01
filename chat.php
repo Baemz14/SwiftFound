@@ -38,6 +38,7 @@
                 <button class="status-tab" data-status="CHATTING">Chatting</button>
                 <button class="status-tab" data-status="PENDING">Pending</button>
                 <button class="status-tab" data-status="OWNER_CONFIRM">Owner Confirm</button>
+                <button class="status-tab" data-status="PENDING_RESOLUTION">Pending Resolution</button>
                 <div class="status-dropdown" id="statusDropdown">
                     <button id="statusDropdownToggle" class="status-tab dropdown-toggle" type="button">Archive ▾</button>
                     <div class="dropdown-menu" id="statusDropdownMenu">

@@ -252,7 +252,29 @@ function confirmClaimOwner($claim_id) {
     }
     $sql = "UPDATE claim SET claim_status = 'REJECTED' 
         WHERE claim_id != '$claim_id' 
-            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id')";
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND claim_status = 'CHATTING'";
+    return mysqli_query($conn, $sql);
+}
+
+function posterResolveClaim($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'PENDING_RESOLUTION' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE claim SET claim_status = 'REJECTED' 
+        WHERE claim_id != '$claim_id' 
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND claim_status = 'CHATTING'";
+    return mysqli_query($conn, $sql);
+}
+
+function confirmResolution($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'RESOLVED' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE item SET status = 'RESOLVED' WHERE item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id')";
     return mysqli_query($conn, $sql);
 }
 
@@ -264,7 +286,7 @@ function resolveClaim($claim_id) {
     }
     $sql = "UPDATE claim SET claim_status = 'REJECTED' 
         WHERE claim_id != '$claim_id' 
-            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id')";
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND claim_status = 'CHATTING'";
     return mysqli_query($conn, $sql);
 }
 
@@ -332,5 +354,11 @@ function setChatsRead($chat_ids) {
     $id_string = implode(',', $chat_ids);
     $sql = "UPDATE message SET is_read = 1 WHERE message_id IN ($id_string)";
     return mysqli_query($conn, $sql) > 0;
+}
+
+function updateItemStatus($item_id, $status) {
+    global $conn;
+    $sql = "UPDATE item SET status = '$status' WHERE item_id = '$item_id'";
+    return mysqli_query($conn, $sql);
 }
 ?>

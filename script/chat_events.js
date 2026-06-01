@@ -14,6 +14,28 @@ export async function onOpenChatConfirm(_contact) {
     updateContactStatus(_contact.contact_id, "CHATTING");
 }
 
+export async function onPosterResolveConfirm(_contact) {
+    let isSuccess = await userUtil.posterResolveClaim(_contact.claim);
+    if (isSuccess) {
+        console.log("Poster marked claim as pending resolution for contact:", _contact);
+    } else {
+        console.error("Failed to mark claim as pending resolution for contact:", _contact);
+    }
+    chatUtils.closeResolveClaimModal();
+    updateContactStatus(_contact.contact_id, "PENDING_RESOLUTION");
+}
+
+export async function onConfirmResolutionConfirm(_contact) {
+    let isSuccess = await userUtil.confirmResolution(_contact.claim);
+    if (isSuccess) {
+        console.log("Claim confirmed resolved for contact:", _contact);
+    } else {
+        console.error("Failed to confirm resolution for contact:", _contact);
+    }
+    chatUtils.closeResolveClaimModal();
+    updateContactStatus(_contact.contact_id, "RESOLVED");
+}
+
 export async function onResolveClaimConfirm(_contact) {
     // Fill in your confirmation logic here
     console.log("Resolved claim for contact:", _contact);
@@ -38,7 +60,7 @@ export async function onCancelClaimConfirm(_contact) {
 
 export async function onConfirmOwnerConfirm(_contact) {
     // Fill in your confirmation logic here
-    let isSuccess = await userUtil.confirmOwner(_contact.claim);
+    let isSuccess = await userUtil.confirmOwner(_contact);
     if (isSuccess) {
         console.log("Owner confirmed for contact:", _contact);
     } else {

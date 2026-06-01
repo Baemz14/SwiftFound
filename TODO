@@ -7,13 +7,6 @@ skarang boleh jadi code injection so mcm kalu user type ' blh jadi error
 
 chat TODO:
 boleh bukak item detail bile tekan gamba item
-tambah pilihan utk resolve item / reject claimer / cancel claiming - baem buat
-topbar message yng tunjuk nama contact tepi letak nama item and gamba item
-buat 3 btn utk confirm owner, confirm resolution, reject:
-* owner btn to confirm contact is owner, resolve btn to confirm claim resolved, 
-* reject btn to reject claim. only show if user is claimer or owner respectively and claim not resolved yet
-* make popup confirmation for each action to prevent misclicks, and for owner confirm also ask for item condition (same, worse, better)
-* for owner confirm, make sure to let user know that this action will reject all other claims on the same item
 
 home TODO:
 buat cantik butang
@@ -29,11 +22,11 @@ kalu isUserPosted = true(item yg kau sendiri post), buat tkde butang claim n rep
 kalu isuserClaimed = true(dah claim), buat butang claim tuka pada edit answer n delete claim
 display brapa ramai dah claim item and brapa ramai dah mula chat dgn poster
 
+browse.php line 42
+
 (baem)
 chat.php -- line 69
-chat contact header buat status nmpk cantik
 item claiming - ada update pada claim status so pastikan user boleh reclaim sebanyak 3 kali, dan display dah berapa byk try
-bug - archived chat (canceled, resolved, rejected) masih ada butang utk cnacel claim, confirm owner and reject
-chat - sort ikut most recent activity
-chat - refresh contact sidebar dan chat contents setiap kali ada status change
 chat - archive ada all, utk all yg main hanya tunjuk pending, chatting, owner confirm
+
+item details buat tunjuk brapa ramai yg claimed dan brapa ramai yg tgh chatting dan tunjuk status kalu dah owner confirmed

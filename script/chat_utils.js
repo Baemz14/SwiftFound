@@ -5,6 +5,27 @@ import * as chatEvents from "/swiftfound/script/chat_events.js";
 export const rejectReasonKey = `/r`;
 export const cancelReasonKey = `/c`;
 export const ownerConfirmKey = `/o`;
+export const openChatKey = `/s`;
+export const posterResolveKey = `/p`;
+export const confirmResolutionKey = `/f`;
+
+const specialMessageKeys = [
+    rejectReasonKey,
+    cancelReasonKey,
+    ownerConfirmKey,
+    openChatKey,
+    posterResolveKey,
+    confirmResolutionKey
+];
+
+export function parseSpecialMessageContent(messageContent) {
+    for (const key of specialMessageKeys) {
+        if (messageContent.startsWith(key)) {
+            return messageContent.substring(key.length);
+        }
+    }
+    return messageContent;
+}
 
 let user = null;
 export function setUser(u) {
@@ -18,13 +39,30 @@ export function setContactList(cl) {
 
 export function onResolveClaim(_contact) {
     const modal = document.getElementById('resolveClaimModal');
+    const title = modal.querySelector('h2');
+    const description = modal.querySelector('p');
     const confirmBtn = document.getElementById('resolveClaimBtn');
     const cancelBtn = document.getElementById('cancelResolveBtn');
-    
+
     modal.classList.add('show');
-    
-    confirmBtn.onclick = () => chatEvents.onResolveClaimConfirm(_contact);
     cancelBtn.onclick = () => closeResolveClaimModal();
+
+    if ((_contact.claimStatus === 'OWNER_CONFIRM' || _contact.claimStatus === 'OWNER_CONFIRMED') && !_contact.isClaiming) {
+        title.textContent = 'Mark Returned';
+        description.textContent = 'Tell the claimer the item has been returned and ask them to confirm receipt.';
+        confirmBtn.textContent = 'Mark returned';
+        confirmBtn.onclick = () => chatEvents.onPosterResolveConfirm(_contact);
+    } else if (_contact.claimStatus === 'PENDING_RESOLUTION' && _contact.isClaiming) {
+        title.textContent = 'Confirm Received';
+        description.textContent = 'Confirm that you have received the item so the claim can be finalized.';
+        confirmBtn.textContent = 'Confirm received';
+        confirmBtn.onclick = () => chatEvents.onConfirmResolutionConfirm(_contact);
+    } else {
+        title.textContent = 'Resolve Claim';
+        description.textContent = 'Are you sure you want to mark this claim as resolved?';
+        confirmBtn.textContent = 'Resolve';
+        confirmBtn.onclick = () => chatEvents.onResolveClaimConfirm(_contact);
+    }
 }
 
 export function closeResolveClaimModal() {
@@ -65,7 +103,10 @@ export function onConfirmOwner(_contact) {
 
     const rejectingClaimersList = document.getElementById('rejectingClaimersList');
     rejectingClaimersList.innerHTML = '';
-    const rejectingClaimers = contactList.filter(c => !c.isClaiming && c.contact_id !== _contact.contact_id && c.item.item_id === _contact.item.item_id);
+    const rejectingClaimers = contactList.filter(c => !c.isClaiming && 
+        c.contact_id !== _contact.contact_id && 
+        c.item.item_id === _contact.item.item_id &&
+        c.claimStatus === 'CHATTING');
     if (rejectingClaimers.length === 0) {
         const listItem = document.createElement('li');
         listItem.textContent = 'No other claimers';
@@ -134,6 +175,8 @@ export function formatStatusLabel(status) {
         case 'OWNER_CONFIRM':
         case 'OWNER_CONFIRMED':
             return 'Owner Confirm';
+        case 'PENDING_RESOLUTION':
+            return 'Pending Resolution';
         case 'RESOLVED':
             return 'Resolved';
         case 'REJECTED':
@@ -149,7 +192,7 @@ export function formatStatusLabel(status) {
 }
 
 export function shouldAllowSend(status) {
-    return status === 'CHATTING' || status === 'OWNER_CONFIRM' || status === 'OWNER_CONFIRMED';
+    return status === 'CHATTING' || status === 'OWNER_CONFIRM' || status === 'OWNER_CONFIRMED' || status === 'PENDING_RESOLUTION';
 }
 
 export function closeStatusDropdown() {
@@ -201,8 +244,9 @@ export function getLatestMessagePreview(contact) {
     }
     
     let latestMsg = contact.chat[contact.chat.length - 1];
+    let messageText = parseSpecialMessageContent(latestMsg.message_content);
     let senderName = latestMsg.sender_id === user.user_id ? "You" : contact.username;
-    let preview = `${senderName}: ${latestMsg.message_content}`;
+    let preview = `${senderName}: ${messageText}`;
     
     // Truncate if too long
     if (preview.length > 50) {
@@ -264,10 +308,11 @@ function getStatusPriority(status) {
         'OWNER_CONFIRM': 0,
         'OWNER_CONFIRMED': 0,
         'CHATTING': 1,
-        'PENDING': 2,
-        'RESOLVED': 3,
-        'REJECTED': 4,
-        'CANCELED': 5
+        'PENDING_RESOLUTION': 2,
+        'PENDING': 3,
+        'RESOLVED': 4,
+        'REJECTED': 5,
+        'CANCELED': 6
     };
     return priorityMap[normalized] !== undefined ? priorityMap[normalized] : 5;
 }

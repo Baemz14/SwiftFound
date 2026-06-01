@@ -310,6 +310,15 @@ body {
     gap: 16px;
 }
 
+.chat-header-note {
+    font-size: 0.9rem;
+    color: #334155;
+    padding: 8px 12px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+}
+
 .chat-header-left {
     display: flex;
     align-items: center;
@@ -425,6 +434,27 @@ body {
     background-color: #e6ffed;
     color: #136f2d;
     border: 1px solid #8bd18b;
+}
+
+.message.special-message-openchat,
+.message.sent.special-message-openchat {
+    background-color: #fff4cc;
+    color: #805d00;
+    border: 1px solid #f7d27a;
+}
+
+.message.special-message-posterresolve,
+.message.sent.special-message-posterresolve {
+    background-color: #dbeafe;
+    color: #1e3a8a;
+    border: 1px solid #93c5fd;
+}
+
+.message.special-message-confirmresolution,
+.message.sent.special-message-confirmresolution {
+    background-color: #f3e8ff;
+    color: #6d28d9;
+    border: 1px solid #c4b5fd;
 }
 
 /* Add more special message types here: special-message-canceled, special-message-resolved, etc. */
@@ -662,6 +692,16 @@ body {
 
 .chat-status-chip.status-pending {
     box-shadow: 0 1px 3px rgba(159, 96, 0, 0.15);
+}
+
+.contact-status-chip.status-pending_resolution,
+.chat-status-chip.status-pending_resolution {
+    background-color: #eef2ff;
+    color: #3730a3;
+}
+
+.chat-status-chip.status-pending_resolution {
+    box-shadow: 0 1px 3px rgba(55, 48, 163, 0.15);
 }
 
 .contact-status-chip.status-resolved,

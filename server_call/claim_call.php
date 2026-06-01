@@ -49,9 +49,25 @@ switch ($call_state) {
         }
         break;
 
-    case 'RESOLVE_CLAIM':
+    case 'POSTER_RESOLVE':
         $claim_id = $_POST['claim_id'];
-        if (resolveClaim($claim_id)) {
+        if (posterResolveClaim($claim_id)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
+        break;
+
+    case 'CONFIRM_RESOLUTION':
+        $claim_id = $_POST['claim_id'];
+        $claim = getClaim($claim_id);
+        if ($claim['claim_status'] != 'PENDING_RESOLUTION') {
+            $response['is_success'] = false;
+            $response['error_log'] = "claim status wong >:(";
+            break;
+        }
+        if (confirmResolution($claim_id)) {
             $response['is_success'] = true;
         } else {
             $response['is_success'] = false;

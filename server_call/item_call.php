@@ -56,6 +56,17 @@ switch ($call_state) {
         $response["saved_as"] = $is_upload_success? $filename : null;
         break;
 
+    case 'UPDATE_STATUS':
+        $item_id = $_POST['item_id'];
+        $new_status = $_POST['new_status'];
+        if (updateItemStatus($item_id, $new_status)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller errror";
+        }
+        break;
+
     default:
         $response['error_log'] = "state wong >:(";
         break;

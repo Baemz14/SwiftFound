@@ -38,6 +38,10 @@
 
             <input type="text" id="locationFilter" placeholder="Location">
             <input type="date" id="timeFilter">
+
+            <!-- TODO: stylize the checkbox -->
+            <input type="checkbox" id="isShowResolved">
+            <label for="isShowResolved">Show Resolved Items</label>
         </div>
     </header>
 

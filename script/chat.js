@@ -41,7 +41,7 @@ let activeStatus = 'all'; // default active status
 const chatKey = [];
 
 export async function chatLoad() {
-    chatKey.push(chatUtils.rejectReasonKey, chatUtils.cancelReasonKey, chatUtils.ownerConfirmKey);
+    chatKey.push(chatUtils.rejectReasonKey, chatUtils.cancelReasonKey, chatUtils.ownerConfirmKey, chatUtils.openChatKey, chatUtils.posterResolveKey, chatUtils.confirmResolutionKey);
     user = await userUtil.loadUserData();
     if (!user) {
         window.location.href = 'login.php';
@@ -206,8 +206,17 @@ async function checkNewMessages() {
                 minute: '2-digit'
             });
             if (messageBubble) {
+                const { messageText, messageType } = parseSpecialMessageContent(chat[i].message_content);
+                const oldSpecialClasses = Array.from(messageBubble.classList).filter(c => c.startsWith('special-message-'));
+                if (oldSpecialClasses.length > 0) {
+                    messageBubble.classList.remove(...oldSpecialClasses);
+                }
+                if (messageType) {
+                    messageBubble.classList.add(`special-message-${messageType}`);
+                }
+
                 messageBubble.innerHTML = `
-                    <div class="message-text">${chat[i].message_content}</div>
+                    <div class="message-text">${messageText}</div>
                     <div class="message-meta">
                         <span class="timestamp">${timeString}</span>
                         ${getReadReceiptStatus(chat[i])}
@@ -223,6 +232,34 @@ async function checkNewMessages() {
         console.log(`claim ${claim.claim_id} has updated status ${claim.claim_status}`);
         updateContactStatus(claim.claim_id, claim.claim_status);
     }
+}
+
+function parseSpecialMessageContent(messageContent) {
+    let messageText = messageContent;
+    let messageType = null;
+
+    for (const key of chatKey) {
+        if (messageContent.startsWith(key)) {
+            messageText = messageContent.substring(key.length);
+
+            if (key === chatUtils.rejectReasonKey) {
+                messageType = 'reject';
+            } else if (key === chatUtils.cancelReasonKey) {
+                messageType = 'cancel';
+            } else if (key === chatUtils.ownerConfirmKey) {
+                messageType = 'ownerconfirm';
+            } else if (key === chatUtils.openChatKey) {
+                messageType = 'openchat';
+            } else if (key === chatUtils.posterResolveKey) {
+                messageType = 'posterresolve';
+            } else if (key === chatUtils.confirmResolutionKey) {
+                messageType = 'confirmresolution';
+            }
+            break;
+        }
+    }
+
+    return { messageText, messageType };
 }
 
 let latestDateDrawn = {};
@@ -285,28 +322,7 @@ function drawNewChat(chat, _contact) {
     let messageCont = contactChat.querySelector(".message-area");
     
     // Check if message starts with a special key and determine message type
-    let messageContent = chat.message_content;
-    let messageText = messageContent;
-    let messageType = null;
-    
-    for (const key of chatKey) {
-        if (messageContent.startsWith(key)) {
-            const keyLength = key.length;
-            const restOfMessage = messageContent.substring(keyLength);
-            messageText = restOfMessage;
-            
-            // Determine message type based on key
-            if (key === chatUtils.rejectReasonKey) {
-                messageType = 'reject';
-            } else if (key === chatUtils.cancelReasonKey) {
-                messageType = 'cancel';
-            } else if (key === chatUtils.ownerConfirmKey) {
-                messageType = 'ownerconfirm';
-            }
-            break;
-        }
-    }
-    
+    const { messageText, messageType } = parseSpecialMessageContent(chat.message_content);
     const messageClass = messageType ? `special-message-${messageType}` : '';
     let newMessage = `
         <div id=message_${chat.message_id} class="message ${isSender? "sent": "recieved"} ${messageClass}">
@@ -435,8 +451,18 @@ function applyHeaderButtons(contactObj, status, container) {
         html = contactObj.isClaiming ?
             '<button id="cancelBtn" class="btn-secondary">cancel claim</button>' :
             '<button id="openChatBtn" class="btn-primary">Open Chat</button> <button id="rejectBtn" class="btn-danger">Reject</button>';
-    } else if (status === 'OWNER_CONFIRM') {
-        html = '<button id="resolveBtn" class="btn-primary">confirm resolution</button> <button id="cancelBtn" class="btn-secondary">cancel</button>';
+    } else if (status === 'OWNER_CONFIRM' || status === 'OWNER_CONFIRMED') {
+        if (!contactObj.isClaiming) {
+            html = '<button id="resolveBtn" class="btn-primary">Mark returned</button>';
+        } else {
+            html = '<span class="chat-header-note">Claim confirmed. Waiting for the poster to mark the item returned.</span>';
+        }
+    } else if (status === 'PENDING_RESOLUTION') {
+        if (contactObj.isClaiming) {
+            html = '<button id="resolveBtn" class="btn-primary">Confirm received</button>';
+        } else {
+            html = '<span class="chat-header-note">Pending receipt confirmation from the claimer.</span>';
+        }
     } else if (contactObj.isClaiming) {
         html = '<button id="cancelBtn" class="btn-secondary">cancel claim</button>';
     } else {
