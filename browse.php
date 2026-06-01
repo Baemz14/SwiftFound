@@ -38,10 +38,21 @@
 
             <input type="text" id="locationFilter" placeholder="Location">
             <input type="date" id="timeFilter">
+        </div>
 
-            <!-- TODO: stylize the checkbox -->
-            <input type="checkbox" id="isShowResolved">
-            <label for="isShowResolved">Show Resolved Items</label>
+        <div class="status-filters">
+            <label class="status-filter-item">
+                <input type="checkbox" id="showResolved">
+                <span>Show Resolved</span>
+            </label>
+            <label class="status-filter-item">
+                <input type="checkbox" id="showAbandoned">
+                <span>Show Abandoned</span>
+            </label>
+            <label class="status-filter-item">
+                <input type="checkbox" id="showOwnerConfirm">
+                <span>Show Owner Confirm</span>
+            </label>
         </div>
     </header>
 
