@@ -51,7 +51,7 @@
             </label>
             <label class="status-filter-item">
                 <input type="checkbox" id="showOwnerConfirm">
-                <span>Show Owner Confirm</span>
+                <span>Show Owner Confirmed</span>
             </label>
         </div>
     </header>
