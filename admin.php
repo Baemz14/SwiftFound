@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftFound | Admin Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
@@ -28,12 +28,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="admin-logo">SwiftFound</div>
             <span class="badge">Staff Only</span>
         </div>
-        
+
         <h1>Admin Portal</h1>
-        <p class="subtitle">Enter security key to access management tools.</p>
+        <p class="subtitle">Enter the security key to access management tools.</p>
 
         <?php if($error): ?>
-            <div class="error-box"><?php echo $error; ?></div>
+            <div class="error-box"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
         <form method="POST" action="" id="loginForm">
@@ -48,20 +48,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href="home.php">← Back to Homepage</a>
         </div>
     </div>
-
-    <script>
-        // Interactive button feedback
-        const form = document.getElementById('loginForm');
-        const btn = document.getElementById('authBtn');
-        const loader = document.getElementById('loader');
-        const btnText = btn.querySelector('.btn-text');
-
-        form.onsubmit = function() {
-            btnText.style.display = 'none';
-            loader.style.display = 'block';
-            btn.style.opacity = '0.7';
-            btn.style.cursor = 'wait';
-        };
-    </script>
 </body>
 </html>

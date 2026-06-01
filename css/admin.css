@@ -5,6 +5,7 @@
     --text-white: #ffffff;
     --text-dim: #94a3b8;
     --error-red: #ef4444;
+    --border: rgba(255,255,255,0.06);
 }
 
 body, html {
@@ -13,79 +14,86 @@ body, html {
     height: 100%;
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
-    background-image: radial-gradient(circle at top right, rgba(139, 140, 247, 0.05), transparent);
     color: var(--text-white);
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
 }
 
 .admin-card {
     background: var(--card-bg);
     padding: 40px;
-    border-radius: 24px;
+    border-radius: 20px;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border);
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Hovering over the card makes it feel physical */
-.admin-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 30px 60px -12px rgba(139, 140, 247, 0.15);
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 .admin-logo {
     font-weight: 800;
     font-size: 1.2rem;
-    background: linear-gradient(to right, #ffffff, #8b8cf7);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary-purple);
 }
 
 .badge {
     background: rgba(139, 140, 247, 0.1);
     color: var(--primary-purple);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    border: 1px solid rgba(139, 140, 247, 0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin: 0 0 10px 0;
+}
+
+.subtitle {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 .input-group label {
     display: block;
-    font-size: 0.7rem;
-    font-weight: 800;
-    margin-bottom: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 8px;
     color: var(--text-dim);
-    letter-spacing: 1.5px;
-    text-align: left;
+    letter-spacing: 1px;
 }
 
 input[type="password"] {
     width: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.05);
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     background: #0f172a;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1rem;
     box-sizing: border-box;
     outline: none;
-    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
 }
 
 input[type="password"]:focus {
     border-color: var(--primary-purple);
-    background: rgba(139, 140, 247, 0.05);
-    box-shadow: 0 0 20px rgba(139, 140, 247, 0.1);
+    box-shadow: 0 0 0 2px rgba(139, 140, 247, 0.3);
 }
 
 .primary-btn {
@@ -93,48 +101,41 @@ input[type="password"]:focus {
     background: var(--primary-purple);
     color: white;
     border: none;
-    padding: 16px;
-    border-radius: 12px;
+    padding: 15px;
+    border-radius: 10px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
+    transition: 0.2s;
+    font-family: 'Inter', sans-serif;
 }
 
 .primary-btn:hover {
     filter: brightness(1.1);
-    box-shadow: 0 10px 25px rgba(139, 140, 247, 0.4);
+    transform: translateY(-1px);
 }
 
-.back-link {
+.error-box {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-red);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.admin-footer {
+    margin-top: 24px;
+}
+
+.admin-footer a {
     color: var(--text-dim);
     text-decoration: none;
     font-size: 0.85rem;
-    transition: 0.3s;
-    display: inline-block;
-    margin-top: 25px;
+    transition: color 0.2s;
 }
 
-.back-link:hover {
-    color: var(--primary-purple);
-}
-
-/* Spinner Animation */
-.loader {
-    display: none;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.admin-footer a:hover {
+    color: var(--text-white);
 }
