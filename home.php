@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/home.css">
 
     <script type="module">
-        import { homeLoad } from '/swiftfound/script/home.js';
+        import { homeLoad } from '/swiftfound/script/home.js?v=2';
         window.onload = homeLoad;
     </script>
 </head>
@@ -90,6 +90,24 @@
             <div class="modal-actions">
                 <button id="closeProfileModal" class="secondary-btn">Close</button>
                 <a href="item_form.php" class="primary-btn">Post Item</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve Claim Confirm Dialog -->
+    <div id="approveConfirmModal" class="modal-overlay" style="display: none;">
+        <div class="confirm-modal-card">
+            <h2>Approve Claim Request?</h2>
+            <p style="color: #6b7280; margin-bottom: 4px;">Claimer: <strong id="confirmClaimerName">—</strong></p>
+            <div class="confirm-rep">
+                <span class="rep-star">★</span>
+                <span>Reputation: <strong id="confirmClaimerRep">—</strong></span>
+            </div>
+            <p style="font-size: 0.85rem; color: #374151; margin-bottom: 4px;">Their answer:</p>
+            <div class="confirm-answer-box" id="confirmAnswerBox">—</div>
+            <div class="modal-actions">
+                <button id="confirmApproveCancel" class="row-btn row-btn-secondary">Cancel</button>
+                <button id="confirmApproveOk" class="row-btn row-btn-primary">✓ Approve &amp; Open Chat</button>
             </div>
         </div>
     </div>

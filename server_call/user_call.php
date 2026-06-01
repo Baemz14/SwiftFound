@@ -105,7 +105,11 @@ switch ($call_state) {
 
     case "GET_USER":
         $user_data = isset($_SESSION['user_id']) ? getUser($_SESSION['user_id']) : null;
-        $response['user_id'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        if (!$user_data) {
+            $response['user_id'] = null;
+        } else {
+            $response['user_id'] = $_SESSION['user_id'];
+        }
         $response['username'] = $user_data ? $user_data['username'] : null;
         $response['reputation'] = $user_data ? $user_data['reputation'] : null;
         $response['avatar_url'] = $user_data && isset($user_data['avatar_url']) ? $user_data['avatar_url'] : null;
