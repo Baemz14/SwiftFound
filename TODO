@@ -1,18 +1,11 @@
 buat image boleh process sebelum upload, so macam kasi user crop utk kawal semua img satu dimension, n mungkin post byk image - baem
 buat user boleh stay sign in
 
-bug fix:
-home buat kau ade butang/tab lebih buat scroll, kalu skang butang lebih terkeluar nmpk hudoh
-skarang boleh jadi code injection so mcm kalu user type ' blh jadi error
+
 
 chat TODO:
 boleh bukak item detail bile tekan gamba item
 
-home TODO:
-buat cantik butang
-utk bagian 'claim req' bila 'click approve and open chat' bukak dialog utk confirm dan tunjuk claimer answer dan reputation
-bagian 'my active claims' tunjuk kalu claim tu da approved, chatting atau rejected
-buat active claim n claim request bagi asing setiap status
 
 chat, browse, item_detail, post item TODO:
 buat topbar ada logo, home, browse, post item. buat dua2 site sama so cam nice

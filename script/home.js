@@ -272,11 +272,15 @@ function updateClaimUi(newClaim) {
                     </div>
                 </div>
                 <div style="flex-shrink: 0;">
-                    <button class="row-btn row-btn-secondary">Edit</button>
+                    <button class="row-btn row-btn-secondary" id="editClaimBtn_${escapeHtml(claim.claim_id)}">Edit</button>
                 </div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
+        
+        document.getElementById(`editClaimBtn_${claim.claim_id}`).addEventListener('click', function() {
+            window.location.href = `item_detail.php?item_id=${claim.item_id}`;
+        });
     }
 }
 

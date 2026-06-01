@@ -35,25 +35,44 @@ export async function onBrowseLoad() {
     }
 
     // --- TRACKING LOGIC ADDED HERE ---
-    categoryFilter.addEventListener('change', function() {
-        let selectedCategory = this.value; 
-        console.log("Dropdown clicked! User wants to see:", selectedCategory);
+    let isShowResolved = document.getElementById("isShowResolved");
+    let searchInput = document.getElementById("searchInput");
+    let locationFilter = document.getElementById("locationFilter");
+
+    function applyFilters() {
+        let selectedCategory = categoryFilter.value; 
+        let showResolved = isShowResolved.checked;
+        let searchText = searchInput.value.toLowerCase();
+        let locationText = locationFilter.value.toLowerCase();
 
         let allCards = document.querySelectorAll('.item-card');
-        console.log("Found " + allCards.length + " cards on the page.");
-
+        
         allCards.forEach(card => {
             let cardCategory = card.dataset.category;
-            
-            if (selectedCategory === "" || cardCategory === selectedCategory) {
-                card.style.display = ""; // Show the card
-                console.log("Showing card with category:", cardCategory);
+            let cardStatus = card.dataset.status;
+            let cardTitle = card.querySelector('h3').innerText.toLowerCase();
+            let cardLocation = card.querySelector('.card-meta span').innerText.toLowerCase();
+
+            let matchesCategory = selectedCategory === "" || cardCategory === selectedCategory;
+            let matchesStatus = showResolved || cardStatus !== 'RESOLVED';
+            let matchesSearch = searchText === "" || cardTitle.includes(searchText);
+            let matchesLocation = locationText === "" || cardLocation.includes(locationText);
+
+            if (matchesCategory && matchesStatus && matchesSearch && matchesLocation) {
+                card.style.display = ""; 
             } else {
-                card.style.display = "none"; // Hide the card
-                console.log("Hiding card with category:", cardCategory);
+                card.style.display = "none"; 
             }
         });
-    });
+    }
+
+    categoryFilter.addEventListener('change', applyFilters);
+    isShowResolved.addEventListener('change', applyFilters);
+    searchInput.addEventListener('input', applyFilters);
+    locationFilter.addEventListener('input', applyFilters);
+    
+    // Apply filters initially
+    applyFilters();
 }
 
 function drawItemCard(item) {
@@ -63,7 +82,7 @@ function drawItemCard(item) {
         isUserPosted = item['user_id'] === user['user_id'];
     }
     let newCard = `
-        <div id="itemCard_${item.item_id}" class="item-card" data-category="${item['category']}">
+        <div id="itemCard_${item.item_id}" class="item-card" data-category="${item['category']}" data-status="${item['status']}">
             <div class="item-card-img">
                 <img src="/swiftfound/img_upload/${item['img_file']}" alt="${item['title']}">
             </div>

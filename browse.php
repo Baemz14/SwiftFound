@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/browse.css">
 
     <script type="module">
-        import { onBrowseLoad } from "/swiftfound/script/browse.js";
+        import { onBrowseLoad } from "/swiftfound/script/browse.js?v=2";
         window.onload = onBrowseLoad;
     </script>
 </head>

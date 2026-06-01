@@ -67,6 +67,34 @@ switch ($call_state) {
         }
         break;
 
+    case 'REPORT_ITEM':
+        $reporter_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        if (!$reporter_id) {
+            $response['success'] = false;
+            $response['message'] = 'Not logged in';
+            break;
+        }
+        $reported_item_id = $_POST['item_id'] ?? null;
+        $reported_user_id = null; // Get user_id from item if needed, but it can be null
+        $reason = $_POST['reason'] ?? '';
+        $details = $_POST['details'] ?? '';
+        
+        $full_reason = empty($details) ? $reason : "$reason: $details";
+        
+        if (empty($reason)) {
+            $response['success'] = false;
+            $response['message'] = 'Reason is required';
+            break;
+        }
+
+        if (submitReport($reporter_id, $reported_user_id, $reported_item_id, $full_reason)) {
+            $response['success'] = true;
+        } else {
+            $response['success'] = false;
+            $response['message'] = 'Database error';
+        }
+        break;
+
     default:
         $response['error_log'] = "state wong >:(";
         break;

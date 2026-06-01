@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/home.css">
 
     <script type="module">
-        import { homeLoad } from '/swiftfound/script/home.js';
+        import { homeLoad } from '/swiftfound/script/home.js?v=2';
         window.onload = homeLoad;
     </script>
 </head>
