@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 01, 2026 at 02:32 PM
+-- Generation Time: Jun 02, 2026 at 04:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,7 +63,7 @@ CREATE TABLE `item` (
   `location` varchar(255) NOT NULL,
   `img_file` varchar(255) NOT NULL,
   `secret_question` varchar(255) NOT NULL,
-  `status` enum('PENDING','RESOLVED','ABANDONED','OWNER_CONFIRM') NOT NULL,
+  `status` enum('PENDING','RESOLVED','ABANDONED','OWNER_CONFIRM','REMOVED') NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

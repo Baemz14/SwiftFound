@@ -472,4 +472,20 @@ function getAllUsers() {
     }
     return $users;
 }
+
+function getItemClaims($item_id) {
+    global $conn;
+    $sql = "SELECT 
+                c.*,
+                u.*
+            FROM claim c
+            INNER JOIN user u ON c.user_id = u.user_id
+            WHERE c.item_id = '$item_id'";
+    $result = mysqli_query($conn, $sql);
+    $claims = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $claims[] = $row;
+    }
+    return $claims;
+}
 ?>

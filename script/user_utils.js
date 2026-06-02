@@ -314,3 +314,7 @@ export async function cancelClaim(claim, reason) {
     }
     return true;
 }
+
+export async function itemClaims(item_id) {
+    
+}

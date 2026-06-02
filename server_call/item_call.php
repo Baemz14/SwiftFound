@@ -95,6 +95,9 @@ switch ($call_state) {
         }
         break;
 
+    case 'ITEM_CLAIMS':
+        break;
+
     default:
         $response['error_log'] = "state wong >:(";
         break;
