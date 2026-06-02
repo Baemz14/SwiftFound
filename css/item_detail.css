@@ -80,9 +80,10 @@ body {
 /* Info Styling */
 .item-header h1 {
     font-size: 2.2rem;
-    margin: 10px 0;
+    margin: 6px 0 2px 0;
     color: var(--text-dark);
     font-weight: 700;
+    line-height: 1.05;
 }
 
 .category-tag {
@@ -145,6 +146,151 @@ body {
 
 .msg-btn:hover {
     background-color: var(--primary-color);
+}
+
+.delete-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #dc2626;
+}
+
+.claim-status-section {
+    margin-top: 20px;
+    background: transparent;
+    padding: 12px 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.claim-status-section h3 {
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    border-bottom: none;
+    padding-bottom: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.claim-stats {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stats-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-badge {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+    gap: 8px;
+}
+
+.stat-badge strong {
+    font-size: 0.95rem;
+    min-width: 20px;
+}
+
+.stat-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.stat-pending strong {
+    color: #92400e;
+}
+
+.stat-chatting {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.stat-confirmed {
+    background: #dbeafe;
+    color: #1e3a8a;
+}
+
+.item-status {
+    display: block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin: 2px 0 0 0;
+}
+
+.dt-cont {
+    margin-top: 6px;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
+
+.status-resolved { background: #eef2ff; color: #1e3a8a; }
+.status-owner_confirm { background: #ecfeff; color: #065f46; }
+.status-abandoned { background: #fff7ed; color: #92400e; }
+.status-removed { background: #fef2f2; color: #7f1d1d; }
+
+.no-claims-msg {
+    display: block;
+    padding: 6px 10px;
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    background: #f3f4f6;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.8rem;
+}
+
+.claim-attempt-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 0; 
+    align-items: center;
+}
+
+.already-claimed-msg {
+    margin: 0;
+    padding: 10px 12px;
+    background: #f8fafc;
+    color: #0f172a;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-weight: 500;
+}
+
+.claim-attempt-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 9999px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
 /* The Fixed Report Button */

@@ -96,6 +96,12 @@ switch ($call_state) {
         break;
 
     case 'ITEM_CLAIMS':
+        $response['claims'] = null;
+        if (isset($_POST['item_id'])) {
+            $response['claims'] = getItemClaims($_POST['item_id']);
+        } else {
+            $response['error_log'] = "no item id passed";
+        }
         break;
 
     default:

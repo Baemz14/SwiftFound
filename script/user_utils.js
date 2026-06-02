@@ -316,5 +316,12 @@ export async function cancelClaim(claim, reason) {
 }
 
 export async function itemClaims(item_id) {
-    
+    let formData = new FormData();
+    formData.append('item_id', item_id);
+    let data = await callServer('server_call/item_call.php', formData, "ITEM_CLAIMS");
+    if (!data['claims']) {
+        console.log(`server error: ${data['error_log']}`);
+        return [];
+    }
+    return data['claims'];
 }
