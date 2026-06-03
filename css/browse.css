@@ -1,3 +1,15 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f4f4f9;
+    padding: 20px;
+}
+
 .logo {
     font-size: 1.8rem;
     font-weight: 800;
@@ -31,18 +43,6 @@
 .item-item-card h3 {
     margin: 0;
     padding: 2px;
-}
-
-* {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    background-color: #f4f4f9;
-    padding: 20px;
 }
 
 /* Navbar */
@@ -209,7 +209,7 @@ body {
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Spacing between elements */
+    gap: 8px; 
 }
 
 .card-info h3 {
@@ -217,7 +217,6 @@ body {
     color: #1a1a1a;
     margin: 0;
     font-weight: 600;
-    /* Optional: Truncate long titles to 1 line */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -255,4 +254,77 @@ body {
 .posted-at {
     font-size: 0.8rem;
     color: #999;
+}
+
+/* ==========================================================================
+   DYNAMIC ACTION BANNER STYLING (Untuk Line 42 browse.php)
+   ========================================================================== */
+.browse-action-banner {
+    max-width: 1000px;
+    margin: -10px auto 25px auto; /* Ngam-ngam bawah search bar */
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.browse-action-banner p {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Base style untuk semua butang banner */
+.browse-action-banner a {
+    display: inline-block;
+    padding: 10px 22px;
+    margin: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+/* Guna warna utama sistem (#007bff) */
+.btn-action-primary {
+    background: #007bff;
+    color: #fff !important;
+}
+
+.btn-action-primary:hover {
+    background: #0056b3;
+}
+
+/* Soft blue button untuk Chat */
+.btn-action-secondary {
+    background: #e7f3ff;
+    color: #007bff !important;
+}
+
+.btn-action-secondary:hover {
+    background: #d0e7ff;
+}
+
+/* Style minimalis untuk Login */
+.btn-action-login {
+    background: transparent;
+    color: #333 !important;
+    border: 1px solid #ddd;
+}
+
+.btn-action-login:hover {
+    background: #f4f4f9;
+    border-color: #bbb;
+}
+
+/* Style menonjol sikit untuk Signup/Register */
+.btn-action-register {
+    background: #28a745;
+    color: #fff !important;
+}
+
+.btn-action-register:hover {
+    background: #218838;
 }
