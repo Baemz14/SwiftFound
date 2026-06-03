@@ -22,12 +22,6 @@ function userExists($username) {
     return mysqli_num_rows($result) > 0;
 }
 
-function ensureUserAvatarColumn() {
-    global $conn;
-    $sql = "ALTER TABLE User ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(255) DEFAULT NULL";
-    return mysqli_query($conn, $sql);
-}
-
 function addUser($username, $password) {
     global $conn;
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -49,7 +43,6 @@ function getUserId($username) {
 
 function getUser($user_id) {
     global $conn;
-    ensureUserAvatarColumn();
     $sql = "SELECT user_id, username, reputation, avatar_url FROM User WHERE user_id = '$user_id'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
@@ -62,7 +55,6 @@ function getUser($user_id) {
 
 function updateUserAvatar($user_id, $avatar_url) {
     global $conn;
-    ensureUserAvatarColumn();
     $sql = "UPDATE User SET avatar_url = '$avatar_url' WHERE user_id = '$user_id'";
     return mysqli_query($conn, $sql);
 }
@@ -360,10 +352,6 @@ function updateItemStatus($item_id, $status) {
     return mysqli_query($conn, $sql);
 }
 
-/**
- * Soft-deletes an item by setting its status to REMOVED.
- * The row is preserved in the DB for audit purposes.
- */
 function removeItem($item_id) {
     global $conn;
     $item_id = (int)$item_id;
@@ -371,40 +359,17 @@ function removeItem($item_id) {
     return mysqli_query($conn, $sql);
 }
 
-function submitReport($reporter_id, $reported_user_id, $reported_item_id, $reason) {
+function submitReport($reporter_id, $reported_user_id, $reported_item_id, $reason, $details) {
     global $conn;
-    ensureReportTable();
-    $reporter_id = (int)$reporter_id;
-    $reported_user_id = $reported_user_id ? (int)$reported_user_id : 'NULL';
-    $reported_item_id = $reported_item_id ? (int)$reported_item_id : 'NULL';
     $reason = mysqli_real_escape_string($conn, $reason);
-    $sql = "INSERT INTO report (reporter_id, reported_user_id, reported_item_id, reason) 
-            VALUES ($reporter_id, $reported_user_id, $reported_item_id, '$reason')";
+    $details = mysqli_real_escape_string($conn, $details);
+    $sql = "INSERT INTO report (reporter_id, reported_user_id, reported_item_id, reason, details) 
+            VALUES ($reporter_id, $reported_user_id, $reported_item_id, '$reason', '$details')";
     return mysqli_query($conn, $sql);
-}
-
-// ── Admin functions ────────────────────────────────────────────────────────────
-
-function ensureReportTable() {
-    global $conn;
-    $sql = "CREATE TABLE IF NOT EXISTS `report` (
-        `report_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-        `reporter_id` int(11) UNSIGNED NOT NULL,
-        `reported_user_id` int(11) UNSIGNED DEFAULT NULL,
-        `reported_item_id` int(11) UNSIGNED DEFAULT NULL,
-        `reason` varchar(500) NOT NULL,
-        `status` enum('PENDING','REVIEWING','RESOLVED','DISMISSED') NOT NULL DEFAULT 'PENDING',
-        `admin_note` varchar(500) DEFAULT NULL,
-        `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-        `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-        PRIMARY KEY (`report_id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
-    mysqli_query($conn, $sql);
 }
 
 function getAdminStats() {
     global $conn;
-    ensureReportTable();
     $stats = [];
 
     $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM user");
@@ -440,7 +405,6 @@ function getAdminStats() {
 
 function getReports($status_filter = 'ALL') {
     global $conn;
-    ensureReportTable();
     $where = $status_filter !== 'ALL' ? "WHERE r.status = '" . mysqli_real_escape_string($conn, $status_filter) . "'" : '';
     $sql = "SELECT r.*,
                 reporter.username AS reporter_name,

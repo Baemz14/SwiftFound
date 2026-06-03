@@ -274,20 +274,17 @@ async function submitReport() {
     if (!reason) {
         alert('Please select a reason for reporting');
         return;
+    } if (!user) {
+        alert('You must be logged in to report an item');
+        return;
     }
-
-    let formData = new FormData();
-    formData.append('item_id', item['item_id']);
-    formData.append('reason', reason);
-    formData.append('details', details);
-
-    let response = await callServer('/swiftfound/server_call/item_call.php', formData, "REPORT_ITEM");
-    
-    if (response['success']) {
-        alert('Thank you for your report. Our team will review it shortly.');
+    let isReported = await userUtils.reportItem(item, reason, details);
+    // TODO: alert change to dialog box
+    if (isReported) {
+        alert('Report submitted successfully');
         closeReportModal();
     } else {
-        alert('Error submitting report: ' + (response['message'] || 'Unknown error'));
+        alert('Failed to submit report');
     }
 }
 

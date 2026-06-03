@@ -68,30 +68,22 @@ switch ($call_state) {
         break;
 
     case 'REPORT_ITEM':
-        $reporter_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
-        if (!$reporter_id) {
-            $response['success'] = false;
-            $response['message'] = 'Not logged in';
+        if (!isset($_SESSION['user_id']) || !isset($_POST['reported_item_id']) || !isset($_POST['reason']) || !isset($_POST['reported_user_id'])) {
+            $response['is_success'] = false;
+            $response['error_log'] = 'no enough data provided';
             break;
         }
-        $reported_item_id = $_POST['item_id'] ?? null;
-        $reported_user_id = null; // Get user_id from item if needed, but it can be null
-        $reason = $_POST['reason'] ?? '';
+        $reporter_id = $_SESSION['user_id'];
+        $reported_item_id = $_POST['reported_item_id'];
+        $reported_user_id = $_POST['reported_user_id'];
+        $reason = $_POST['reason'];
         $details = $_POST['details'] ?? '';
-        
-        $full_reason = empty($details) ? $reason : "$reason: $details";
-        
-        if (empty($reason)) {
-            $response['success'] = false;
-            $response['message'] = 'Reason is required';
-            break;
-        }
 
-        if (submitReport($reporter_id, $reported_user_id, $reported_item_id, $full_reason)) {
-            $response['success'] = true;
+        if (submitReport($reporter_id, $reported_user_id, $reported_item_id, $reason, $details)) {
+            $response['is_success'] = true;
         } else {
-            $response['success'] = false;
-            $response['message'] = 'Database error';
+            $response['is_success'] = false;
+            $response['error_log'] = 'controller error';
         }
         break;
 

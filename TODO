@@ -12,6 +12,12 @@ chat.php -- line 69
 
 home TODO:
 semua claim n claim request tkde butang edit/approve/delete, semua tuka pada open in chat sebb butang semua dah dlm chat
+susun claim req, active claim, posted item ikut status
+buat status item cantik n bewarna mcm claim
+dkt dashboard isi lah sesuatu buat cantik
+
+item_details TODO:
+delete button tuka nama jadi abandon item
 
 reputation
 < 0 ➔ CAUTIOS

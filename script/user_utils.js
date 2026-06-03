@@ -379,10 +379,6 @@ export async function abandonItem(item_id, poster_id, claim_id = null) {
     return true;
 }
 
-/**
- * Returns the reputation tier label and CSS class for a given score.
- * Tiers: CAUTIOUS (< 0), NOVICE (0-19), HELPFUL (20-49), TRUSTED (50-99), GUARDIAN (100+)
- */
 export function getReputationLabel(reputation) {
     if (Number.isNaN(reputation)) {
         return { label: 'NOVICE', className: 'rep-novice' };
@@ -392,4 +388,18 @@ export function getReputationLabel(reputation) {
     if (reputation <= 49)  return { label: 'HELPFUL',  className: 'rep-helpful' };
     if (reputation <= 99)  return { label: 'TRUSTED',  className: 'rep-trusted' };
     return                        { label: 'GUARDIAN', className: 'rep-guardian' };
-}
+}
+
+export async function reportItem(item, reason, details) {
+    let formData = new FormData();
+    formData.append('reported_item_id', item.item_id);
+    formData.append('reported_user_id', item.user_id);
+    formData.append('reason', reason);
+    formData.append('details', details);
+    let data = await callServer('server_call/item_call.php', formData, 'REPORT_ITEM');
+    if (!data['is_success']) {
+        console.log(`Failed to report item: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
