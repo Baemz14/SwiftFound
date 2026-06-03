@@ -21,9 +21,17 @@ chat - archive ada all, utk all yg main hanya tunjuk pending, chatting, owner co
 
 item details buat tunjuk brapa ramai yg claimed dan brapa ramai yg tgh chatting dan tunjuk status kalu dah owner confirmed
 
+home TODO:
+semua claim n claim request tkde butang edit/approve/delete, semua tuka pada open in chat sebb butang semua dah dlm chat
+
 reputation
 < 0 ➔ CAUTIOS
 0 - 19 ➔ NOVICE
 20 - 49 ➔ HELPFUL
 50 - 99 ➔ TRUSTED
 100+ ➔ GUARDIAN
+
+cancel -1
+reject -3
+resolve item, poster +10, claimer +5
+abandon item -7
