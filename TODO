@@ -1,4 +1,3 @@
-buat image boleh process sebelum upload, so macam kasi user crop utk kawal semua img satu dimension, n mungkin post byk image - baem
 buat user boleh stay sign in
 
 chat TODO:
@@ -7,19 +6,10 @@ boleh bukak item detail bile tekan gamba item
 chat, browse, item_detail, post item TODO:
 buat topbar ada logo, home, browse, post item. buat dua2 site sama so cam nice
 
-item detail TODO:
-kalu isUserPosted = true(item yg kau sendiri post), buat tkde butang claim n report tkde tuka lain mungkin buat edit/delete atau view claims
-kalu isuserClaimed = true(dah claim), buat butang claim tuka pada edit answer n delete claim
-display brapa ramai dah claim item and brapa ramai dah mula chat dgn poster
-
 browse.php line 42
 
-(baem)
 chat.php -- line 69
-item claiming - ada update pada claim status so pastikan user boleh reclaim sebanyak 3 kali, dan display dah berapa byk try
 chat - archive ada all, utk all yg main hanya tunjuk pending, chatting, owner confirm
-
-item details buat tunjuk brapa ramai yg claimed dan brapa ramai yg tgh chatting dan tunjuk status kalu dah owner confirmed
 
 home TODO:
 semua claim n claim request tkde butang edit/approve/delete, semua tuka pada open in chat sebb butang semua dah dlm chat
