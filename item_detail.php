@@ -34,6 +34,7 @@
             <div class="item-header">
                 <span class="category-tag" id="category">Category Placeholder</span>
                 <h1 class="item-title" id="title">Item Title Placeholder</h1>
+                <div id="itemStatus" class="item-status" style="display: none;"></div>
                 <p class="dt-cont">
                     <span class="dt-label">POSTED ON:</span> 
                     <span class="dt-value" id="detail_date">May 13, 2026, 05:54 PM</span>
@@ -54,13 +55,28 @@
                 </p>
             </div>
 
+            <!-- Claim Status Section -->
+            <div class="claim-status-section">
+                <h3>Activity</h3>
+                <div id="claimStats" class="claim-stats"></div>
+            </div>
+
             <!-- Poster Identity Card -->
             <div class="poster-card">
                 <div class="poster-meta">
                     <p><strong>Posted by:</strong> <span id="username">FaizAnwar57</span></p>
-                    <p><strong>Reputation:</strong> <span id="rep">-1</span></p>
+                    <div id="posterReputation" class="poster-reputation rep-novice">
+                        <span class="rep-pill" id="repBadge">NOVICE</span>
+                        <span class="rep-score">Reputation: <strong id="rep">0</strong></span>
+                    </div>
+                </div>
+                <div class="claim-attempt-row">
+                    <p id="alreadyClaimedMsg" class="already-claimed-msg" style="display: none;"></p>
+                    <span id="claimAttemptBadge" class="claim-attempt-badge" style="display: none;"></span>
                 </div>
                 <button id="claimBtn" class="msg-btn">Claim</button>
+                <button id="openChatBtn" class="msg-btn" style="display: none;">Open Chat</button>
+                <button id="deleteBtn" class="delete-btn" style="display: none;">Delete Item</button>
             </div>
 
             <button id="reportBtn" class="report-btn">Report</button>
@@ -116,6 +132,19 @@
         <div class="modal-actions">
             <button id="cancelReportBtn" class="btn-secondary">Cancel</button>
             <button id="submitReportBtn" class="btn-danger">Report</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h2>Delete Item</h2>
+        <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+
+        <div class="modal-actions">
+            <button id="cancelDeleteBtn" class="btn-secondary">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn-danger">Delete</button>
         </div>
     </div>
 </div>

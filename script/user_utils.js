@@ -1,10 +1,7 @@
 import { callServer } from "../include/call_server.js";
+import * as chatUtils from "./chat_utils.js";
 
 export async function checkIsLoggedIn() {
-    //let data = await callServer('server_call/user_call.php', null, "GET_SESSDATA");
-    //return data['is_logged_in'];
-    
-    // changed new code
     let user = await loadUserData();
     if(!user) {
         return false;
@@ -35,6 +32,28 @@ export async function saveLogin(user_id) {
     } else {
         alert("Failed to save login data");
     }
+}
+
+export async function claimItem(item_id, poster_id, claimer_id, question, answer) {
+    let formData = new FormData();
+    formData.append('item_id', item_id);
+    formData.append('answer_text', answer);
+    let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
+    if (!data['is_added']) {
+        console.log(`something went wong: ${data['error_log']}`);
+        return false;
+    }
+    let isSent = await sendMessage(poster_id, claimer_id, question, data.claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send question message");
+        return false;
+    }
+    isSent = await sendMessage(claimer_id, poster_id, answer, data.claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send answer message");
+        return false;
+    }
+    return true;
 }
 
 export async function loadNewItem(loadedItem=null) {
@@ -113,11 +132,6 @@ export function countUnreadMessages(chats, user_id) {
 }
 
 export async function openChat(claim) {
-    let claimerId = claim.claimer.user_id;
-    let posterId = claim.poster.user_id;
-    let posterQuestion = claim.item.secret_question;
-    let claimerAnswer = claim.answer_text;
-
     let formData = new FormData();
     formData.append('claim_id', claim.claim_id);
     formData.append('status', "CHATTING");
@@ -126,27 +140,11 @@ export async function openChat(claim) {
         console.log(`server error: ${data['error_log']}`);
         return false;
     }
-
-    formData.append('sender_id', posterId);
-    formData.append('reciever_id', claimerId);
-    formData.append('text', posterQuestion);
-    data = await callServer('server_call/chat_call.php', formData, "ADD_CHAT");
-    if (!data['is_success']) {
-        console.log(`server error: ${data['error_log']}`);
+    let isSent = await sendMessage(claim.poster_id, claim.claimer_id, `${chatUtils.openChatKey}The chat for this claim has been opened. You can disscuss more about ownership verification!`, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send open chat message");
         return false;
     }
-
-    formData = new FormData();
-    formData.append('sender_id', claimerId);
-    formData.append('reciever_id', posterId);
-    formData.append('claim_id', claim.claim_id);
-    formData.append('text', claimerAnswer);
-    data = await callServer('server_call/chat_call.php', formData, "ADD_CHAT");
-    if (!data['is_success']) {
-        console.log(`server error: ${data['error_log']}`);
-        return false;
-    }
-
     return true;
 }
 
@@ -161,7 +159,7 @@ export async function sendMessage(
     formData.append('claim_id', claim_id);
     let data = await callServer('server_call/chat_call.php', formData, "ADD_CHAT");
     if (!data['is_success']) {
-        console.log(`server error: ${data['error_log']}`);
+        throw new Error(`server send message error: ${data['error_log']}`);
         return false;
     }
     return true;
@@ -205,4 +203,161 @@ export async function loadUpdatedChat(loadedChat) {
         }
     }
     return updatedChats;
+}
+
+export async function loadUpdatedClaimStatus(loadedClaim) {
+    let data = await callServer("server_call/user_call.php", null, "USER_CLAIM_REQ");
+    let data2 = await callServer("server_call/user_call.php", null, "USER_CLAIMS");
+    let allClaims = data['claim_req'].concat(data2['claims']);
+    if (allClaims.length <= 0) {
+        return [];
+    }
+    const newClaimReqMap = new Map(allClaims.map(data => [data.claim_id, data]));   
+    let updatedClaim = [];
+    for (const c of loadedClaim) {
+        let newC = newClaimReqMap.get(c.claim_id);
+        if (newC && newC.claim_status !== c.claim_status) {
+            updatedClaim.push(newC);
+        }
+    }
+    return updatedClaim;
+}
+
+export async function confirmOwner(contact) {
+    let claim = contact.claim;
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    let data = await callServer('server_call/claim_call.php', formData, "CONFIRM_OWNER");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    let isSent = await sendMessage(claim.poster_id, claim.claimer_id, `${chatUtils.ownerConfirmKey}The poster has confirmed you are the owner. You can start discussing exchange details!`, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send owner confirmation message");
+        return false;
+    }
+    formData.append('item_id', contact.item.item_id);
+    formData.append('new_status', "OWNER_CONFIRM");
+    data = await callServer('server_call/item_call.php', formData, "UPDATE_STATUS");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function rejectClaim(claim, reason) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    formData.append('status', "REJECTED");
+    let data = await callServer('server_call/claim_call.php', formData, "UPDATE_STATUS");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    let isSent = await sendMessage(claim.poster_id, claim.claimer_id, `${chatUtils.rejectReasonKey}This claim has been rejected. Reason from poster: ${reason}`, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send rejection message");
+        return false;
+    }
+    let isUpdated = await updateReputation(claim.claimer_id, -3);
+    if (!isUpdated) {
+        console.log("Failed to update claimer reputation");
+        return false;
+    }
+    return true;
+}
+
+export async function posterResolveClaim(claim) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    let data = await callServer('server_call/claim_call.php', formData, "POSTER_RESOLVE");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    let message = `${chatUtils.posterResolveKey}The poster has marked this claim as resolved. Please confirm the resolution or raise a dispute if there are any issues.`;
+    let isSent = await sendMessage(claim.poster_id, claim.claimer_id, message, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send poster resolution message");
+        return false;
+    }
+    return true;
+}
+
+export async function confirmResolution(claim) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    let data = await callServer('server_call/claim_call.php', formData, "CONFIRM_RESOLUTION");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    let message = `${chatUtils.confirmResolutionKey}This claim has been resolved. Thats great! If you have any feedback about the process, please let us know!`;
+    let isSent = await sendMessage(claim.claimer_id, claim.poster_id, message, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send poster resolution message");
+        return false;
+    }
+    let isUpdated = await updateReputation(claim.poster_id, 10);
+    if (!isUpdated) {
+        console.log("Failed to update poster reputation");
+        return false;
+    }
+    isUpdated = await updateReputation(claim.claimer_id, 5);
+    if (!isUpdated) {
+        console.log("Failed to update claimer reputation");
+        return false;
+    }
+    return true;
+}
+
+export async function cancelClaim(claim, reason) {
+    let formData = new FormData();
+    formData.append('claim_id', claim.claim_id);
+    formData.append('status', "CANCELED");
+    let data = await callServer('server_call/claim_call.php', formData, "UPDATE_STATUS");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    let isSent = await sendMessage(claim.claimer_id, claim.poster_id, `${chatUtils.cancelReasonKey}This claim has been canceled. Reason from claimer: ${reason}`, claim.claim_id);
+    if (!isSent) {
+        console.log("Failed to send cancellation message");
+        return false;
+    }
+    let isUpdated = await updateReputation(claim.claimer_id, -1);
+    if (!isUpdated) {
+        console.log("Failed to update claimer reputation");
+        return false;
+    }
+    return true;
+}
+
+export async function itemClaims(item_id) {
+    let formData = new FormData();
+    formData.append('item_id', item_id);
+    let data = await callServer('server_call/item_call.php', formData, "ITEM_CLAIMS");
+    if (!data['claims']) {
+        console.log(`server error: ${data['error_log']}`);
+        return [];
+    }
+    return data['claims'];
+}
+
+export async function updateReputation(user_id, change) {
+    let formData = new FormData();
+    formData.append('user_id', user_id);
+    formData.append('change', change);
+    let data = await callServer('server_call/user_call.php', formData, "UPDATE_REPUTATION");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function abandonItem(item_id, user_id) {
+    throw new Error("Abandon item function is not implemented yet");
 }

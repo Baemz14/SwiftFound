@@ -1,7 +1,9 @@
 <?php
 session_start();
 $error = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Current security key: TAPAH2026
     if ($_POST['pass'] === "TAPAH2026") {
         $_SESSION['admin_auth'] = true;
         header("Location: admin_dashboard.php");
@@ -24,49 +26,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="admin-card">
         <div class="admin-header">
             <div class="admin-logo">SwiftFound</div>
-            <span class="badge">Staff Portal</span>
+            <span class="badge">Staff Only</span>
         </div>
-        
+
         <h1>Admin Portal</h1>
-        <p class="subtitle">Secure encrypted access for Tapah Campus Staff.</p>
+        <p class="subtitle">Enter the security key to access management tools.</p>
 
         <?php if($error): ?>
-            <div class="error-box">
-                <span class="error-icon">⚠️</span> <?php echo $error; ?>
-            </div>
+            <div class="error-box"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
         <form method="POST" action="" id="loginForm">
             <div class="input-group">
                 <label>SECURITY KEY</label>
-                <div class="input-wrapper">
-                    <input type="password" name="pass" id="passInput" placeholder="••••••••" required autofocus>
-                </div>
+                <input type="password" name="pass" placeholder="••••••••" required autofocus>
             </div>
-            <button type="submit" class="primary-btn" id="authBtn">
-                <span class="btn-text">Authorize Access</span>
-                <div class="loader" id="loader"></div>
-            </button>
+            <button type="submit" class="primary-btn">Authorize Access</button>
         </form>
 
         <div class="admin-footer">
-            <a href="home.php" class="back-link">← Return to User Dashboard</a>
+            <a href="home.php">← Back to Homepage</a>
         </div>
     </div>
-
-    <script>
-        // Interactive button feedback
-        const form = document.getElementById('loginForm');
-        const btn = document.getElementById('authBtn');
-        const loader = document.getElementById('loader');
-        const btnText = btn.querySelector('.btn-text');
-
-        form.onsubmit = function() {
-            btnText.style.display = 'none';
-            loader.style.display = 'block';
-            btn.style.opacity = '0.7';
-            btn.style.cursor = 'wait';
-        };
-    </script>
 </body>
 </html>

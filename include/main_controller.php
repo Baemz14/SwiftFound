@@ -137,11 +137,37 @@ function getItem($item_id) {
     return null;
 }
 
+function getClaim($claim_id) {
+    global $conn;
+    $sql = "SELECT claim.*, item.title, item.img_file, user.username 
+        FROM claim, item, user 
+        WHERE claim.claim_id = '$claim_id' AND 
+            claim.item_id = item.item_id AND 
+            claim.user_id = user.user_id";
+    $result = mysqli_query($conn, $sql);
+
+    if (mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    }
+    
+    return null;
+}
+
 function addClaim($user_id, $item_id, $answer_text) {
     global $conn;
     $sql = "INSERT INTO Claim (user_id, item_id, answer_text)
-        VALUES ('$user_id', '$item_id', '$answer_text')";
-    return mysqli_query($conn, $sql);
+            VALUES ('$user_id', '$item_id', '$answer_text')";
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        return null;
+    }
+    
+    $new_id = mysqli_insert_id($conn);
+    $claim = getClaim($new_id);
+    if ($claim) {
+        return $claim;
+    }
+    return null;
 }
 
 function getUserItemClaims($user_id) {
@@ -218,6 +244,52 @@ function updateClaimStatus($claim_id, $status) {
     return mysqli_query($conn, $sql);
 }
 
+function confirmClaimOwner($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'OWNER_CONFIRM' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE claim SET claim_status = 'REJECTED' 
+        WHERE claim_id != '$claim_id' 
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND claim_status = 'CHATTING'";
+    return mysqli_query($conn, $sql);
+}
+
+function posterResolveClaim($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'PENDING_RESOLUTION' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE claim SET claim_status = 'REJECTED' 
+        WHERE claim_id != '$claim_id' 
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND claim_status = 'CHATTING'";
+    return mysqli_query($conn, $sql);
+}
+
+function confirmResolution($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'RESOLVED' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE item SET status = 'RESOLVED' WHERE item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id')";
+    return mysqli_query($conn, $sql);
+}
+
+function resolveClaim($claim_id) {
+    global $conn;
+    $sql = "UPDATE claim SET claim_status = 'RESOLVED' WHERE claim_id = '$claim_id'";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE claim SET claim_status = 'REJECTED' 
+        WHERE claim_id != '$claim_id' 
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND claim_status = 'CHATTING'";
+    return mysqli_query($conn, $sql);
+}
+
 function getUserChat($user_id) {
     global $conn;
     $sql = "SELECT 
@@ -234,13 +306,15 @@ function getUserChat($user_id) {
                 item.title AS item_title,
                 item.img_file AS item_img,
 
-                claim.user_id AS claimer_id
+                claim.user_id AS claimer_id,
+                claim.claim_id AS claim_id,
+                claim.claim_status AS claim_status
             FROM message m
             INNER JOIN user sender ON m.sender_id = sender.user_id
             INNER JOIN user reciever ON m.reciever_id = reciever.user_id
             INNER JOIN claim ON m.claim_id = claim.claim_id
             INNER JOIN item ON claim.item_id = item.item_id
-            WHERE m.sender_id = '$user_id' OR m.reciever_id = '$user_id'
+            WHERE (m.sender_id = '$user_id' OR m.reciever_id = '$user_id')
             ORDER BY m.sent_at ASC";
 
     $result = mysqli_query($conn, $sql);
@@ -263,6 +337,11 @@ function getUserChat($user_id) {
             'item_title' => $row['item_title'],
             'item_img' => $row['item_img']
         ];
+        $row['claim'] = [
+            'claim_id' => $row['claim_id'],
+            'claimer_id' => $row['claimer_id'],
+            'claim_status' => $row['claim_status']
+        ];
         
         $chats[] = $row;
     }
@@ -275,5 +354,144 @@ function setChatsRead($chat_ids) {
     $id_string = implode(',', $chat_ids);
     $sql = "UPDATE message SET is_read = 1 WHERE message_id IN ($id_string)";
     return mysqli_query($conn, $sql) > 0;
+}
+
+function updateItemStatus($item_id, $status) {
+    global $conn;
+    $sql = "UPDATE item SET status = '$status' WHERE item_id = '$item_id'";
+    return mysqli_query($conn, $sql);
+}
+
+function submitReport($reporter_id, $reported_user_id, $reported_item_id, $reason) {
+    global $conn;
+    ensureReportTable();
+    $reporter_id = (int)$reporter_id;
+    $reported_user_id = $reported_user_id ? (int)$reported_user_id : 'NULL';
+    $reported_item_id = $reported_item_id ? (int)$reported_item_id : 'NULL';
+    $reason = mysqli_real_escape_string($conn, $reason);
+    $sql = "INSERT INTO report (reporter_id, reported_user_id, reported_item_id, reason) 
+            VALUES ($reporter_id, $reported_user_id, $reported_item_id, '$reason')";
+    return mysqli_query($conn, $sql);
+}
+
+// ── Admin functions ────────────────────────────────────────────────────────────
+
+function ensureReportTable() {
+    global $conn;
+    $sql = "CREATE TABLE IF NOT EXISTS `report` (
+        `report_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `reporter_id` int(11) UNSIGNED NOT NULL,
+        `reported_user_id` int(11) UNSIGNED DEFAULT NULL,
+        `reported_item_id` int(11) UNSIGNED DEFAULT NULL,
+        `reason` varchar(500) NOT NULL,
+        `status` enum('PENDING','REVIEWING','RESOLVED','DISMISSED') NOT NULL DEFAULT 'PENDING',
+        `admin_note` varchar(500) DEFAULT NULL,
+        `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+        `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+        PRIMARY KEY (`report_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+    mysqli_query($conn, $sql);
+}
+
+function getAdminStats() {
+    global $conn;
+    ensureReportTable();
+    $stats = [];
+
+    $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM user");
+    $stats['total_users'] = mysqli_fetch_assoc($r)['c'];
+
+    $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM item");
+    $stats['total_items'] = mysqli_fetch_assoc($r)['c'];
+
+    $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM item WHERE status = 'RESOLVED'");
+    $stats['resolved_items'] = mysqli_fetch_assoc($r)['c'];
+
+    $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM claim");
+    $stats['total_claims'] = mysqli_fetch_assoc($r)['c'];
+
+    $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM message");
+    $stats['total_messages'] = mysqli_fetch_assoc($r)['c'];
+
+    $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM report WHERE status = 'PENDING'");
+    $stats['pending_reports'] = mysqli_fetch_assoc($r)['c'];
+
+    $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM report");
+    $stats['total_reports'] = mysqli_fetch_assoc($r)['c'];
+
+    // Claim status breakdown
+    $r = mysqli_query($conn, "SELECT claim_status, COUNT(*) AS c FROM claim GROUP BY claim_status");
+    $stats['claim_breakdown'] = [];
+    while ($row = mysqli_fetch_assoc($r)) {
+        $stats['claim_breakdown'][$row['claim_status']] = $row['c'];
+    }
+
+    return $stats;
+}
+
+function getReports($status_filter = 'ALL') {
+    global $conn;
+    ensureReportTable();
+    $where = $status_filter !== 'ALL' ? "WHERE r.status = '" . mysqli_real_escape_string($conn, $status_filter) . "'" : '';
+    $sql = "SELECT r.*,
+                reporter.username AS reporter_name,
+                reported_u.username AS reported_username,
+                i.title AS reported_item_title
+            FROM report r
+            INNER JOIN user reporter ON r.reporter_id = reporter.user_id
+            LEFT JOIN user reported_u ON r.reported_user_id = reported_u.user_id
+            LEFT JOIN item i ON r.reported_item_id = i.item_id
+            $where
+            ORDER BY r.created_at DESC";
+    $result = mysqli_query($conn, $sql);
+    $reports = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $reports[] = $row;
+    }
+    return $reports;
+}
+
+function updateReportStatus($report_id, $status, $admin_note) {
+    global $conn;
+    $note_escaped = mysqli_real_escape_string($conn, $admin_note);
+    $status_escaped = mysqli_real_escape_string($conn, $status);
+    $sql = "UPDATE report SET status = '$status_escaped', admin_note = '$note_escaped' WHERE report_id = '$report_id'";
+    return mysqli_query($conn, $sql);
+}
+
+function getAllUsers() {
+    global $conn;
+    $sql = "SELECT user_id, username, reputation,
+                (SELECT COUNT(*) FROM item WHERE item.user_id = user.user_id) AS item_count,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id) AS claim_count
+            FROM user ORDER BY user_id DESC";
+    $result = mysqli_query($conn, $sql);
+    $users = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $users[] = $row;
+    }
+    return $users;
+}
+
+function getItemClaims($item_id) {
+    global $conn;
+    $sql = "SELECT 
+                c.*,
+                u.*
+            FROM claim c
+            INNER JOIN user u ON c.user_id = u.user_id
+            WHERE c.item_id = '$item_id'";
+    $result = mysqli_query($conn, $sql);
+    $claims = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $claims[] = $row;
+    }
+    return $claims;
+}
+
+function updateUserReputation($user_id, $delta) {
+    global $conn;
+    $sql = "UPDATE user SET reputation = reputation + '$delta' WHERE user_id = '$user_id'";
+    return mysqli_query($conn, $sql);
 }
 ?>

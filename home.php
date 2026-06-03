@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/home.css">
 
     <script type="module">
-        import { homeLoad } from '/swiftfound/script/home.js';
+        import { homeLoad } from '/swiftfound/script/home.js?v=2';
         window.onload = homeLoad;
     </script>
 </head>
@@ -31,7 +31,7 @@
             
             <div class="not-logout">
                 <ul class="nav-links">
-                    <li id='recentBtn' class="nav-buttons active">Recent Activity</li>
+                    <li id='dashboardBtn' class="nav-buttons active">Dashboard</li>
                     <li id='postedBtn' class="nav-buttons">My Posted Items</li>
                     <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
                     <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
@@ -51,11 +51,12 @@
 
         <!-- Main Content Card -->
         <main class="content-area">
-            <div id="recentSect" class="tab-content">
+            <div id="dashboardSect" class="tab-content">
                 <h1>Hello, <span id="usernameTxt">User</span>!</h1>
-                <p class="subtitle">Here is what's happening with your items today.</p>
-                <hr>
-                <div class="placeholder-content">Quick stats and recent activity will go here.</div>
+                <div class="reputation-summary rep-novice">
+                    <span id="reputationBadge" class="rep-pill">NOVICE</span>
+                    <span class="rep-score">Reputation: <strong id="reputationScore">0</strong></span>
+                </div>
             </div>
 
             <div id="postedSect" class="tab-content" style="display:none;">
@@ -90,6 +91,24 @@
             <div class="modal-actions">
                 <button id="closeProfileModal" class="secondary-btn">Close</button>
                 <a href="item_form.php" class="primary-btn">Post Item</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve Claim Confirm Dialog -->
+    <div id="approveConfirmModal" class="modal-overlay" style="display: none;">
+        <div class="confirm-modal-card">
+            <h2>Approve Claim Request?</h2>
+            <p style="color: #6b7280; margin-bottom: 4px;">Claimer: <strong id="confirmClaimerName">—</strong></p>
+            <div class="confirm-rep">
+                <span class="rep-star">★</span>
+                <span>Reputation: <strong id="confirmClaimerRep">—</strong></span>
+            </div>
+            <p style="font-size: 0.85rem; color: #374151; margin-bottom: 4px;">Their answer:</p>
+            <div class="confirm-answer-box" id="confirmAnswerBox">—</div>
+            <div class="modal-actions">
+                <button id="confirmApproveCancel" class="row-btn row-btn-secondary">Cancel</button>
+                <button id="confirmApproveOk" class="row-btn row-btn-primary">✓ Approve &amp; Open Chat</button>
             </div>
         </div>
     </div>

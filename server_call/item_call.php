@@ -56,6 +56,54 @@ switch ($call_state) {
         $response["saved_as"] = $is_upload_success? $filename : null;
         break;
 
+    case 'UPDATE_STATUS':
+        $item_id = $_POST['item_id'];
+        $new_status = $_POST['new_status'];
+        if (updateItemStatus($item_id, $new_status)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller errror";
+        }
+        break;
+
+    case 'REPORT_ITEM':
+        $reporter_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        if (!$reporter_id) {
+            $response['success'] = false;
+            $response['message'] = 'Not logged in';
+            break;
+        }
+        $reported_item_id = $_POST['item_id'] ?? null;
+        $reported_user_id = null; // Get user_id from item if needed, but it can be null
+        $reason = $_POST['reason'] ?? '';
+        $details = $_POST['details'] ?? '';
+        
+        $full_reason = empty($details) ? $reason : "$reason: $details";
+        
+        if (empty($reason)) {
+            $response['success'] = false;
+            $response['message'] = 'Reason is required';
+            break;
+        }
+
+        if (submitReport($reporter_id, $reported_user_id, $reported_item_id, $full_reason)) {
+            $response['success'] = true;
+        } else {
+            $response['success'] = false;
+            $response['message'] = 'Database error';
+        }
+        break;
+
+    case 'ITEM_CLAIMS':
+        $response['claims'] = null;
+        if (isset($_POST['item_id'])) {
+            $response['claims'] = getItemClaims($_POST['item_id']);
+        } else {
+            $response['error_log'] = "no item id passed";
+        }
+        break;
+
     default:
         $response['error_log'] = "state wong >:(";
         break;

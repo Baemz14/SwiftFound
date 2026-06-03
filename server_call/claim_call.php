@@ -17,8 +17,15 @@ switch ($call_state) {
         }
         $item_id = $_POST['item_id'];
         $answer_text = $_POST['answer_text'];
-        $response['is_added'] = addClaim($user_id, $item_id, $answer_text);
-        $response['error_log'] = 'blah blah';
+        $response['claim'] = null;
+        $claim = addClaim($user_id, $item_id, $answer_text);
+        if ($claim) {
+            $response['is_added'] = true;
+            $response['claim'] = $claim;
+        } else {
+            $response['is_added'] = false;
+            $response['error_log'] = 'controller error';
+        }
         break;
 
     case 'UPDATE_STATUS':
@@ -30,6 +37,43 @@ switch ($call_state) {
             $response['is_success'] = false;
             $response['error_log'] = "controller error";
         }
+        break;
+
+    case 'CONFIRM_OWNER':
+        $claim_id = $_POST['claim_id'];
+        if (confirmClaimOwner($claim_id)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
+        break;
+
+    case 'POSTER_RESOLVE':
+        $claim_id = $_POST['claim_id'];
+        if (posterResolveClaim($claim_id)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
+        break;
+
+    case 'CONFIRM_RESOLUTION':
+        $claim_id = $_POST['claim_id'];
+        $claim = getClaim($claim_id);
+        if ($claim['claim_status'] != 'PENDING_RESOLUTION') {
+            $response['is_success'] = false;
+            $response['error_log'] = "claim status wong >:(";
+            break;
+        }
+        if (confirmResolution($claim_id)) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "controller error";
+        }
+        break;
     
     default:
         $response['error_log'] = "state wong >:(";

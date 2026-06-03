@@ -105,7 +105,11 @@ switch ($call_state) {
 
     case "GET_USER":
         $user_data = isset($_SESSION['user_id']) ? getUser($_SESSION['user_id']) : null;
-        $response['user_id'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        if (!$user_data) {
+            $response['user_id'] = null;
+        } else {
+            $response['user_id'] = $_SESSION['user_id'];
+        }
         $response['username'] = $user_data ? $user_data['username'] : null;
         $response['reputation'] = $user_data ? $user_data['reputation'] : null;
         $response['avatar_url'] = $user_data && isset($user_data['avatar_url']) ? $user_data['avatar_url'] : null;
@@ -169,6 +173,23 @@ switch ($call_state) {
         }
         $user_id = $_SESSION['user_id'];
         $response['chats'] = getUserChat($user_id);
+        break;
+
+    case 'UPDATE_REPUTATION':
+        if (!isset($_POST['user_id']) || !isset($_POST['change'])) {
+            $response['error_log'] = "missing required parameters";
+            $response['is_success'] = false;
+            break;
+        }
+        $user_id = $_POST['user_id'];
+        $change = intval($_POST['change']);
+        if (updateUserReputation($user_id, $change)) {
+            $response['is_success'] = true;
+            $response['updated_user'] = getUser($user_id);
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "unable to update reputation";
+        }
         break;
 
     default:

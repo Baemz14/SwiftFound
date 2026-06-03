@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/browse.css">
 
     <script type="module">
-        import { onBrowseLoad } from "/swiftfound/script/browse.js";
+        import { onBrowseLoad } from "/swiftfound/script/browse.js?v=2";
         window.onload = onBrowseLoad;
     </script>
 </head>
@@ -38,6 +38,21 @@
 
             <input type="text" id="locationFilter" placeholder="Location">
             <input type="date" id="timeFilter">
+        </div>
+
+        <div class="status-filters">
+            <label class="status-filter-item">
+                <input type="checkbox" id="showResolved">
+                <span>Show Resolved</span>
+            </label>
+            <label class="status-filter-item">
+                <input type="checkbox" id="showAbandoned">
+                <span>Show Abandoned</span>
+            </label>
+            <label class="status-filter-item">
+                <input type="checkbox" id="showOwnerConfirm">
+                <span>Show Owner Confirmed</span>
+            </label>
         </div>
     </header>
 
