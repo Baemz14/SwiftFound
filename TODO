@@ -9,7 +9,6 @@ kalu user logged in letak butang post item n chat,
 kalu user blom logged in hide semua butang My dashboard, post item n chat, pastu letak butang register/login
 
 chat.php -- line 69
-chat - archive ada all, utk all yg main hanya tunjuk pending, chatting, owner confirm
 
 home TODO:
 semua claim n claim request tkde butang edit/approve/delete, semua tuka pada open in chat sebb butang semua dah dlm chat
