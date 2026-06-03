@@ -3,10 +3,10 @@ buat user boleh stay sign in
 chat TODO:
 boleh bukak item detail bile tekan gamba item
 
-chat, browse, item_detail, post item TODO:
-buat topbar ada logo, home, browse, post item. buat dua2 site sama so cam nice
-
+browse TODO:
 browse.php line 42
+kalu user logged in letak butang post item n chat, 
+kalu user blom logged in hide semua butang My dashboard, post item n chat, pastu letak butang register/login
 
 chat.php -- line 69
 chat - archive ada all, utk all yg main hanya tunjuk pending, chatting, owner confirm
