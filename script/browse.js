@@ -35,14 +35,12 @@ export async function onBrowseLoad() {
     }
 
     let showResolvedCheckbox = document.getElementById('showResolved');
-    let showAbandonedCheckbox = document.getElementById('showAbandoned');
-    let showOwnerConfirmCheckbox = document.getElementById('showOwnerConfirm');
+    let hideAbandonedCheckbox = document.getElementById('showAbandoned');
 
     function filterItems() {
         let selectedCategory = categoryFilter.value;
         let showResolved = showResolvedCheckbox?.checked;
-        let showAbandoned = showAbandonedCheckbox?.checked;
-        let showOwnerConfirm = showOwnerConfirmCheckbox?.checked;
+        let hideAbandoned = hideAbandonedCheckbox?.checked;
 
         let allCards = document.querySelectorAll('.item-card');
         allCards.forEach(card => {
@@ -51,14 +49,18 @@ export async function onBrowseLoad() {
             let categoryMatches = selectedCategory === "" || cardCategory === selectedCategory;
             let statusMatches = true;
 
-            if (cardStatus === "PENDING") {
+            if (cardStatus === "REMOVED") {
+                statusMatches = false;
+            } else if (cardStatus === "PENDING") {
                 statusMatches = true;
             } else if (cardStatus === "RESOLVED") {
                 statusMatches = showResolved;
             } else if (cardStatus === "ABANDONED") {
-                statusMatches = showAbandoned;
+                // Show abandoned by default; hide when checkbox is ticked
+                statusMatches = !hideAbandoned;
             } else if (cardStatus === "OWNER_CONFIRM") {
-                statusMatches = showOwnerConfirm;
+                // Always show owner_confirm items
+                statusMatches = true;
             }
 
             card.style.display = categoryMatches && statusMatches ? "" : "none";
@@ -66,16 +68,23 @@ export async function onBrowseLoad() {
     }
 
     categoryFilter.addEventListener('change', filterItems);
-    [showResolvedCheckbox, showAbandonedCheckbox, showOwnerConfirmCheckbox].forEach(checkbox => {
+    [showResolvedCheckbox, hideAbandonedCheckbox].forEach(checkbox => {
         if (checkbox) {
             checkbox.addEventListener('change', filterItems);
         }
     });
+
+    // Apply filters immediately on load based on default checkbox states
+    filterItems();
 }
 
 
 function drawItemCard(item) {
     let listingsWrapper = document.getElementById("listings_wrapper");
+
+    // Never render items that have been removed by an admin
+    if (item['status'] === 'REMOVED') return;
+
     let isUserPosted = false;
     if (user) {
         isUserPosted = item['user_id'] === user['user_id'];

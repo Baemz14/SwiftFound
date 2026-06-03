@@ -358,6 +358,38 @@ export async function updateReputation(user_id, change) {
     return true;
 }
 
-export async function abandonItem(item_id, user_id) {
-    throw new Error("Abandon item function is not implemented yet");
+export async function abandonItem(item_id, poster_id, claim_id = null) {
+    // Set item status to ABANDONED
+    let formData = new FormData();
+    formData.append('item_id', item_id);
+    formData.append('new_status', 'ABANDONED');
+    let data = await callServer('server_call/item_call.php', formData, 'UPDATE_STATUS');
+    if (!data['is_success']) {
+        console.log(`Failed to set item ABANDONED: ${data['error_log']}`);
+        return false;
+    }
+
+    // Deduct -7 reputation from the poster
+    let isUpdated = await updateReputation(poster_id, -7);
+    if (!isUpdated) {
+        console.log('Failed to update poster reputation for abandon');
+        return false;
+    }
+
+    return true;
 }
+
+/**
+ * Returns the reputation tier label and CSS class for a given score.
+ * Tiers: CAUTIOUS (< 0), NOVICE (0-19), HELPFUL (20-49), TRUSTED (50-99), GUARDIAN (100+)
+ */
+export function getReputationLabel(reputation) {
+    if (Number.isNaN(reputation)) {
+        return { label: 'NOVICE', className: 'rep-novice' };
+    }
+    if (reputation < 0)   return { label: 'CAUTIOUS', className: 'rep-cautios' };
+    if (reputation <= 19)  return { label: 'NOVICE',   className: 'rep-novice' };
+    if (reputation <= 49)  return { label: 'HELPFUL',  className: 'rep-helpful' };
+    if (reputation <= 99)  return { label: 'TRUSTED',  className: 'rep-trusted' };
+    return                        { label: 'GUARDIAN', className: 'rep-guardian' };
+}

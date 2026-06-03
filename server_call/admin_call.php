@@ -35,6 +35,17 @@ switch ($call_state) {
         $response['is_success'] = updateReportStatus($report_id, $new_status, $admin_note);
         break;
 
+    case 'REMOVE_ITEM':
+        $item_id = intval($_POST['item_id'] ?? 0);
+        if (!$item_id) {
+            $response['is_success'] = false;
+            $response['error_log'] = 'invalid item_id';
+            break;
+        }
+        $response['is_success'] = removeItem($item_id);
+        break;
+
+
     case 'GET_USERS':
         $response['users'] = getAllUsers();
         break;

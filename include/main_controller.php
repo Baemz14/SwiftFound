@@ -112,7 +112,7 @@ function getUserItems($user_id) {
 
 function getItems() {
     global $conn;
-    $sql = "SELECT item.*, user.user_id, user.username, user.reputation FROM item, user WHERE item.user_id = user.user_id";
+    $sql = "SELECT item.*, user.user_id, user.username, user.reputation FROM item, user WHERE item.user_id = user.user_id AND item.status != 'REMOVED'";
     $result = mysqli_query($conn, $sql);
 
     $items = array();
@@ -125,10 +125,8 @@ function getItems() {
 
 function getItem($item_id) {
     global $conn;
-    $sql = "SELECT item.*, user.username, user.reputation FROM item, user WHERE item.user_id = user.user_id and item.item_id = '$item_id'";
+    $sql = "SELECT item.*, user.username, user.reputation FROM item, user WHERE item.user_id = user.user_id AND item.item_id = '$item_id' AND item.status != 'REMOVED'";
     $result = mysqli_query($conn, $sql);
-
-    $items = array();
 
     if (mysqli_num_rows($result) > 0) {
         return mysqli_fetch_assoc($result);
@@ -362,6 +360,17 @@ function updateItemStatus($item_id, $status) {
     return mysqli_query($conn, $sql);
 }
 
+/**
+ * Soft-deletes an item by setting its status to REMOVED.
+ * The row is preserved in the DB for audit purposes.
+ */
+function removeItem($item_id) {
+    global $conn;
+    $item_id = (int)$item_id;
+    $sql = "UPDATE item SET status = 'REMOVED' WHERE item_id = $item_id";
+    return mysqli_query($conn, $sql);
+}
+
 function submitReport($reporter_id, $reported_user_id, $reported_item_id, $reason) {
     global $conn;
     ensureReportTable();
@@ -436,7 +445,8 @@ function getReports($status_filter = 'ALL') {
     $sql = "SELECT r.*,
                 reporter.username AS reporter_name,
                 reported_u.username AS reported_username,
-                i.title AS reported_item_title
+                i.title AS reported_item_title,
+                i.status AS item_status
             FROM report r
             INNER JOIN user reporter ON r.reporter_id = reporter.user_id
             LEFT JOIN user reported_u ON r.reported_user_id = reported_u.user_id

@@ -207,71 +207,129 @@ h1 {
     color: var(--text-dark);
 }
 
-.reputation-summary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.9rem;
-    margin-top: 14px;
-    padding: 14px 20px;
+/* ── Reputation Card ──────────────────────────────────── */
+.rep-card {
+    display: block;
+    margin-top: 20px;
+    padding: 22px 24px;
     border-radius: 18px;
     border: 2px solid transparent;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-    color: var(--text-dark);
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+    max-width: 540px;
+    transition: border-color 0.3s, background 0.3s;
 }
 
-.reputation-summary.rep-cautios {
-    background: rgba(254, 226, 226, 0.92);
-    border-color: #fca5a5;
-    color: #991b1b;
+.rep-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-.reputation-summary.rep-novice {
-    background: rgba(243, 244, 246, 0.95);
-    border-color: #d1d5db;
-    color: #374151;
+.rep-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.reputation-summary.rep-helpful {
-    background: rgba(220, 252, 231, 0.9);
-    border-color: #34d399;
-    color: #065f46;
+.rep-next-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    opacity: 0.7;
 }
 
-.reputation-summary.rep-trusted {
-    background: linear-gradient(135deg, rgba(219, 234, 254, 0.96), rgba(191, 219, 254, 0.9));
-    border-color: #3b82f6;
-    color: #1e3a8a;
+/* Progress bar */
+.rep-bar-wrap { margin-bottom: 18px; }
+
+.rep-bar-track {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-bottom: 4px;
 }
 
-.reputation-summary.rep-guardian {
-    background: linear-gradient(135deg, rgba(253, 230, 138, 0.95), rgba(245, 158, 11, 0.9));
-    border-color: #d97706;
-    color: #78350f;
+.rep-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: currentColor;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.7;
 }
+
+.rep-bar-ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    opacity: 0.6;
+    font-weight: 600;
+}
+
+/* Tier milestone row */
+.rep-tiers {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 4px;
+}
+
+.rep-tier-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    opacity: 0.4;
+    transition: opacity 0.25s;
+}
+
+.rep-tier-dot.active { opacity: 1; }
+
+.rep-tier-dot .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    border: 2px solid currentColor;
+}
+
+.rep-tier-dot.active .dot {
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.12);
+    transform: scale(1.3);
+}
+
+.tier-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+}
+
+/* Tier colour themes */
+.reputation-summary.rep-cautios { background: rgba(254,226,226,0.92); border-color: #fca5a5; color: #991b1b; }
+.reputation-summary.rep-novice  { background: rgba(243,244,246,0.95); border-color: #d1d5db; color: #374151; }
+.reputation-summary.rep-helpful { background: rgba(220,252,231,0.9);  border-color: #34d399; color: #065f46; }
+.reputation-summary.rep-trusted { background: linear-gradient(135deg,rgba(219,234,254,0.96),rgba(191,219,254,0.9)); border-color: #3b82f6; color: #1e3a8a; }
+.reputation-summary.rep-guardian{ background: linear-gradient(135deg,rgba(253,230,138,0.95),rgba(245,158,11,0.9)); border-color: #d97706; color: #78350f; }
 
 .rep-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 7px 14px;
+    padding: 5px 14px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255,255,255,0.75);
     color: inherit;
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
 }
 
-.rep-score {
-    font-size: 0.95rem;
-    color: inherit;
-}
-
-.rep-score strong {
-    color: inherit;
-}
+.rep-score { font-size: 0.9rem; color: inherit; }
+.rep-score strong { color: inherit; }
 
 .subtitle {
     color: var(--text-gray);

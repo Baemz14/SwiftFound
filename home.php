@@ -53,9 +53,34 @@
         <main class="content-area">
             <div id="dashboardSect" class="tab-content">
                 <h1>Hello, <span id="usernameTxt">User</span>!</h1>
-                <div class="reputation-summary rep-novice">
-                    <span id="reputationBadge" class="rep-pill">NOVICE</span>
-                    <span class="rep-score">Reputation: <strong id="reputationScore">0</strong></span>
+
+                <!-- Reputation Progress Card -->
+                <div class="rep-card reputation-summary rep-novice">
+                    <div class="rep-card-top">
+                        <div class="rep-left">
+                            <span id="reputationBadge" class="rep-pill">NOVICE</span>
+                            <span class="rep-score">Reputation: <strong id="reputationScore">0</strong></span>
+                        </div>
+                        <div id="repNextLabel" class="rep-next-label">Next: HELPFUL at 20</div>
+                    </div>
+
+                    <div class="rep-bar-wrap">
+                        <div class="rep-bar-track">
+                            <div id="repBarFill" class="rep-bar-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="rep-bar-ends">
+                            <span id="repBarMin">0</span>
+                            <span id="repBarMax">20</span>
+                        </div>
+                    </div>
+
+                    <div class="rep-tiers">
+                        <div class="rep-tier-dot cautios">  <span class="dot"></span><span class="tier-label">CAUTIOUS<br><small>&lt;0</small></span></div>
+                        <div class="rep-tier-dot novice">   <span class="dot"></span><span class="tier-label">NOVICE<br><small>0</small></span></div>
+                        <div class="rep-tier-dot helpful">  <span class="dot"></span><span class="tier-label">HELPFUL<br><small>20</small></span></div>
+                        <div class="rep-tier-dot trusted">  <span class="dot"></span><span class="tier-label">TRUSTED<br><small>50</small></span></div>
+                        <div class="rep-tier-dot guardian"> <span class="dot"></span><span class="tier-label">GUARDIAN<br><small>100</small></span></div>
+                    </div>
                 </div>
             </div>
 

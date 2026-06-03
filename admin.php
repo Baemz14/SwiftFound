@@ -1,10 +1,10 @@
 <?php
 session_start();
+require_once 'include/admin_key.php';
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Current security key: TAPAH2026
-    if ($_POST['pass'] === "TAPAH2026") {
+    if ($_POST['pass'] === getAdminKey()) {
         $_SESSION['admin_auth'] = true;
         header("Location: admin_dashboard.php");
         exit();
@@ -46,6 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div class="admin-footer">
             <a href="home.php">← Back to Homepage</a>
+            <br><br>
+            <a href="get_admin_code.php">Don't have a key? Get one here</a>
         </div>
     </div>
 </body>

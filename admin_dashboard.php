@@ -213,6 +213,10 @@ async function loadReports(filter) {
 
         const date = new Date(r.created_at).toLocaleDateString('en-MY', { month:'short', day:'numeric', year:'numeric' });
 
+        // Show Remove Item button only for item reports that are not yet resolved/dismissed
+        const isItemReport = !!r.reported_item_id;
+        const isActionable = r.status === 'PENDING' || r.status === 'REVIEWING';
+
         let actionBtns = '';
         if (r.status === 'PENDING') {
             actionBtns = `
@@ -223,11 +227,21 @@ async function loadReports(filter) {
             actionBtns = `<button class="r-btn resolve" onclick="openActionModal(${r.report_id}, '${esc(r.reporter_name)}', '${esc(r.reason)}')">Resolve / Dismiss</button>`;
         }
 
+        // Append Remove Item button for actionable item reports
+        if (isItemReport && isActionable) {
+            actionBtns += `<button class="r-btn remove-item" onclick="removeItem(${r.reported_item_id}, ${r.report_id})">🚫 Remove Item</button>`;
+        }
+
+        // Show REMOVED badge if item was already removed
+        const removedTag = (isItemReport && r.item_status === 'REMOVED')
+            ? `<span class="r-badge REMOVED" style="margin-left:6px;">ITEM REMOVED</span>`
+            : '';
+
         return `
             <div class="report-card" id="rcard_${r.report_id}">
                 <div class="report-card-top">
                     <div class="report-meta">
-                        <div class="report-target">${target} <span>by ${esc(r.reporter_name)}</span></div>
+                        <div class="report-target">${target}${removedTag} <span>by ${esc(r.reporter_name)}</span></div>
                         <div class="report-reason">"${esc(r.reason)}"</div>
                         ${r.admin_note ? `<div style="font-size:0.8rem;color:#60a5fa;">Admin note: ${esc(r.admin_note)}</div>` : ''}
                         <div class="report-footer">
@@ -245,6 +259,22 @@ async function loadReports(filter) {
 async function setReview(reportId) {
     await callAdmin('UPDATE_REPORT', { report_id: reportId, status: 'REVIEWING', admin_note: '' });
     loadReports(currentFilter);
+}
+
+/**
+ * Soft-removes an item (sets status = REMOVED) then auto-resolves the report.
+ */
+async function removeItem(itemId, reportId) {
+    if (!confirm('Remove this item? It will be hidden from users but kept in the database.')) return;
+    const removeRes = await callAdmin('REMOVE_ITEM', { item_id: itemId });
+    if (!removeRes.is_success) {
+        alert('Failed to remove item. Please try again.');
+        return;
+    }
+    // Auto-resolve the associated report
+    await callAdmin('UPDATE_REPORT', { report_id: reportId, status: 'RESOLVED', admin_note: 'Item removed by admin.' });
+    loadReports(currentFilter);
+    loadStats();
 }
 
 // ── Action modal ──────────────────────────────────────────────────────────────

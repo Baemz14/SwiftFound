@@ -52,19 +52,7 @@ export async function homeLoad() {
     updateChatNotiCount(chatNotiCount);
 
     document.getElementById("usernameTxt").innerText = user['username'];
-    const reputationScoreEl = document.getElementById('reputationScore');
-    const reputationBadgeEl = document.getElementById('reputationBadge');
-    const reputationPanel = document.querySelector('.reputation-summary');
-    const reputationValue = Number(user.reputation ?? 0);
-    const { label: reputationLabel, className: reputationClass } = getReputationLabel(reputationValue);
-    if (reputationScoreEl) reputationScoreEl.innerText = Number.isNaN(reputationValue) ? '0' : reputationValue;
-    if (reputationBadgeEl) {
-        reputationBadgeEl.textContent = reputationLabel;
-    }
-    if (reputationPanel) {
-        reputationPanel.classList.remove('rep-cautios', 'rep-novice', 'rep-helpful', 'rep-trusted', 'rep-guardian');
-        reputationPanel.classList.add(reputationClass);
-    }
+    updateReputationUI(Number(user.reputation ?? 0));
 
     const sidebarName = document.getElementById("sidebarUsername");
     const sidebarAvatarImg = document.getElementById("sidebarAvatarImg");
@@ -272,6 +260,67 @@ function getReputationLabel(reputation) {
         return { label: 'TRUSTED', className: 'rep-trusted' };
     }
     return { label: 'GUARDIAN', className: 'rep-guardian' };
+}
+
+function updateReputationUI(rep) {
+    const tiers = [
+        { label: 'CAUTIOUS',  className: 'rep-cautios', min: -Infinity, max: -1,  dotClass: 'cautios' },
+        { label: 'NOVICE',    className: 'rep-novice',  min: 0,         max: 19,  dotClass: 'novice'  },
+        { label: 'HELPFUL',   className: 'rep-helpful', min: 20,        max: 49,  dotClass: 'helpful' },
+        { label: 'TRUSTED',   className: 'rep-trusted', min: 50,        max: 99,  dotClass: 'trusted' },
+        { label: 'GUARDIAN',  className: 'rep-guardian',min: 100,       max: Infinity, dotClass: 'guardian' },
+    ];
+
+    const current = tiers.find(t => rep >= t.min && rep <= t.max) ?? tiers[1];
+    const nextIdx  = tiers.indexOf(current) + 1;
+    const next     = tiers[nextIdx] ?? null;
+
+    // Badge + score
+    const badgeEl = document.getElementById('reputationBadge');
+    const scoreEl = document.getElementById('reputationScore');
+    if (badgeEl) badgeEl.textContent = current.label;
+    if (scoreEl) scoreEl.textContent = isNaN(rep) ? '0' : rep;
+
+    // Card theme class
+    const panel = document.querySelector('.reputation-summary');
+    if (panel) {
+        panel.classList.remove('rep-cautios','rep-novice','rep-helpful','rep-trusted','rep-guardian');
+        panel.classList.add(current.className);
+    }
+
+    // Progress bar
+    const barFill  = document.getElementById('repBarFill');
+    const barMin   = document.getElementById('repBarMin');
+    const barMax   = document.getElementById('repBarMax');
+    const nextLabel = document.getElementById('repNextLabel');
+
+    if (current.label === 'GUARDIAN' || !next) {
+        // Max tier — full bar
+        if (barFill)   barFill.style.width = '100%';
+        if (barMin)    barMin.textContent  = '100';
+        if (barMax)    barMax.textContent  = '∞';
+        if (nextLabel) nextLabel.textContent = '🏆 Max tier reached!';
+    } else if (current.label === 'CAUTIOUS') {
+        // Negative — fill based on distance from -∞ toward 0
+        const pct = Math.max(0, Math.min(100, ((rep + 20) / 20) * 100));
+        if (barFill)   { barFill.style.width = '0%'; setTimeout(() => barFill.style.width = pct + '%', 50); }
+        if (barMin)    barMin.textContent  = rep;
+        if (barMax)    barMax.textContent  = '0';
+        if (nextLabel) nextLabel.textContent = `Next: NOVICE at 0  (${Math.abs(rep)} away)`;
+    } else {
+        const rangeMin = current.min;
+        const rangeMax = next.min;
+        const pct = Math.max(0, Math.min(100, ((rep - rangeMin) / (rangeMax - rangeMin)) * 100));
+        if (barFill)   { barFill.style.width = '0%'; setTimeout(() => barFill.style.width = pct + '%', 50); }
+        if (barMin)    barMin.textContent  = rangeMin;
+        if (barMax)    barMax.textContent  = rangeMax;
+        if (nextLabel) nextLabel.textContent = `Next: ${next.label} at ${next.min}  (${next.min - rep} away)`;
+    }
+
+    // Highlight active tier dot
+    document.querySelectorAll('.rep-tier-dot').forEach(el => el.classList.remove('active'));
+    const activeDot = document.querySelector(`.rep-tier-dot.${current.dotClass}`);
+    if (activeDot) activeDot.classList.add('active');
 }
 
 function statusPillHtml(status) {

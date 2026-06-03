@@ -47,11 +47,7 @@
             </label>
             <label class="status-filter-item">
                 <input type="checkbox" id="showAbandoned">
-                <span>Show Abandoned</span>
-            </label>
-            <label class="status-filter-item">
-                <input type="checkbox" id="showOwnerConfirm">
-                <span>Show Owner Confirmed</span>
+                <span>Hide Abandoned</span>
             </label>
         </div>
     </header>
