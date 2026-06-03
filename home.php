@@ -31,7 +31,7 @@
             
             <div class="not-logout">
                 <ul class="nav-links">
-                    <li id='recentBtn' class="nav-buttons active">Recent Activity</li>
+                    <li id='dashboardBtn' class="nav-buttons active">Dashboard</li>
                     <li id='postedBtn' class="nav-buttons">My Posted Items</li>
                     <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
                     <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
@@ -51,11 +51,12 @@
 
         <!-- Main Content Card -->
         <main class="content-area">
-            <div id="recentSect" class="tab-content">
+            <div id="dashboardSect" class="tab-content">
                 <h1>Hello, <span id="usernameTxt">User</span>!</h1>
-                <p class="subtitle">Here is what's happening with your items today.</p>
-                <hr>
-                <div class="placeholder-content">Quick stats and recent activity will go here.</div>
+                <div class="reputation-summary rep-novice">
+                    <span id="reputationBadge" class="rep-pill">NOVICE</span>
+                    <span class="rep-score">Reputation: <strong id="reputationScore">0</strong></span>
+                </div>
             </div>
 
             <div id="postedSect" class="tab-content" style="display:none;">

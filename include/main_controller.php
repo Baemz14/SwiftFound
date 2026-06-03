@@ -488,4 +488,10 @@ function getItemClaims($item_id) {
     }
     return $claims;
 }
+
+function updateUserReputation($user_id, $delta) {
+    global $conn;
+    $sql = "UPDATE user SET reputation = reputation + '$delta' WHERE user_id = '$user_id'";
+    return mysqli_query($conn, $sql);
+}
 ?>

@@ -65,7 +65,10 @@
             <div class="poster-card">
                 <div class="poster-meta">
                     <p><strong>Posted by:</strong> <span id="username">FaizAnwar57</span></p>
-                    <p><strong>Reputation:</strong> <span id="rep">-1</span></p>
+                    <div id="posterReputation" class="poster-reputation rep-novice">
+                        <span class="rep-pill" id="repBadge">NOVICE</span>
+                        <span class="rep-score">Reputation: <strong id="rep">0</strong></span>
+                    </div>
                 </div>
                 <div class="claim-attempt-row">
                     <p id="alreadyClaimedMsg" class="already-claimed-msg" style="display: none;"></p>

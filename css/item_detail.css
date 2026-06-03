@@ -130,6 +130,67 @@ body {
     margin: 8px 0;
 }
 
+.poster-reputation {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 10px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    background: rgba(243, 244, 246, 0.95);
+    color: #111827;
+    font-size: 0.95rem;
+}
+
+.poster-reputation .rep-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.88);
+    color: inherit;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.poster-reputation .rep-score {
+    color: inherit;
+}
+
+.poster-reputation.rep-cautios {
+    background: rgba(254, 226, 226, 0.95);
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+.poster-reputation.rep-novice {
+    background: rgba(243, 244, 246, 0.95);
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+.poster-reputation.rep-helpful {
+    background: rgba(220, 252, 231, 0.92);
+    border-color: #34d399;
+    color: #047857;
+}
+
+.poster-reputation.rep-trusted {
+    background: linear-gradient(135deg, rgba(219, 234, 254, 0.95), rgba(191, 219, 254, 0.92));
+    border-color: #3b82f6;
+    color: #1e3a8a;
+}
+
+.poster-reputation.rep-guardian {
+    background: linear-gradient(135deg, rgba(253, 230, 138, 0.95), rgba(245, 158, 11, 0.92));
+    border-color: #d97706;
+    color: #78350f;
+}
+
 .msg-btn {
     width: 100%;
     margin-top: 15px;

@@ -4,18 +4,19 @@ import { logout } from "/swiftfound/script/logout.js";
 import { callServer } from "/swiftfound/include/call_server.js";
 
 const btnIdToSect = {
-    'recentBtn': 'recentSect',
+    'dashboardBtn': 'dashboardSect',
     'postedBtn': 'postedSect',
     'claimsBtn': 'claimsSect',
     'claimReqBtn': 'claimReqSect'
 };
 const btnIdToText = {
-    'recentBtn': 'recent',
+    'dashboardBtn': 'dashboard',
     'postedBtn': 'posted',
     'claimsBtn': 'claims',
     'claimReqBtn': 'claimReq'
 }
 
+let user = null;
 let item = [];
 let claim = [];
 let claimReq = [];
@@ -32,12 +33,13 @@ function escapeHtml(str) {
 }
 
 export async function homeLoad() {
-    let user = await loadUserData();
+    user = await loadUserData();
     if(!user) {
         alert("You are not logged in. Redirecting to login page.");
         window.location.href = 'login.php';
         return; // Prevents further execution if not logged in
     }
+    console.log("User data loaded:", user);
 
     item = await userUtil.loadNewItem();
     claim = await userUtil.loadNewClaim();
@@ -50,6 +52,20 @@ export async function homeLoad() {
     updateChatNotiCount(chatNotiCount);
 
     document.getElementById("usernameTxt").innerText = user['username'];
+    const reputationScoreEl = document.getElementById('reputationScore');
+    const reputationBadgeEl = document.getElementById('reputationBadge');
+    const reputationPanel = document.querySelector('.reputation-summary');
+    const reputationValue = Number(user.reputation ?? 0);
+    const { label: reputationLabel, className: reputationClass } = getReputationLabel(reputationValue);
+    if (reputationScoreEl) reputationScoreEl.innerText = Number.isNaN(reputationValue) ? '0' : reputationValue;
+    if (reputationBadgeEl) {
+        reputationBadgeEl.textContent = reputationLabel;
+    }
+    if (reputationPanel) {
+        reputationPanel.classList.remove('rep-cautios', 'rep-novice', 'rep-helpful', 'rep-trusted', 'rep-guardian');
+        reputationPanel.classList.add(reputationClass);
+    }
+
     const sidebarName = document.getElementById("sidebarUsername");
     const sidebarAvatarImg = document.getElementById("sidebarAvatarImg");
     const sidebarAvatarInitial = document.getElementById("sidebarAvatarInitial");
@@ -131,8 +147,8 @@ export async function homeLoad() {
 
     document.getElementById("logoutBtn").addEventListener('click', logout);
 
-    document.getElementById("recentBtn").addEventListener('click', function() {
-        activateSection("recentBtn");
+    document.getElementById("dashboardBtn").addEventListener('click', function() {
+        activateSection("dashboardBtn");
     });
     document.getElementById("postedBtn").addEventListener('click', function() {
         activateSection("postedBtn");
@@ -145,7 +161,7 @@ export async function homeLoad() {
     });
 
     const urlParams = new URLSearchParams(window.location.search);
-    let opening = urlParams.get('opening') ?? "recent";
+    let opening = urlParams.get('opening') ?? "dashboard";
     const btnId = Object.keys(btnIdToText).find(key => btnIdToText[key] === opening);
     activateSection(btnId);
 
@@ -237,6 +253,25 @@ function updateItemUi(newItem) {
             window.location.href = `item_detail.php?item_id=${item.item_id}`;
         });
     }
+}
+
+function getReputationLabel(reputation) {
+    if (Number.isNaN(reputation)) {
+        return { label: 'NOVICE', className: 'rep-novice' };
+    }
+    if (reputation < 0) {
+        return { label: 'CAUTIOS', className: 'rep-cautios' };
+    }
+    if (reputation <= 19) {
+        return { label: 'NOVICE', className: 'rep-novice' };
+    }
+    if (reputation <= 49) {
+        return { label: 'HELPFUL', className: 'rep-helpful' };
+    }
+    if (reputation <= 99) {
+        return { label: 'TRUSTED', className: 'rep-trusted' };
+    }
+    return { label: 'GUARDIAN', className: 'rep-guardian' };
 }
 
 function statusPillHtml(status) {
@@ -388,47 +423,3 @@ async function openChat(claim) {
     }
     window.location.href = `/swiftfound/chat.php?opening=${claim.claim_id}`;
 }
-
-// --- RECENT ACTIVITY LOGIC ---
-// async function fetchRecentActivity() {
-//     const container = document.querySelector('#recentSect .placeholder-content');
-//     container.innerHTML = "<p>Loading recent activity...</p>";
-    
-//     try {
-//         const response = await fetch('api/get_recent_activity.php');
-//         const data = await response.json();
-
-//         if (data.status === 'success') {
-//             if (data.recent_items.length === 0) {
-//                 container.innerHTML = "<p>No recent activity. Start by posting an item!</p>";
-//                 return;
-//             }
-
-//             let html = '<ul class="activity-list" style="list-style: none; padding: 0;">';
-//             data.recent_items.forEach(item => {
-//                 const dateObj = new Date(item.created_at);
-//                 const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
-                
-//                 const imagePath = item.img_file ? `/swiftfound/img_upload/${item.img_file}` : 'https://via.placeholder.com/60?text=No+Image'; 
-//                 html += `
-//                     <li class="activity-item" style="display: flex; align-items: center; gap: 15px; background: #f8f9fa; border-left: 4px solid #4f46e5; padding: 12px 16px; margin-bottom: 10px; border-radius: 4px;">
-//                         <img src="${imagePath}" alt="Item image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
-//                         <div>
-//                             <strong>[${item.found_or_lost}]</strong> ${item.title} 
-//                             <span style="color: #6c757d; font-size: 0.9em;">(${item.category})</span>
-//                             <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">Posted on ${dateStr}</div>
-//                         </div>
-//                     </li>
-//                 `;
-//             });
-//             html += '</ul>';
-
-//             container.innerHTML = html;
-//         } else {
-//             container.innerHTML = `<p class="error" style="color: red;">Error: ${data.message}</p>`;
-//         }
-//     } catch (error) {
-//         console.error("Failed to fetch activity:", error);
-//         container.innerHTML = "<p style='color: red;'>Failed to load recent activity.</p>";
-//     }
-// }

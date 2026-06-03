@@ -74,7 +74,24 @@ export async function onItemLoad() {
     document.getElementById('loc').innerText = item['location'];
     document.getElementById('desc').innerText = item['description'];
     document.getElementById('username').innerText = isUserPosted? "you": item['username'];
-    document.getElementById('rep').innerText = item['reputation'];
+
+    const reputationContainer = document.getElementById('posterReputation');
+    const reputationBadge = document.getElementById('repBadge');
+    const reputationValue = Number(item['reputation'] ?? 0);
+    const repLabel = getReputationLabel(reputationValue);
+    const reputationLabel = repLabel.label;
+    const reputationClass = repLabel.className;
+    const repElement = document.getElementById('rep');
+    if (repElement) {
+        repElement.innerText = Number.isNaN(reputationValue) ? '0' : reputationValue;
+    }
+    if (reputationBadge) {
+        reputationBadge.innerText = reputationLabel;
+    }
+    if (reputationContainer) {
+        reputationContainer.classList.remove('rep-cautios', 'rep-novice', 'rep-helpful', 'rep-trusted', 'rep-guardian');
+        reputationContainer.classList.add(reputationClass);
+    }
 
     updateButtonVisibility();
 
@@ -192,6 +209,25 @@ function onClaimClick(e) {
         return;
     }
     document.getElementById('claimModal').style.display = 'flex';
+}
+
+function getReputationLabel(reputation) {
+    if (Number.isNaN(reputation)) {
+        return { label: 'NOVICE', className: 'rep-novice' };
+    }
+    if (reputation < 0) {
+        return { label: 'CAUTIOS', className: 'rep-cautios' };
+    }
+    if (reputation <= 19) {
+        return { label: 'NOVICE', className: 'rep-novice' };
+    }
+    if (reputation <= 49) {
+        return { label: 'HELPFUL', className: 'rep-helpful' };
+    }
+    if (reputation <= 99) {
+        return { label: 'TRUSTED', className: 'rep-trusted' };
+    }
+    return { label: 'GUARDIAN', className: 'rep-guardian' };
 }
 
 async function claimItem(e) {

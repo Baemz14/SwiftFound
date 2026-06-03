@@ -261,6 +261,11 @@ export async function rejectClaim(claim, reason) {
         console.log("Failed to send rejection message");
         return false;
     }
+    let isUpdated = await updateReputation(claim.claimer_id, -3);
+    if (!isUpdated) {
+        console.log("Failed to update claimer reputation");
+        return false;
+    }
     return true;
 }
 
@@ -295,6 +300,16 @@ export async function confirmResolution(claim) {
         console.log("Failed to send poster resolution message");
         return false;
     }
+    let isUpdated = await updateReputation(claim.poster_id, 10);
+    if (!isUpdated) {
+        console.log("Failed to update poster reputation");
+        return false;
+    }
+    isUpdated = await updateReputation(claim.claimer_id, 5);
+    if (!isUpdated) {
+        console.log("Failed to update claimer reputation");
+        return false;
+    }
     return true;
 }
 
@@ -312,6 +327,11 @@ export async function cancelClaim(claim, reason) {
         console.log("Failed to send cancellation message");
         return false;
     }
+    let isUpdated = await updateReputation(claim.claimer_id, -1);
+    if (!isUpdated) {
+        console.log("Failed to update claimer reputation");
+        return false;
+    }
     return true;
 }
 
@@ -324,4 +344,20 @@ export async function itemClaims(item_id) {
         return [];
     }
     return data['claims'];
+}
+
+export async function updateReputation(user_id, change) {
+    let formData = new FormData();
+    formData.append('user_id', user_id);
+    formData.append('change', change);
+    let data = await callServer('server_call/user_call.php', formData, "UPDATE_REPUTATION");
+    if (!data['is_success']) {
+        console.log(`server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function abandonItem(item_id, user_id) {
+    throw new Error("Abandon item function is not implemented yet");
 }

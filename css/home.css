@@ -207,6 +207,72 @@ h1 {
     color: var(--text-dark);
 }
 
+.reputation-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 14px;
+    padding: 14px 20px;
+    border-radius: 18px;
+    border: 2px solid transparent;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    color: var(--text-dark);
+}
+
+.reputation-summary.rep-cautios {
+    background: rgba(254, 226, 226, 0.92);
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+.reputation-summary.rep-novice {
+    background: rgba(243, 244, 246, 0.95);
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+.reputation-summary.rep-helpful {
+    background: rgba(220, 252, 231, 0.9);
+    border-color: #34d399;
+    color: #065f46;
+}
+
+.reputation-summary.rep-trusted {
+    background: linear-gradient(135deg, rgba(219, 234, 254, 0.96), rgba(191, 219, 254, 0.9));
+    border-color: #3b82f6;
+    color: #1e3a8a;
+}
+
+.reputation-summary.rep-guardian {
+    background: linear-gradient(135deg, rgba(253, 230, 138, 0.95), rgba(245, 158, 11, 0.9));
+    border-color: #d97706;
+    color: #78350f;
+}
+
+.rep-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.8);
+    color: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.rep-score {
+    font-size: 0.95rem;
+    color: inherit;
+}
+
+.rep-score strong {
+    color: inherit;
+}
+
 .subtitle {
     color: var(--text-gray);
     margin-bottom: 25px;

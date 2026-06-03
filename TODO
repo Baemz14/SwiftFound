@@ -20,3 +20,10 @@ item claiming - ada update pada claim status so pastikan user boleh reclaim seba
 chat - archive ada all, utk all yg main hanya tunjuk pending, chatting, owner confirm
 
 item details buat tunjuk brapa ramai yg claimed dan brapa ramai yg tgh chatting dan tunjuk status kalu dah owner confirmed
+
+reputation
+< 0 ➔ CAUTIOS
+0 - 19 ➔ NOVICE
+20 - 49 ➔ HELPFUL
+50 - 99 ➔ TRUSTED
+100+ ➔ GUARDIAN

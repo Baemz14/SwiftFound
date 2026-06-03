@@ -175,6 +175,23 @@ switch ($call_state) {
         $response['chats'] = getUserChat($user_id);
         break;
 
+    case 'UPDATE_REPUTATION':
+        if (!isset($_POST['user_id']) || !isset($_POST['change'])) {
+            $response['error_log'] = "missing required parameters";
+            $response['is_success'] = false;
+            break;
+        }
+        $user_id = $_POST['user_id'];
+        $change = intval($_POST['change']);
+        if (updateUserReputation($user_id, $change)) {
+            $response['is_success'] = true;
+            $response['updated_user'] = getUser($user_id);
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = "unable to update reputation";
+        }
+        break;
+
     default:
         $response['error_log'] = "state wong >:(";
 }
