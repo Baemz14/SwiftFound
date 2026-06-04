@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="admin-card">
         <div class="admin-header">
-            <div class="admin-logo">SwiftFound</div>
+            <div class="admin-logo" onclick="window.location.href='index.php'">SwiftFound</div>
             <span class="badge">Staff Only</span>
         </div>
 
@@ -45,9 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
         <div class="admin-footer">
-            <a href="home.php">← Back to Homepage</a>
+            <a href="index.php">← Back to Homepage</a>
             <br><br>
-            <a href="get_admin_code.php">Don't have a key? Get one here</a>
+            <p>Dont have a key? Contact our system administrator.</p>
         </div>
     </div>
 </body>

@@ -49,6 +49,8 @@ body, html {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .badge {
@@ -157,6 +159,13 @@ input[type="password"]:focus {
 
 .admin-footer a:hover {
     color: var(--primary-purple);
+}
+
+.admin-footer p {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 @keyframes fadeIn {

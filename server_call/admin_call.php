@@ -18,8 +18,7 @@ switch ($call_state) {
         break;
 
     case 'GET_REPORTS':
-        $status_filter = $_POST['status_filter'] ?? 'ALL';
-        $response['reports'] = getReports($status_filter);
+        $response['reports'] = getReports();
         break;
 
     case 'UPDATE_REPORT':

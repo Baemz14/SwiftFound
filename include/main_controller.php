@@ -403,9 +403,8 @@ function getAdminStats() {
     return $stats;
 }
 
-function getReports($status_filter = 'ALL') {
+function getReports() {
     global $conn;
-    $where = $status_filter !== 'ALL' ? "WHERE r.status = '" . mysqli_real_escape_string($conn, $status_filter) . "'" : '';
     $sql = "SELECT r.*,
                 reporter.username AS reporter_name,
                 reported_u.username AS reported_username,
@@ -415,7 +414,6 @@ function getReports($status_filter = 'ALL') {
             INNER JOIN user reporter ON r.reporter_id = reporter.user_id
             LEFT JOIN user reported_u ON r.reported_user_id = reported_u.user_id
             LEFT JOIN item i ON r.reported_item_id = i.item_id
-            $where
             ORDER BY r.created_at DESC";
     $result = mysqli_query($conn, $sql);
     $reports = [];
@@ -437,7 +435,14 @@ function getAllUsers() {
     global $conn;
     $sql = "SELECT user_id, username, reputation,
                 (SELECT COUNT(*) FROM item WHERE item.user_id = user.user_id) AS item_count,
-                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id) AS claim_count
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id) AS claim_count,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'RESOLVED') AS resolved_claims,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'OWNER_CONFIRM') AS owner_confirmed_claims,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'PENDING') AS pending_claims,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'REJECTED') AS rejected_claims,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'CHATTING') AS chatting_claims,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'PENDING_RESOLUTION') AS pending_resolution_claims,
+                (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'CANCELED') AS canceled_claims
             FROM user ORDER BY user_id DESC";
     $result = mysqli_query($conn, $sql);
     $users = [];
