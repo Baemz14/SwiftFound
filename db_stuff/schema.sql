@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 02, 2026 at 04:08 PM
+-- Generation Time: Jun 04, 2026 at 03:33 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -86,6 +86,25 @@ CREATE TABLE `message` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `report`
+--
+
+CREATE TABLE `report` (
+  `report_id` int(11) UNSIGNED NOT NULL,
+  `reporter_id` int(11) UNSIGNED NOT NULL,
+  `reported_user_id` int(11) UNSIGNED DEFAULT NULL,
+  `reported_item_id` int(11) UNSIGNED DEFAULT NULL,
+  `reason` varchar(500) NOT NULL,
+  `details` varchar(500) NOT NULL,
+  `status` enum('PENDING','RESOLVED','DISMISSED') NOT NULL DEFAULT 'PENDING',
+  `admin_note` varchar(500) DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user`
 --
 
@@ -134,6 +153,12 @@ ALTER TABLE `message`
   ADD KEY `fk_message_reciever` (`reciever_id`);
 
 --
+-- Indexes for table `report`
+--
+ALTER TABLE `report`
+  ADD PRIMARY KEY (`report_id`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -166,6 +191,12 @@ ALTER TABLE `item`
 --
 ALTER TABLE `message`
   MODIFY `message_id` bigint(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `report`
+--
+ALTER TABLE `report`
+  MODIFY `report_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user`

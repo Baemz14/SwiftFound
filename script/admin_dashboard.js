@@ -180,29 +180,70 @@ function drawUsers() {
         return;
     }
 
+    const claimStatusColors = { 
+        PENDING: '#fbbf24', 
+        CHATTING: '#60a5fa', 
+        OWNER_CONFIRM: '#a78bfa', 
+        RESOLVED: '#34d399', 
+        REJECTED: '#f87171', 
+        CANCELED: '#94a3b8' 
+    };
+    const claimStatusLabels = { 
+        PENDING: 'Pending', 
+        CHATTING: 'Chatting', 
+        OWNER_CONFIRM: 'Owner Confirm', 
+        RESOLVED: 'Resolved', 
+        REJECTED: 'Rejected', 
+        CANCELED: 'Canceled' 
+    };
+
     container.innerHTML = `
-        <table class="users-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Reputation</th>
-                    <th>Items Posted</th>
-                    <th>Claims Made</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${users.map(u => `
-                    <tr>
-                        <td style="color:#94a3b8;">#${esc(u.user_id)}</td>
-                        <td class="username-cell">${esc(u.username)}</td>
-                        <td class="rep-cell">★ ${esc(u.reputation)}</td>
-                        <td>${esc(u.item_count)}</td>
-                        <td>${esc(u.claim_count)}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
+        <div class="users-list">
+            ${users.map((u, idx) => `
+                <div class="user-card" id="ucard_${idx}">
+                    <div class="user-card-main" onclick="this.closest('.user-card').classList.toggle('expanded')">
+                        <div class="user-main-info">
+                            <div class="user-id" style="color:#94a3b8;">#${esc(u.user_id)}</div>
+                            <div class="user-username">${esc(u.username)}</div>
+                        </div>
+                        <div class="user-main-stats">
+                            <div class="user-stat">
+                                <span class="stat-label">Reputation</span>
+                                <span class="stat-value" style="color:${u.reputation < 0 ? '#f87171' : '#fbbf24'};">★ ${esc(u.reputation)}</span>
+                            </div>
+                            <div class="user-stat">
+                                <span class="stat-label">Items</span>
+                                <span class="stat-value">${esc(u.item_count)}</span>
+                            </div>
+                            <div class="user-stat">
+                                <span class="stat-label">Total Claims</span>
+                                <span class="stat-value">${esc(u.claim_count)}</span>
+                            </div>
+                        </div>
+                        <div class="expand-icon">›</div>
+                    </div>
+                    <div class="user-card-details">
+                        <div class="claims-breakdown">
+                            <div class="breakdown-title">Claim Status Breakdown</div>
+                            <div class="breakdown-items">
+                                ${Object.entries(claimStatusLabels).map(([key, label]) => {
+                                    const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '').replace('owner_confirm', 'owner_confirmed').replace('pending_resolution', 'pending_resolution');
+                                    const countKey = key === 'OWNER_CONFIRM' ? 'owner_confirmed_claims' : key === 'PENDING' ? 'pending_claims' : key.toLowerCase() + '_claims';
+                                    const count = u[countKey] || '0';
+                                    return `
+                                        <div class="breakdown-item">
+                                            <div class="breakdown-dot" style="background:${claimStatusColors[key]};"></div>
+                                            <span class="breakdown-label">${label}</span>
+                                            <span class="breakdown-count" style="color:${claimStatusColors[key]};">${count}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
     `;
 }
 
