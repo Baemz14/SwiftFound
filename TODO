@@ -3,21 +3,9 @@ buat user boleh stay sign in
 chat TODO:
 boleh bukak item detail bile tekan gamba item
 
-browse TODO:
-browse.php line 42
-kalu user logged in letak butang post item n chat, 
-kalu user blom logged in hide semua butang My dashboard, post item n chat, pastu letak butang register/login
-abandoned, owner_confirm, resolved sorok dari user tapi kasi ada checkbox filter kalu nk tunjuk
-buat date filter ada from and to
 
 chat.php -- line 69
 
-home TODO:
-semua claim n claim request tkde butang edit/approve/delete, semua tuka pada open in chat sebb butang semua dah dlm chat
-susun claim req, active claim, posted item ikut status
-buat status item cantik n bewarna mcm claim
-dkt dashboard isi lah sesuatu buat cantik
-claim req buat mcm notification ikut brapa byk claim req status = PENDING
 
 item_details TODO:
 delete button tuka nama jadi abandon item
