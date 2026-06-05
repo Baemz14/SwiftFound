@@ -2,6 +2,7 @@ import { callServer } from "/swiftfound/include/call_server.js";
 import { CategoryEnumDB, CategoryText, CategoryEnum } from "/swiftfound/enum_constant.js";
 import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
 import * as userUtils from "/swiftfound/script/user_utils.js";
+import * as adminUtils from "/swiftfound/script/admin_utils.js";
 
 let item = null;
 let user = null;
@@ -12,9 +13,27 @@ let claimAttempt = 0;
 let userClaimBlocked = false; // true when user exceeded allowed attempts
 let isArchived = false;
 let viewingStatus = 'USER_VIEW'; // USER_VIEW, USER_POSTED, USER_CLAIMED, ADMIN_REVIEW
+let report = null;
 
 export async function onItemLoad() {
     const urlParams = new URLSearchParams(window.location.search);
+    let reportId = urlParams.get('report_id');
+    if (reportId) {
+        report = await adminUtils.getReport(reportId);
+        if (report) {
+            viewingStatus = 'ADMIN_REVIEW';
+        }
+        console.log(report);
+    }
+
+    if (viewingStatus === 'ADMIN_REVIEW') {
+        const backLink = document.querySelector('.back-link');
+        if (backLink) {
+            backLink.setAttribute('href', '/swiftfound/admin_dashboard.php');
+            backLink.innerText = '← Back to Admin Dashboard';
+        }
+    }
+
     let formData = new FormData();
     formData.append('item_id', urlParams.get('item_id'));
     let data = await callServer('/swiftfound/server_call/item_call.php', formData, "GET_ITEM");
@@ -23,44 +42,19 @@ export async function onItemLoad() {
         alert(`cant find item`);
         window.location.href = "/swiftfound/browse.php";
     }
+    console.log(item);
 
-    let sessData = await callServer('/swiftfound/server_call/user_call.php', null, "GET_SESSDATA");
-    user = sessData['user'];
-    if (user) {
-        viewingStatus = item['user_id'] === user['user_id']? 'USER_POSTED': 'USER_VIEW';
-    }
-
-    let isReview = urlParams.get('is_review');
-    if (isReview) {
-        viewingStatus = 'ADMIN_REVIEW';
+    if (viewingStatus !== 'ADMIN_REVIEW') {        
+        let sessData = await callServer('/swiftfound/server_call/user_call.php', null, "GET_SESSDATA");
+        user = sessData['user'];
+        if (user) {
+            viewingStatus = item['user_id'] === user['user_id']? 'USER_POSTED': 'USER_VIEW';
+        }
     }
 
     await loadClaims();
     displayClaimStatistics();
-
-    // show overall item status if not PENDING
-    try {
-        const statusEl = document.getElementById('itemStatus');
-        const rawStatus = (item['claim_status'] || item.claim_status || '').toString().toUpperCase();
-        // mark as archived for any status other than PENDING
-        isArchived = rawStatus && rawStatus !== 'PENDING';
-        if (rawStatus && rawStatus !== 'PENDING') {
-            // map display text
-            let displayText = rawStatus.split('_').map(s => s.charAt(0) + s.slice(1).toLowerCase()).join(' ');
-            if (rawStatus === 'OWNER_CONFIRM') displayText = 'Owner Confirmed';
-            if (rawStatus === 'REMOVED') displayText = 'Removed';
-            if (rawStatus === 'RESOLVED') displayText = 'Resolved';
-            if (rawStatus === 'ABANDONED') displayText = 'Abandoned';
-            statusEl.innerText = displayText;
-            // set class for coloring
-            statusEl.className = 'item-status status-' + rawStatus.toLowerCase();
-            statusEl.style.display = 'inline-block';
-        } else {
-            statusEl.style.display = 'none';
-        }
-    } catch (e) {
-        console.warn('itemStatus element not found or error setting status', e);
-    }
+    renderItemStatus();
 
     document.getElementById('item_image').src = `/swiftfound/img_upload/${item['img_file']}`;
     document.getElementById('category').innerText = CategoryText[CategoryEnum[item['category']]];
@@ -97,6 +91,7 @@ export async function onItemLoad() {
     }
 
     updateButtonVisibility();
+    renderAdminReportStatus();
 
     document.getElementById('claimBtn').addEventListener('click', onClaimClick);
     document.getElementById('reportBtn').addEventListener('click', function(e) {
@@ -109,14 +104,25 @@ export async function onItemLoad() {
     document.getElementById('deleteBtn').addEventListener('click', function(e) {
         document.getElementById('deleteModal').style.display = 'flex';
     });
+    document.getElementById('removeItemBtn').addEventListener('click', function() {
+        document.getElementById('removeItemModal').style.display = 'flex';
+    });
+    document.getElementById('dismissReportBtn').addEventListener('click', function() {
+        document.getElementById('dismissReportModal').style.display = 'flex';
+    });
     document.getElementById('cancelReportBtn').addEventListener('click', closeReportModal);
     document.getElementById('submitReportBtn').addEventListener('click', submitReport);
 
     document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
-    document.getElementById('confirmDeleteBtn').addEventListener('click', deleteItem);
+    document.getElementById('confirmDeleteBtn').addEventListener('click', abandonItem);
 
     document.getElementById('cancelClaimBtn').addEventListener('click', closeClaimModal);
     document.getElementById('submitClaimBtn').addEventListener('click', claimItem);
+    document.getElementById('cancelRemoveItemBtn').addEventListener('click', closeRemoveItemModal);
+    document.getElementById('confirmRemoveItemBtn').addEventListener('click', onConfirmRemoveItem);
+    document.getElementById('cancelDismissReportBtn').addEventListener('click', closeDismissReportModal);
+    document.getElementById('confirmDismissReportBtn').addEventListener('click', onConfirmDismissReport);
+    document.getElementById('adminResultOkBtn').addEventListener('click', closeAdminResultModal);
 
     // open chat button listener (if applicable)
     if (user && viewingStatus === 'USER_CLAIMED') {
@@ -126,6 +132,50 @@ export async function onItemLoad() {
     }
 
     console.log(viewingStatus);
+}
+
+function getRawItemStatus() {
+    if (!item) return '';
+    return (item['status'] || item.status || item['claim_status'] || item.claim_status || '').toString().toUpperCase();
+}
+
+function getStatusDisplay(rawStatus) {
+    if (!rawStatus) return '';
+    if (rawStatus === 'OWNER_CONFIRM') return 'Owner Confirmed';
+    if (rawStatus === 'REMOVED') return 'Removed';
+    if (rawStatus === 'RESOLVED') return 'Resolved';
+    if (rawStatus === 'ABANDONED') return 'Abandoned';
+    return rawStatus.split('_').map(s => s.charAt(0) + s.slice(1).toLowerCase()).join(' ');
+}
+
+function renderItemStatus() {
+    const statusEl = document.getElementById('itemStatus');
+    if (!statusEl) return;
+
+    const rawStatus = getRawItemStatus();
+    isArchived = rawStatus && rawStatus !== 'PENDING';
+    if (!rawStatus || rawStatus === 'PENDING') {
+        statusEl.style.display = 'none';
+        return;
+    }
+
+    statusEl.innerText = getStatusDisplay(rawStatus);
+    statusEl.className = 'item-status status-' + rawStatus.toLowerCase();
+    statusEl.style.display = 'inline-flex';
+}
+
+function renderAdminReportStatus() {
+    const adminStatusEl = document.getElementById('adminReportStatus');
+    if (!adminStatusEl) return;
+    if (viewingStatus !== 'ADMIN_REVIEW' || !report) {
+        adminStatusEl.style.display = 'none';
+        return;
+    }
+
+    const rawReportStatus = (report.status || report.report_status || '').toString().toUpperCase();
+    const displayReportStatus = rawReportStatus ? rawReportStatus.split('_').map(s => s.charAt(0) + s.slice(1).toLowerCase()).join(' ') : 'Unknown';
+    adminStatusEl.innerText = `Report status: ${displayReportStatus}`;
+    adminStatusEl.style.display = 'block';
 }
 
 async function loadClaims() {
@@ -198,7 +248,7 @@ function onClaimClick(e) {
         window.location.href = "/swiftfound/login.php";
         return;
     }
-    if (viewingStatus === 'USER_CLAIM') {
+    if (viewingStatus === 'USER_CLAIMED') {
         alert(`You have an active claim for this item.`);
         return;
     }
@@ -294,15 +344,41 @@ function updateButtonVisibility() {
     const claimBtn = document.getElementById('claimBtn');
     const reportBtn = document.getElementById('reportBtn');
     const deleteBtn = document.getElementById('deleteBtn');
+    const removeItemBtn = document.getElementById('removeItemBtn');
+    const dismissReportBtn = document.getElementById('dismissReportBtn');
     const chatBtn = document.getElementById('openChatBtn');
     const alreadyClaimedMsg = document.getElementById('alreadyClaimedMsg');
-    
+    const adminStatusEl = document.getElementById('adminReportStatus');
+
+    if (adminStatusEl) {
+        adminStatusEl.style.display = 'none';
+    }
+
+    if (viewingStatus === 'ADMIN_REVIEW') {
+        const rawReportStatus = (report && (report.status || report.report_status) || '').toString().toUpperCase();
+        const isReportPending = rawReportStatus === 'PENDING';
+
+        claimBtn.style.display = 'none';
+        reportBtn.style.display = 'none';
+        deleteBtn.style.display = 'none';
+        chatBtn.style.display = 'none';
+        removeItemBtn.style.display = isReportPending ? 'block' : 'none';
+        dismissReportBtn.style.display = isReportPending ? 'block' : 'none';
+        alreadyClaimedMsg.style.display = 'none';
+        if (adminStatusEl) {
+            adminStatusEl.style.display = 'block';
+        }
+        return;
+    }
+
     // If item is archived, hide claim and report for everyone (except poster delete)
     if (isArchived) {
         claimBtn.style.display = 'none';
         reportBtn.style.display = 'none';
         deleteBtn.style.display = viewingStatus === 'USER_POSTED' ? 'block' : 'none';
         chatBtn.style.display = viewingStatus === 'USER_CLAIMED' ? 'block' : 'none';
+        removeItemBtn.style.display = 'none';
+        dismissReportBtn.style.display = 'none';
         // keep any existing messages visible
         return;
     }
@@ -323,6 +399,8 @@ function updateButtonVisibility() {
         reportBtn.style.display = 'none';
         deleteBtn.style.display = 'block';
         chatBtn.style.display = 'none';
+        removeItemBtn.style.display = 'none';
+        dismissReportBtn.style.display = 'none';
         alreadyClaimedMsg.style.display = 'none';
         return;
     }
@@ -333,7 +411,20 @@ function updateButtonVisibility() {
         reportBtn.style.display = 'none';
         deleteBtn.style.display = 'none';
         chatBtn.style.display = 'block';
+        removeItemBtn.style.display = 'none';
+        dismissReportBtn.style.display = 'none';
         alreadyClaimedMsg.style.display = 'block';
+        return;
+    }
+
+    if (viewingStatus === 'ADMIN_REVIEW') {
+        claimBtn.style.display = 'none';
+        reportBtn.style.display = 'none';
+        deleteBtn.style.display = 'none';
+        chatBtn.style.display = 'none';
+        removeItemBtn.style.display = 'block';
+        dismissReportBtn.style.display = 'block';
+        alreadyClaimedMsg.style.display = 'none';
         return;
     }
 
@@ -349,9 +440,64 @@ function updateButtonVisibility() {
     }
 }
 
-async function deleteItem() {
-    // TODO: Implement delete item backend logic
-    throw new Error("Delete item not implemented yet");
+function closeRemoveItemModal() {
+    document.getElementById('removeItemModal').style.display = 'none';
+}
+
+function closeDismissReportModal() {
+    document.getElementById('dismissReportModal').style.display = 'none';
+}
+
+async function onConfirmRemoveItem() {
+    if (!report) {
+        alert('No report available to remove.');
+        return;
+    }
+    const result = await adminUtils.acceptReport(report);
+    if (result) {
+        closeRemoveItemModal();
+        report.status = 'ACCEPTED';
+        if (item) {
+            item.status = 'REMOVED';
+        }
+        renderItemStatus();
+        renderAdminReportStatus();
+        updateButtonVisibility();
+        showAdminResultModal('Item removed successfully.');
+    } else {
+        alert(`item remove error`);
+    }
+}
+
+async function onConfirmDismissReport() {
+    if (!report) {
+        alert('No report available to dismiss.');
+        return;
+    }
+    const result = await adminUtils.dismissReport(report);
+    if (result) {
+        closeDismissReportModal();
+        report.status = 'DISMISSED';
+        renderAdminReportStatus();
+        updateButtonVisibility();
+        showAdminResultModal('Report dismissed successfully.');
+    } else {
+        alert(`dismiss report error`);
+    }
+}
+
+function showAdminResultModal(message) {
+    const modal = document.getElementById('adminResultModal');
+    const messageEl = document.getElementById('adminResultModalMessage');
+    if (!modal || !messageEl) return;
+    messageEl.innerText = message;
+    modal.style.display = 'flex';
+}
+
+function closeAdminResultModal() {
+    const modal = document.getElementById('adminResultModal');
+    if (!modal) return;
+    modal.style.display = 'none';
 }
 
 function displayClaimStatistics() {
@@ -375,4 +521,8 @@ function displayClaimStatistics() {
     
     statsHTML += '</div>';
     statsContainer.innerHTML = statsHTML;
+}
+
+async function abandonItem(e) {
+
 }

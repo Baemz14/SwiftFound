@@ -32,9 +32,11 @@
         <!-- Right: Information Section -->
         <section class="info-section">
             <div class="item-header">
-                <span class="category-tag" id="category">Category Placeholder</span>
+                <div class="category-row">
+                    <span class="category-tag" id="category">Category Placeholder</span>
+                    <span id="itemStatus" class="item-status" style="display: none;"></span>
+                </div>
                 <h1 class="item-title" id="title">Item Title Placeholder</h1>
-                <div id="itemStatus" class="item-status" style="display: none;"></div>
                 <p class="dt-cont">
                     <span class="dt-label">POSTED ON:</span> 
                     <span class="dt-value" id="detail_date">May 13, 2026, 05:54 PM</span>
@@ -74,9 +76,12 @@
                     <p id="alreadyClaimedMsg" class="already-claimed-msg" style="display: none;"></p>
                     <span id="claimAttemptBadge" class="claim-attempt-badge" style="display: none;"></span>
                 </div>
+                <div id="adminReportStatus" class="admin-report-status" style="display: none;"></div>
                 <button id="claimBtn" class="msg-btn">Claim</button>
                 <button id="openChatBtn" class="msg-btn" style="display: none;">Open Chat</button>
                 <button id="deleteBtn" class="delete-btn" style="display: none;">Delete Item</button>
+                <button id="removeItemBtn" class="delete-btn" style="display: none;">Remove Item</button>
+                <button id="dismissReportBtn" class="report-btn" style="display: none;">Dismiss Report</button>
             </div>
 
             <button id="reportBtn" class="report-btn">Report</button>
@@ -145,6 +150,41 @@
         <div class="modal-actions">
             <button id="cancelDeleteBtn" class="btn-secondary">Cancel</button>
             <button id="confirmDeleteBtn" class="btn-danger">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Item Modal -->
+<div id="removeItemModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h2>Remove Item</h2>
+        <p>Confirm removing this item from the platform.</p>
+        <div class="modal-actions">
+            <button id="cancelRemoveItemBtn" class="btn-secondary">Cancel</button>
+            <button id="confirmRemoveItemBtn" class="btn-danger">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Dismiss Report Modal -->
+<div id="dismissReportModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h2>Dismiss Report</h2>
+        <p>Confirm dismissing this report without action.</p>
+        <div class="modal-actions">
+            <button id="cancelDismissReportBtn" class="btn-secondary">Cancel</button>
+            <button id="confirmDismissReportBtn" class="btn-danger">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Result Modal -->
+<div id="adminResultModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h2>Action completed</h2>
+        <p id="adminResultModalMessage"></p>
+        <div class="modal-actions">
+            <button id="adminResultOkBtn" class="btn-claim">OK</button>
         </div>
     </div>
 </div>

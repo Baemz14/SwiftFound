@@ -427,6 +427,24 @@ body {
 .r-badge.PENDING   { background: rgba(251,191,36,0.16);  color: var(--yellow); }
 .r-badge.ACCEPTED  { background: rgba(52,211,153,0.16);  color: var(--green); }
 .r-badge.DISMISSED { background: rgba(148,163,184,0.12);  color: var(--text-dim); }
+
+.review-action-btn {
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    cursor: pointer;
+}
+.review-action-btn:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-1px);
+}
+
 .r-btn:hover { filter: brightness(1.2); }
 
 /* ── Modal ───────────────────────────────────────────── */

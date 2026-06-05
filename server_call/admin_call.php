@@ -21,17 +21,31 @@ switch ($call_state) {
         $response['reports'] = getReports();
         break;
 
-    case 'UPDATE_REPORT':
-        $report_id = intval($_POST['report_id']);
-        $new_status = $_POST['status'];
-        $admin_note = $_POST['admin_note'] ?? '';
-        $allowed = ['REVIEWING', 'RESOLVED', 'DISMISSED'];
-        if (!in_array($new_status, $allowed)) {
-            $response['is_success'] = false;
-            $response['error_log'] = 'invalid status';
-            break;
+    case 'GET_REPORT':
+        $response['report'] = null;
+        if (isset($_POST['report_id'])) {
+            $report = getReport($_POST['report_id']);
+            if ($report) {
+                $response['report'] = $report;
+            } else {
+                $response['error_log'] = 'no report found';
+            }
+        } else {
+            $response['error_log'] = 'no report id provided';
         }
-        $response['is_success'] = updateReportStatus($report_id, $new_status, $admin_note);
+        break;
+
+    case 'UPDATE_REPORT_STATUS':
+        if (!isset($_POST['report_id']) || !isset($_POST['status'])) {
+            $response['is_success'] = false;
+            $response['error_log'] = 'not enough data provided';
+            break;
+        } if (updateReportStatus($_POST['report_id'], $_POST['status'])) {
+            $response['is_success'] = true;
+        } else {
+            $response['is_success'] = false;
+            $response['error_log'] = 'controller error';
+        }
         break;
 
     case 'REMOVE_ITEM':

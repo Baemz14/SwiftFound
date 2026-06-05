@@ -198,9 +198,16 @@ function drawReports() {
         return;
     }
 
+    const statusOrder = { PENDING: 0, ACCEPTED: 1, DISMISSED: 2 };
+    const sortedReports = [...reports].sort((a, b) => {
+        const aOrder = statusOrder[(a.status || '').toUpperCase()] ?? 3;
+        const bOrder = statusOrder[(b.status || '').toUpperCase()] ?? 3;
+        return aOrder - bOrder;
+    });
+
     container.innerHTML = `
         <div class="reports-list">
-            ${reports.map((r, idx) => {
+            ${sortedReports.map((r, idx) => {
                 const detailsText = r.details ? esc(r.details) : 'No extra details provided.';
                 const date = new Date(r.created_at).toLocaleDateString('en-MY', { month:'short', day:'numeric', year:'numeric' });
                 const time = new Date(r.created_at).toLocaleTimeString('en-MY', { hour:'2-digit', minute:'2-digit' });
@@ -268,9 +275,11 @@ function drawReports() {
                                         <span>Reported: ${date} at ${time}</span>
                                     </div>
                                 </div>
+                                ${r.status === 'PENDING' ? `
                                 <div>
-                                    <button id='reviewBtn_${r.report_id}'>review item</button>
+                                    <button id='reviewBtn_${r.report_id}' type='button' class='r-btn review-action-btn'>review item</button>
                                 </div>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -279,9 +288,13 @@ function drawReports() {
         </div>
     `;
     for (const r of reports) {
-        document.getElementById(`reviewBtn_${r.report_id}`).addEventListener('click', function (e) {
-            window.location.href = `/swiftfound/item_detail.php?item_id=${r.reported_item_id}&is_review=true`;
-        });
+        let reviewBtn = document.getElementById(`reviewBtn_${r.report_id}`);
+        if (reviewBtn) {
+            reviewBtn.addEventListener('click', function (e) {
+                window.location.href = `/swiftfound/item_detail.php?item_id=${r.reported_item_id}&report_id=${r.report_id}`;
+            });
+        }
+
     }
 }
 

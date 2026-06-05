@@ -356,6 +356,13 @@ function removeItem($item_id) {
     global $conn;
     $item_id = (int)$item_id;
     $sql = "UPDATE item SET status = 'REMOVED' WHERE item_id = $item_id";
+    if (!mysqli_query($conn, $sql)) {
+        return false;
+    }
+    $sql = "UPDATE report
+        INNER JOIN item ON item.item_id = report.reported_item_id
+        SET report.status = 'ACCEPTED'
+        WHERE item.item_id = $item_id";
     return mysqli_query($conn, $sql);
 }
 
@@ -403,6 +410,24 @@ function getAdminStats() {
     return $stats;
 }
 
+function getReport($report_id) {
+    global $conn;
+    $sql = "SELECT r.*,
+                reporter.username AS reporter_name,
+                reported_u.username AS reported_username,
+                i.title AS reported_item_title,
+                i.status AS item_status
+            FROM report r
+            INNER JOIN user reporter ON r.reporter_id = reporter.user_id
+            LEFT JOIN user reported_u ON r.reported_user_id = reported_u.user_id
+            LEFT JOIN item i ON r.reported_item_id = i.item_id
+            WHERE r.report_id = '$report_id'";
+    $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    } return null;
+}
+
 function getReports() {
     global $conn;
     $sql = "SELECT r.*,
@@ -423,11 +448,10 @@ function getReports() {
     return $reports;
 }
 
-function updateReportStatus($report_id, $status, $admin_note) {
+function updateReportStatus($report_id, $status) {
     global $conn;
-    $note_escaped = mysqli_real_escape_string($conn, $admin_note);
     $status_escaped = mysqli_real_escape_string($conn, $status);
-    $sql = "UPDATE report SET status = '$status_escaped', admin_note = '$note_escaped' WHERE report_id = '$report_id'";
+    $sql = "UPDATE report SET status = '$status_escaped' WHERE report_id = '$report_id'";
     return mysqli_query($conn, $sql);
 }
 

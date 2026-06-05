@@ -70,3 +70,42 @@ export async function loadUpdatedUsers(loadedUsers) {
     }
     return updatedUsers;
 }
+
+export async function getReport(report_id) {
+    let formData = new FormData();
+    formData.append('report_id', report_id);
+    let data = await callServer('/swiftfound/server_call/admin_call.php', formData, "GET_REPORT");
+    if (!data.report) {
+        throw new Error(`report fethc error: ${data.error_log}`);
+    } return data.report;
+}
+
+export async function dismissReport(report) {
+    let formData = new FormData();
+    formData.append('report_id', report.report_id);
+    formData.append('status', 'DISMISSED');
+    let data = await callServer('/swiftfound/server_call/admin_call.php', formData, "UPDATE_REPORT_STATUS");
+    if (!data['is_success']) {
+        console.error(`dismiss report server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
+
+export async function acceptReport(report) {
+    let formData = new FormData();
+    formData.append('report_id', report.report_id);
+    formData.append('status', 'ACCEPTED');
+    let data = await callServer('/swiftfound/server_call/admin_call.php', formData, "UPDATE_REPORT_STATUS");
+    if (!data['is_success']) {
+        console.error(`accept report server error: ${data['error_log']}`);
+        return false;
+    }
+    formData.append('item_id', report.reported_item_id);
+    data = await callServer('/swiftfound/server_call/admin_call.php', formData, "REMOVE_ITEM");
+    if (!data['is_success']) {
+        console.error(`remove item server error: ${data['error_log']}`);
+        return false;
+    }
+    return true;
+}
