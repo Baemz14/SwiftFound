@@ -31,12 +31,10 @@ export async function loadNewReports(loadedReports = null) {
     let reports = data['reports'];
     if (!loadedReports) {
         return reports;
-    } if (reports.length === loadedReports.length) {
-        return [];
-    } if (reports.length < loadedReports.length) {
+    } if (reports.length <= loadedReports.length) {
         return [];
     }
-    reports.splice(0, reports.length - loadedReports.length);
+    reports.splice(0, loadedReports.length);
     return reports;
 }
 
@@ -50,7 +48,7 @@ export async function loadNewUsers(loadedUsers = null) {
     } if (users.length < loadedUsers.length) {
         return [];
     }
-    users.splice(0, users.length - loadedUsers.length);
+    users.splice(0, loadedUsers.length);
     return users;
 }
 

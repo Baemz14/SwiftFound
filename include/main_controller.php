@@ -414,7 +414,7 @@ function getReports() {
             INNER JOIN user reporter ON r.reporter_id = reporter.user_id
             LEFT JOIN user reported_u ON r.reported_user_id = reported_u.user_id
             LEFT JOIN item i ON r.reported_item_id = i.item_id
-            ORDER BY r.created_at DESC";
+            ORDER BY r.created_at ASC";
     $result = mysqli_query($conn, $sql);
     $reports = [];
     while ($row = mysqli_fetch_assoc($result)) {

@@ -1,17 +1,18 @@
 import * as adminUtils from "/swiftfound/script/admin_utils.js";
 
-let currentFilter = 'ALL';
-let _modalReportId = null;
-
 let reports = [];
 let stats = {};
 let users = [];
+let currentSortKey = null;
+let currentSortAsc = true;
 
 export async function onAdminDashboardLoad() {
     reports = await adminUtils.loadNewReports();
     stats = await adminUtils.loadNewStats();
     users = await adminUtils.loadNewUsers();
     console.log(users);
+    console.log(stats);
+    console.log(reports);
 
     document.querySelectorAll('.dash-nav li').forEach(li => {
         li.addEventListener('click', () => {
@@ -31,19 +32,90 @@ export async function onAdminDashboardLoad() {
         filterReports(btn.dataset.filter);
     });
 
+    // Users search and sort controls
+    document.getElementById('userSearch').addEventListener('input', e => {
+        sortUsers(e.target.value);
+    });
+
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            const sortKey = e.target.dataset.sort;
+            const btnText = e.target.textContent.replace(' ▲', '').replace(' ▼', '');
+            
+            // If clicking the same button
+            if (currentSortKey === sortKey) {
+                if (currentSortAsc) {
+                    // First state: asc → desc
+                    currentSortAsc = false;
+                    e.target.textContent = btnText + ' ▼';
+                    sortUsers(document.getElementById('userSearch').value, currentSortKey, currentSortAsc);
+                } else {
+                    // Second state: desc → deactivate
+                    currentSortKey = null;
+                    currentSortAsc = true;
+                    e.target.classList.remove('active');
+                    e.target.textContent = btnText;
+                    drawUsersFromList(users.filter(u => {
+                        const searchQuery = document.getElementById('userSearch').value;
+                        if (!searchQuery) return true;
+                        return u.username.toLowerCase().includes(searchQuery.toLowerCase());
+                    }));
+                }
+            } else {
+                // Different button clicked
+                document.querySelectorAll('.sort-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.textContent = b.textContent.replace(' ▲', '').replace(' ▼', '');
+                });
+                e.target.classList.add('active');
+                e.target.textContent = btnText + ' ▲';
+                currentSortKey = sortKey;
+                currentSortAsc = true;
+                sortUsers(document.getElementById('userSearch').value, currentSortKey, currentSortAsc);
+            }
+        });
+    });
+
     loadStats();
     drawReports();
     drawUsers();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let opening = urlParams.get('opening');
+    if (opening) {
+        const targetLi = document.querySelector(`.dash-nav li[data-section="${opening}"]`);
+        if (targetLi) {
+            activateSection(targetLi);
+        } else {
+            activateSection(document.querySelector('.dash-nav li'));
+        }
+    } else {
+        activateSection(document.querySelector('.dash-nav li'));
+    }
     setInterval(checkNewData, 2000);
 }
 
 function activateSection(li) {
+    const url = new URL(window.location);
+    url.searchParams.set('opening', li.dataset.section);
+    window.history.pushState({}, '', url);
+
     document.querySelectorAll('.dash-nav li').forEach(x => x.classList.remove('active'));
     document.querySelectorAll('.dash-section').forEach(x => x.classList.remove('active'));
     li.classList.add('active');
     const sect = document.getElementById(li.dataset.section);
     if (sect) sect.classList.add('active');
     if (li.dataset.section === 'reportsSect') filterReports('ALL');
+    if (li.dataset.section === 'usersSect') {
+        currentSortKey = null;
+        currentSortAsc = true;
+        document.querySelectorAll('.sort-btn').forEach(b => {
+            b.classList.remove('active');
+            b.textContent = b.textContent.replace(' ▲', '').replace(' ▼', '');
+        });
+        document.getElementById('userSearch').value = '';
+        drawUsers();
+    }
 }
 
 async function checkNewData() {
@@ -58,6 +130,8 @@ async function checkNewData() {
     const newReports = await adminUtils.loadNewReports(reports);
     if (newReports.length > 0) {
         console.log("New reports:", newReports);
+        reports.push(...newReports);
+        drawReports();
     }
 }
 
@@ -124,37 +198,91 @@ function drawReports() {
         return;
     }
 
-    container.innerHTML = reports.map(r => {
-        const detailsText = r.details ? esc(r.details) : 'No extra details provided.';
-        const targetLabel = r.reported_item_title ? esc(r.reported_item_title) : esc(r.reported_username) || 'Unknown target';
-        const targetType = r.reported_item_title ? 'Item' : r.reported_username ? 'User' : 'Target';
-        const date = new Date(r.created_at).toLocaleDateString('en-MY', { month:'short', day:'numeric', year:'numeric' });
+    container.innerHTML = `
+        <div class="reports-list">
+            ${reports.map((r, idx) => {
+                const detailsText = r.details ? esc(r.details) : 'No extra details provided.';
+                const date = new Date(r.created_at).toLocaleDateString('en-MY', { month:'short', day:'numeric', year:'numeric' });
+                const time = new Date(r.created_at).toLocaleTimeString('en-MY', { hour:'2-digit', minute:'2-digit' });
 
-        return `
-            <div class="report-card" id="rcard_${r.report_id}">
-                <div class="report-card-header">
-                    <div class="report-card-title">
-                        <div class="report-source">${esc(r.reporter_name)}</div>
-                        <div class="report-subtitle">${targetType}: <span>${targetLabel}</span></div>
+                return `
+                    <div class="report-card" id="rcard_${r.report_id}">
+                        <div class="report-card-main" onclick="this.closest('.report-card').classList.toggle('expanded')">
+                            <div class="report-main-info">
+                                <div class="report-header-row">
+                                    <span class="report-label">Reporter:</span>
+                                    <span class="report-name">${esc(r.reporter_name)}</span>
+                                </div>
+                                <div class="report-header-row">
+                                    <span class="report-label">Target:</span>
+                                    <span class="report-target">
+                                        ${r.reported_item_title ? `<span class="target-item">📦 ${esc(r.reported_item_title)}</span>` : ''}
+                                        ${r.reported_username ? `<span class="target-user">👤 ${esc(r.reported_username)}</span>` : ''}
+                                    </span>
+                                </div>
+                                <div class="report-header-row">
+                                    <span class="report-label">Reason:</span>
+                                    <span class="report-reason">${esc(r.reason)}</span>
+                                </div>
+                            </div>
+                            <div class="report-main-meta">
+                                <span class="r-badge ${r.status}">${r.status}</span>
+                                <span class="report-date">${date}</span>
+                            </div>
+                            <div class="expand-icon">›</div>
+                        </div>
+                        <div class="report-card-details">
+                            <div class="report-details-section">
+                                <div class="details-title">Detailed Information</div>
+                                <div class="details-row">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Reporter</span>
+                                        <span class="detail-value">${esc(r.reporter_name)}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Reported User</span>
+                                        <span class="detail-value">${esc(r.reported_username) || '—'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Reported Item</span>
+                                        <span class="detail-value">${esc(r.reported_item_title) || '—'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Item Status</span>
+                                        <span class="detail-value">${esc(r.item_status)}</span>
+                                    </div>
+                                </div>
+                                <div class="detail-full-width">
+                                    <span class="detail-label">Details</span>
+                                    <div class="detail-text">${detailsText}</div>
+                                </div>
+                                ${r.admin_note ? `
+                                    <div class="detail-full-width">
+                                        <span class="detail-label">Admin Note</span>
+                                        <div class="detail-text admin-note">${esc(r.admin_note)}</div>
+                                    </div>
+                                ` : ''}
+                                <div class="detail-full-width">
+                                    <span class="detail-label">Dates</span>
+                                    <div class="detail-dates">
+                                        <span>Reported: ${date} at ${time}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button id='reviewBtn_${r.report_id}'>review item</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <span class="r-badge ${r.status}">${r.status}</span>
-                </div>
-                <div class="report-card-content">
-                    <div class="report-line">
-                        <div class="report-field">Reason</div>
-                        <div class="report-value">${esc(r.reason)}</div>
-                    </div>
-                    <div class="report-line report-details">
-                        <div class="report-field">Details</div>
-                        <div class="report-value">${detailsText}</div>
-                    </div>
-                </div>
-                <div class="report-card-footer">
-                    <span>${date}</span>
-                </div>
-            </div>
-        `;
-    }).join('');
+                `;
+            }).join('')}
+        </div>
+    `;
+    for (const r of reports) {
+        document.getElementById(`reviewBtn_${r.report_id}`).addEventListener('click', function (e) {
+            window.location.href = `/swiftfound/item_detail.php?item_id=${r.reported_item_id}&is_review=true`;
+        });
+    }
 }
 
 function filterReports(filter) {
@@ -171,14 +299,41 @@ function filterReports(filter) {
     });
 }
 
-function drawUsers() {
-    const container = document.getElementById('usersContainer');
-    container.innerHTML = '<div class="loading-text">Loading…</div>';
+function sortUsers(searchQuery = '', sortKey = null, ascending = true) {
+    let filtered = users.filter(u => {
+        if (!searchQuery) return true;
+        return u.username.toLowerCase().includes(searchQuery.toLowerCase());
+    });
 
-    if (users.length === 0) {
+    if (sortKey) {
+        filtered.sort((a, b) => {
+            let aVal = a[sortKey];
+            let bVal = b[sortKey];
+            
+            // Handle numeric values
+            if (typeof aVal === 'string' && !isNaN(aVal)) {
+                aVal = parseInt(aVal);
+                bVal = parseInt(bVal);
+            }
+            
+            if (aVal < bVal) return ascending ? -1 : 1;
+            if (aVal > bVal) return ascending ? 1 : -1;
+            return 0;
+        });
+    }
+
+    // Update the users display
+    const container = document.getElementById('usersContainer');
+    if (filtered.length === 0) {
         container.innerHTML = `<div class="empty-state"><div class="empty-icon">👤</div>No users found.</div>`;
         return;
     }
+
+    drawUsersFromList(filtered);
+}
+
+function drawUsersFromList(userList) {
+    const container = document.getElementById('usersContainer');
 
     const claimStatusColors = { 
         PENDING: '#fbbf24', 
@@ -199,7 +354,7 @@ function drawUsers() {
 
     container.innerHTML = `
         <div class="users-list">
-            ${users.map((u, idx) => `
+            ${userList.map((u, idx) => `
                 <div class="user-card" id="ucard_${idx}">
                     <div class="user-card-main" onclick="this.closest('.user-card').classList.toggle('expanded')">
                         <div class="user-main-info">
@@ -245,6 +400,18 @@ function drawUsers() {
             `).join('')}
         </div>
     `;
+}
+
+function drawUsers() {
+    const container = document.getElementById('usersContainer');
+    container.innerHTML = '<div class="loading-text">Loading…</div>';
+
+    if (users.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">👤</div>No users found.</div>`;
+        return;
+    }
+
+    drawUsersFromList(users);
 }
 
 function updateUser(user) {

@@ -70,7 +70,7 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
             <div class="filter-bar" id="reportFilterBar">
                 <button class="filter-btn active" data-filter="ALL">All</button>
                 <button class="filter-btn" data-filter="PENDING">Pending</button>
-                <button class="filter-btn" data-filter="RESOLVED">Resolved</button>
+                <button class="filter-btn" data-filter="ACCEPTED">Accepted</button>
                 <button class="filter-btn" data-filter="DISMISSED">Dismissed</button>
             </div>
 
@@ -83,6 +83,17 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
         <div id="usersSect" class="dash-section">
             <h1 class="dash-section-title">Users</h1>
             <p class="dash-section-sub">All registered platform members.</p>
+            
+            <div class="users-controls">
+                <input type="text" id="userSearch" placeholder="Search by username…" class="user-search-input">
+                <div class="users-sort-btns">
+                    <button class="sort-btn" data-sort="username">Username</button>
+                    <button class="sort-btn" data-sort="reputation">Reputation</button>
+                    <button class="sort-btn" data-sort="item_count">Items</button>
+                    <button class="sort-btn" data-sort="claim_count">Claims</button>
+                </div>
+            </div>
+            
             <div id="usersContainer">
                 <div class="loading-text">Loading users…</div>
             </div>

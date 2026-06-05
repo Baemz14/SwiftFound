@@ -7,12 +7,11 @@ let item = null;
 let user = null;
 let claims = null;
 
-let isUserPosted = false;
-let isUserClaimed = false;
 let userClaim = null;
 let claimAttempt = 0;
 let userClaimBlocked = false; // true when user exceeded allowed attempts
 let isArchived = false;
+let viewingStatus = 'USER_VIEW'; // USER_VIEW, USER_POSTED, USER_CLAIMED, ADMIN_REVIEW
 
 export async function onItemLoad() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -28,11 +27,15 @@ export async function onItemLoad() {
     let sessData = await callServer('/swiftfound/server_call/user_call.php', null, "GET_SESSDATA");
     user = sessData['user'];
     if (user) {
-        isUserPosted = item['user_id'] === user['user_id'];
+        viewingStatus = item['user_id'] === user['user_id']? 'USER_POSTED': 'USER_VIEW';
+    }
+
+    let isReview = urlParams.get('is_review');
+    if (isReview) {
+        viewingStatus = 'ADMIN_REVIEW';
     }
 
     await loadClaims();
-
     displayClaimStatistics();
 
     // show overall item status if not PENDING
@@ -73,7 +76,7 @@ export async function onItemLoad() {
 
     document.getElementById('loc').innerText = item['location'];
     document.getElementById('desc').innerText = item['description'];
-    document.getElementById('username').innerText = isUserPosted? "you": item['username'];
+    document.getElementById('username').innerText = viewingStatus === 'USER_POSTED'? "you": item['username'];
 
     const reputationContainer = document.getElementById('posterReputation');
     const reputationBadge = document.getElementById('repBadge');
@@ -116,16 +119,17 @@ export async function onItemLoad() {
     document.getElementById('submitClaimBtn').addEventListener('click', claimItem);
 
     // open chat button listener (if applicable)
-    if (user && isUserClaimed) {
+    if (user && viewingStatus === 'USER_CLAIMED') {
         document.getElementById('openChatBtn').addEventListener('click', function() {
             window.location.href = `/swiftfound/chat.php?opening=${userClaim['claim_id']}`;
         });
     }
+
+    console.log(viewingStatus);
 }
 
 async function loadClaims() {
     claimAttempt = 0;
-    isUserClaimed = false;
     userClaim = null;
     userClaimBlocked = false;
 
@@ -145,9 +149,8 @@ async function loadClaims() {
 
             // active claim statuses
             if (status === 'PENDING' || status === 'CHATTING' || status === 'OWNER_CONFIRM') {
-                isUserClaimed = true;
+                viewingStatus = 'USER_CLAIMED'
                 userClaim = claim;
-                console.log(`user already claimed this item`);
                 break;
             }
         }
@@ -156,7 +159,7 @@ async function loadClaims() {
     // update UI messaging about user's claim attempts / active claim
     const alreadyMsgEl = document.getElementById('alreadyClaimedMsg');
     const attemptBadge = document.getElementById('claimAttemptBadge');
-    if (isUserClaimed) {
+    if (viewingStatus === 'USER_CLAIMED') {
         let msg = 'You have an active claim.';
         if (claimAttempt > 0) {
             msg += ` You also have ${claimAttempt} previous attempt${claimAttempt !== 1 ? 's' : ''}.`;
@@ -182,12 +185,11 @@ async function loadClaims() {
     } else {
         alreadyMsgEl.style.display = 'none';
     }
-    console.log(claimAttempt);
 }
 
 
 function onClaimClick(e) {
-    if (isUserPosted) {
+    if (viewingStatus === 'USER_POSTED') {
         alert(`cannot claim your own stuff >:(`);
         return;
     }
@@ -196,7 +198,7 @@ function onClaimClick(e) {
         window.location.href = "/swiftfound/login.php";
         return;
     }
-    if (isUserClaimed) {
+    if (viewingStatus === 'USER_CLAIM') {
         alert(`You have an active claim for this item.`);
         return;
     }
@@ -299,8 +301,8 @@ function updateButtonVisibility() {
     if (isArchived) {
         claimBtn.style.display = 'none';
         reportBtn.style.display = 'none';
-        deleteBtn.style.display = isUserPosted ? 'block' : 'none';
-        chatBtn.style.display = isUserClaimed ? 'block' : 'none';
+        deleteBtn.style.display = viewingStatus === 'USER_POSTED' ? 'block' : 'none';
+        chatBtn.style.display = viewingStatus === 'USER_CLAIMED' ? 'block' : 'none';
         // keep any existing messages visible
         return;
     }
@@ -309,13 +311,13 @@ function updateButtonVisibility() {
     if (userClaimBlocked) {
         claimBtn.style.display = 'none';
         reportBtn.style.display = 'none';
-        deleteBtn.style.display = isUserPosted ? 'block' : 'none';
+        deleteBtn.style.display = viewingStatus === 'USER_POSTED' ? 'block' : 'none';
         chatBtn.style.display = 'none';
         alreadyClaimedMsg.style.display = 'block';
         return;
     }
 
-    if (isUserPosted) {
+    if (viewingStatus === 'USER_POSTED') {
         // User is the poster - show delete button, hide claim and report
         claimBtn.style.display = 'none';
         reportBtn.style.display = 'none';
@@ -325,7 +327,7 @@ function updateButtonVisibility() {
         return;
     }
 
-    if (isUserClaimed) {
+    if (viewingStatus === 'USER_CLAIMED') {
         // User already claimed - show chat button, hide claim, report, delete
         claimBtn.style.display = 'none';
         reportBtn.style.display = 'none';

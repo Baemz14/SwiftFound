@@ -22,6 +22,9 @@ claim req buat mcm notification ikut brapa byk claim req status = PENDING
 item_details TODO:
 delete button tuka nama jadi abandon item
 
+baem:
+item_details open chat broken
+
 reputation
 < 0 ➔ CAUTIOS
 0 - 19 ➔ NOVICE
