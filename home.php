@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/home.css">
 
     <script type="module">
-        import { homeLoad } from '/swiftfound/script/home.js?v=2';
+        import { homeLoad } from '/swiftfound/script/home.js?v=5';
         window.onload = homeLoad;
     </script>
 </head>
@@ -34,7 +34,10 @@
                     <li id='dashboardBtn' class="nav-buttons active">Dashboard</li>
                     <li id='postedBtn' class="nav-buttons">My Posted Items</li>
                     <li id='claimsBtn' class="nav-buttons">My Active Claims</li>
-                    <li id='claimReqBtn' class="nav-buttons">Claim Requests</li>
+                    <li id='claimReqBtn' class="nav-buttons">
+                        Claim Requests
+                        <span class="nav-pending-badge" id="claimReqBadge" style="display:none;"></span>
+                    </li>
                 </ul>   
                 
                 <div class="action-buttons">
@@ -52,7 +55,40 @@
         <!-- Main Content Card -->
         <main class="content-area">
             <div id="dashboardSect" class="tab-content">
-                <h1>Hello, <span id="usernameTxt">User</span>!</h1>
+                <h1>Hello, <span id="usernameTxt">User</span>! 👋</h1>
+                <p class="dash-welcome-sub">Here's a snapshot of your SwiftFound activity.</p>
+
+                <!-- Quick Stats Row -->
+                <div class="dash-stats-row">
+                    <div class="dash-stat-card dash-stat-blue">
+                        <div class="dash-stat-icon">📦</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="stat-posted">0</div>
+                            <div class="dash-stat-label">Posted Items</div>
+                        </div>
+                    </div>
+                    <div class="dash-stat-card dash-stat-purple">
+                        <div class="dash-stat-icon">💬</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="stat-claims">0</div>
+                            <div class="dash-stat-label">Active Claims</div>
+                        </div>
+                    </div>
+                    <div class="dash-stat-card dash-stat-orange">
+                        <div class="dash-stat-icon">⏳</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="stat-pending">0</div>
+                            <div class="dash-stat-label">Pending Requests</div>
+                        </div>
+                    </div>
+                    <div class="dash-stat-card dash-stat-green">
+                        <div class="dash-stat-icon">✅</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="stat-resolved">0</div>
+                            <div class="dash-stat-label">Resolved</div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Reputation Progress Card -->
                 <div class="rep-card reputation-summary rep-novice">
@@ -82,22 +118,41 @@
                         <div class="rep-tier-dot guardian"> <span class="dot"></span><span class="tier-label">GUARDIAN<br><small>100</small></span></div>
                     </div>
                 </div>
+
+                <!-- Quick Actions -->
+                <div class="dash-quick-actions">
+                    <div class="dash-qa-title">Quick Actions</div>
+                    <div class="dash-qa-row">
+                        <a href="item_form.php" class="dash-qa-btn dash-qa-primary">
+                            <span>📋</span> Post an Item
+                        </a>
+                        <a href="browse.php" class="dash-qa-btn dash-qa-secondary">
+                            <span>🔍</span> Browse Items
+                        </a>
+                        <a href="chat.php" class="dash-qa-btn dash-qa-chat">
+                            <span>💬</span> Open Chat
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div id="postedSect" class="tab-content" style="display:none;">
                 <h1>My Posted Items</h1>
-                <div id="postedItemsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                <p class="section-sub">Your items, sorted by status — active first.</p>
+                <div id="postedItemsContainer" class="items-grid">
                 </div>
             </div>
 
             <div id="claimsSect" class="tab-content" style="display:none;">
-                <h1>My Claims</h1>
+                <h1>My Active Claims</h1>
+                <p class="section-sub">Items you've claimed — click any row to open chat.</p>
                 <div id="claimContainer" class="claim-grid">
                 </div>
             </div>
 
             <div id="claimReqSect" class="tab-content" style="display:none;">
                 <h1>Claim Requests</h1>
+                <p class="section-sub">People requesting your posted items — PENDING requests shown first.</p>
                 <div id="claimReqContainer" class="claim-grid"></div>
             </div>
         </main>

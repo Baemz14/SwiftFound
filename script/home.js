@@ -32,14 +32,20 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
+// Status ordering priority (lower index = shown first)
+const STATUS_ORDER = ['PENDING', 'CHATTING', 'OWNER_CONFIRM', 'RESOLVED', 'REJECTED', 'CANCELED', 'ABANDONED', 'AVAILABLE', 'LOST'];
+function statusSortKey(status) {
+    const idx = STATUS_ORDER.indexOf(status);
+    return idx === -1 ? 99 : idx;
+}
+
 export async function homeLoad() {
     user = await loadUserData();
     if(!user) {
         alert("You are not logged in. Redirecting to login page.");
         window.location.href = 'login.php';
-        return; // Prevents further execution if not logged in
+        return;
     }
-    console.log("User data loaded:", user);
 
     item = await userUtil.loadNewItem();
     claim = await userUtil.loadNewClaim();
@@ -50,6 +56,7 @@ export async function homeLoad() {
     updateClaimUi(claim);
     updateClaimReqUi(claimReq);
     updateChatNotiCount(chatNotiCount);
+    updateDashboardStats();
 
     document.getElementById("usernameTxt").innerText = user['username'];
     updateReputationUI(Number(user.reputation ?? 0));
@@ -94,14 +101,12 @@ export async function homeLoad() {
                 alert('Select an image first.');
                 return;
             }
-
             const file = avatarInput.files[0];
             const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
             if (!allowedTypes.includes(file.type)) {
                 alert('Only JPG, PNG, or WEBP images are allowed.');
                 return;
             }
-
             const formData = new FormData();
             formData.append('avatar', file);
             try {
@@ -181,25 +186,26 @@ function activateSection(btnId) {
 async function checkNewThings() {
     let newItem = await userUtil.loadNewItem(item);
     if (newItem.length > 0) {
-        console.log("new item came through");
         item.push(...newItem);
         updateItemUi(newItem);
+        updateDashboardStats();
     }
     let newClaim = await userUtil.loadNewClaim(claim);
     if (newClaim.length > 0) {
-        console.log("new claim came through");
         claim.push(...newClaim);
         updateClaimUi(newClaim);
+        updateDashboardStats();
     }
     let newClaimReq = await userUtil.loadNewClaimReq(claimReq);
     if (newClaimReq.length > 0) {
-        console.log("new claim request came through");
         claimReq.push(...newClaimReq);
-        updateClaimReqUi(newClaimReq);
+        // Full re-render so pending ones stay on top
+        document.getElementById('claimReqContainer').innerHTML = '';
+        updateClaimReqUi(claimReq);
+        updateDashboardStats();
     }
     let newNotiCount = await userUtil.getUnreadMessageCount();
     if (newNotiCount !== chatNotiCount) {
-        console.log(`new noti count: ${newNotiCount}`);
         chatNotiCount = newNotiCount;
         updateChatNotiCount(chatNotiCount);
     }
@@ -215,50 +221,101 @@ function updateChatNotiCount(count) {
     }
 }
 
-function updateItemUi(newItem) {
-    if (newItem.length <= 0) {
-        return;
+// ─── Item Status Pill (for posted items) ───────────────────────────────────────
+function itemStatusPillHtml(status) {
+    const map = {
+        'AVAILABLE':     { cls: 'item-status-available',     icon: '🟢', label: 'Available' },
+        'LOST':          { cls: 'item-status-lost',          icon: '🔍', label: 'Lost' },
+        'OWNER_CONFIRM': { cls: 'item-status-owner-confirm', icon: '🔔', label: 'Owner Confirm' },
+        'RESOLVED':      { cls: 'item-status-resolved',      icon: '✅', label: 'Resolved' },
+        'ABANDONED':     { cls: 'item-status-abandoned',     icon: '⚠️', label: 'Abandoned' },
+        'CLAIMED':       { cls: 'item-status-claimed',       icon: '🏷️', label: 'Claimed' },
+    };
+    const info = map[status] || { cls: 'item-status-default', icon: '📌', label: status };
+    return `<span class="item-status-pill ${info.cls}">${info.icon} ${info.label}</span>`;
+}
+
+// ─── Claim Status Pill ─────────────────────────────────────────────────────────
+function statusPillHtml(status) {
+    const map = {
+        'PENDING':       ['status-pending',       '⏳', 'Pending'],
+        'CHATTING':      ['status-chatting',       '💬', 'Chatting'],
+        'OWNER_CONFIRM': ['status-owner-confirm',  '🔔', 'Owner Confirm'],
+        'RESOLVED':      ['status-resolved',       '✅', 'Resolved'],
+        'REJECTED':      ['status-rejected',       '❌', 'Rejected'],
+        'CANCELED':      ['status-canceled',       '🚫', 'Canceled'],
+    };
+    const [cls, icon, label] = map[status] || ['status-pending', '📌', status];
+    return `<span class="status-pill ${cls}">${icon} ${label}</span>`;
+}
+
+// ─── Dashboard stats ───────────────────────────────────────────────────────────
+function updateDashboardStats() {
+    const pendingReqs  = claimReq.filter(c => c.claim_status === 'PENDING').length;
+    const activeClaims = claim.filter(c => c.claim_status === 'CHATTING' || c.claim_status === 'OWNER_CONFIRM').length;
+    const resolvedCount = claim.filter(c => c.claim_status === 'RESOLVED').length;
+    const postedCount  = item.length;
+
+    const el = id => document.getElementById(id);
+    if (el('stat-posted'))   el('stat-posted').textContent   = postedCount;
+    if (el('stat-claims'))   el('stat-claims').textContent   = activeClaims;
+    if (el('stat-pending'))  el('stat-pending').textContent  = pendingReqs;
+    if (el('stat-resolved')) el('stat-resolved').textContent = resolvedCount;
+
+    // Update claim req nav button badge
+    const claimReqBadge = document.getElementById('claimReqBadge');
+    if (claimReqBadge) {
+        if (pendingReqs > 0) {
+            claimReqBadge.textContent = pendingReqs;
+            claimReqBadge.style.display = 'inline-flex';
+        } else {
+            claimReqBadge.style.display = 'none';
+        }
     }
+}
+
+// ─── Posted Items ──────────────────────────────────────────────────────────────
+function updateItemUi(newItem) {
+    if (newItem.length <= 0) return;
+
+    // Sort: active statuses first
+    const sorted = [...newItem].sort((a, b) => statusSortKey(a.status) - statusSortKey(b.status));
+
     let container = document.getElementById('postedItemsContainer');
-    for (const item of newItem) {
+    for (const item of sorted) {
         const dateObj = new Date(item.created_at);
         const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
-        const imagePath = item.img_file ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}` : 'https://via.placeholder.com/60?text=No+Image'; 
+        const imagePath = item.img_file
+            ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}`
+            : 'https://placehold.co/300x160/eef2ff/6366f1?text=No+Image';
         let card = `
-            <div id="item_${escapeHtml(item.item_id)}" class="item-card">
-                <img src="${imagePath}" alt="${escapeHtml(item.title)}" style="width: 100%; height: 160px; object-fit: cover;">
-                <div style="padding: 15px;">
-                    <div style="font-size: 0.8rem; font-weight: bold; color: #4f46e5; margin-bottom: 5px;">[${escapeHtml(item.status)}] ${escapeHtml(item.category)}</div>
-                    <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">${escapeHtml(item.title)}</h3>
-                    <p style="font-size: 0.9rem; color: #4b5563; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${escapeHtml(item.description)}</p>
-                    <div style="font-size: 0.8rem; color: #9ca3af;">Posted on ${escapeHtml(dateStr)}</div>
+            <div id="item_${escapeHtml(item.item_id)}" class="item-card" style="cursor:pointer;">
+                <div class="item-card-img-wrap">
+                    <img src="${imagePath}" alt="${escapeHtml(item.title)}" class="item-card-img">
+                    <div class="item-card-status-overlay">${itemStatusPillHtml(item.status)}</div>
+                </div>
+                <div class="item-card-body">
+                    <div class="item-card-category">${escapeHtml(item.category)}</div>
+                    <h3 class="item-card-title">${escapeHtml(item.title)}</h3>
+                    <p class="item-card-desc">${escapeHtml(item.description)}</p>
+                    <div class="item-card-date">📅 ${escapeHtml(dateStr)}</div>
                 </div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
 
-        document.getElementById(`item_${item.item_id}`).addEventListener('click', function(e) {
+        document.getElementById(`item_${item.item_id}`).addEventListener('click', function() {
             window.location.href = `item_detail.php?item_id=${item.item_id}`;
         });
     }
 }
 
 function getReputationLabel(reputation) {
-    if (Number.isNaN(reputation)) {
-        return { label: 'NOVICE', className: 'rep-novice' };
-    }
-    if (reputation < 0) {
-        return { label: 'CAUTIOS', className: 'rep-cautios' };
-    }
-    if (reputation <= 19) {
-        return { label: 'NOVICE', className: 'rep-novice' };
-    }
-    if (reputation <= 49) {
-        return { label: 'HELPFUL', className: 'rep-helpful' };
-    }
-    if (reputation <= 99) {
-        return { label: 'TRUSTED', className: 'rep-trusted' };
-    }
+    if (Number.isNaN(reputation)) return { label: 'NOVICE', className: 'rep-novice' };
+    if (reputation < 0)   return { label: 'CAUTIOS', className: 'rep-cautios' };
+    if (reputation <= 19) return { label: 'NOVICE',  className: 'rep-novice' };
+    if (reputation <= 49) return { label: 'HELPFUL', className: 'rep-helpful' };
+    if (reputation <= 99) return { label: 'TRUSTED', className: 'rep-trusted' };
     return { label: 'GUARDIAN', className: 'rep-guardian' };
 }
 
@@ -275,33 +332,28 @@ function updateReputationUI(rep) {
     const nextIdx  = tiers.indexOf(current) + 1;
     const next     = tiers[nextIdx] ?? null;
 
-    // Badge + score
     const badgeEl = document.getElementById('reputationBadge');
     const scoreEl = document.getElementById('reputationScore');
     if (badgeEl) badgeEl.textContent = current.label;
     if (scoreEl) scoreEl.textContent = isNaN(rep) ? '0' : rep;
 
-    // Card theme class
     const panel = document.querySelector('.reputation-summary');
     if (panel) {
         panel.classList.remove('rep-cautios','rep-novice','rep-helpful','rep-trusted','rep-guardian');
         panel.classList.add(current.className);
     }
 
-    // Progress bar
     const barFill  = document.getElementById('repBarFill');
     const barMin   = document.getElementById('repBarMin');
     const barMax   = document.getElementById('repBarMax');
     const nextLabel = document.getElementById('repNextLabel');
 
     if (current.label === 'GUARDIAN' || !next) {
-        // Max tier — full bar
         if (barFill)   barFill.style.width = '100%';
         if (barMin)    barMin.textContent  = '100';
         if (barMax)    barMax.textContent  = '∞';
         if (nextLabel) nextLabel.textContent = '🏆 Max tier reached!';
     } else if (current.label === 'CAUTIOUS') {
-        // Negative — fill based on distance from -∞ toward 0
         const pct = Math.max(0, Math.min(100, ((rep + 20) / 20) * 100));
         if (barFill)   { barFill.style.width = '0%'; setTimeout(() => barFill.style.width = pct + '%', 50); }
         if (barMin)    barMin.textContent  = rep;
@@ -317,126 +369,105 @@ function updateReputationUI(rep) {
         if (nextLabel) nextLabel.textContent = `Next: ${next.label} at ${next.min}  (${next.min - rep} away)`;
     }
 
-    // Highlight active tier dot
     document.querySelectorAll('.rep-tier-dot').forEach(el => el.classList.remove('active'));
     const activeDot = document.querySelector(`.rep-tier-dot.${current.dotClass}`);
     if (activeDot) activeDot.classList.add('active');
 }
 
-function statusPillHtml(status) {
-    const map = {
-        'PENDING':       ['status-pending',       'Pending'],
-        'CHATTING':      ['status-chatting',       'Chatting'],
-        'OWNER_CONFIRM': ['status-owner-confirm',  'Owner Confirm'],
-        'RESOLVED':      ['status-resolved',       'Resolved'],
-        'REJECTED':      ['status-rejected',       'Rejected'],
-        'CANCELED':      ['status-canceled',       'Canceled'],
-    };
-    const [cls, label] = map[status] || ['status-pending', status];
-    return `<span class="status-pill ${cls}">${label}</span>`;
-}
-
+// ─── Active Claims (no buttons — all actions in chat) ─────────────────────────
 function updateClaimUi(newClaim) {
-    if (newClaim.length <= 0) {
-        return;
-    }
+    if (newClaim.length <= 0) return;
+
+    // Sort: active first
+    const sorted = [...newClaim].sort((a, b) => statusSortKey(a.claim_status) - statusSortKey(b.claim_status));
+
     const container = document.getElementById('claimContainer');
-    for (const claim of newClaim) {
-        const imagePath = claim.img_file ? `/swiftfound/img_upload/${escapeHtml(claim.img_file)}` : 'https://via.placeholder.com/60?text=No+Image';
+    for (const claim of sorted) {
+        const imagePath = claim.img_file
+            ? `/swiftfound/img_upload/${escapeHtml(claim.img_file)}`
+            : 'https://placehold.co/52x52/eef2ff/6366f1?text=?';
         let card = `
-            <div id="claim_${escapeHtml(claim.claim_id)}" class="claim-row">
-                <img src="${imagePath}" style="width: 52px; height: 52px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+            <div id="claim_${escapeHtml(claim.claim_id)}" class="claim-row" style="cursor:pointer;" title="Open in chat">
+                <img src="${imagePath}" class="claim-thumb" alt="${escapeHtml(claim.title)}">
                 <div style="flex: 1; min-width: 0;">
-                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <strong style="font-size: 1rem; color: #111827;">${escapeHtml(claim.title)}</strong>
+                    <div class="claim-row-top">
+                        <strong class="claim-item-title">${escapeHtml(claim.title)}</strong>
                         ${statusPillHtml(claim.claim_status)}
                     </div>
-                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+                    <div class="claim-row-answer">
                         Your Answer: <em>&quot;${escapeHtml(claim.answer_text)}&quot;</em>
                     </div>
                 </div>
-                <div style="flex-shrink: 0;">
-                    <button class="row-btn row-btn-secondary" id="editClaimBtn_${escapeHtml(claim.claim_id)}">Edit</button>
-                </div>
+                <div class="claim-row-action-hint">💬 Open Chat</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
-        
-        document.getElementById(`editClaimBtn_${claim.claim_id}`).addEventListener('click', function() {
-            window.location.href = `item_detail.php?item_id=${claim.item_id}`;
+
+        document.getElementById(`claim_${claim.claim_id}`).addEventListener('click', function() {
+            window.location.href = `chat.php?opening=${claim.claim_id}`;
         });
     }
 }
 
-function clearClaimReqUi() {
-    document.getElementById('claimReqContainer').innerHTML = "";
-}
-
+// ─── Claim Requests — notification style, PENDING first & highlighted ─────────
 function updateClaimReqUi(newClaimReq) {
-    if (newClaimReq.length <= 0) {
-        return;
-    }
-    console.log(newClaimReq);
+    if (newClaimReq.length <= 0) return;
+
+    // Sort: PENDING first
+    const sorted = [...newClaimReq].sort((a, b) => statusSortKey(a.claim_status) - statusSortKey(b.claim_status));
+
     const container = document.getElementById('claimReqContainer');
-    for (const claim of newClaimReq) {
+    for (const claim of sorted) {
         let item = claim.item;
         let claimer = claim.claimer;
-        const imagePath = item.img_file ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}` : 'https://via.placeholder.com/60?text=No+Image';
-        const isPending = claim.claim_status === 'PENDING';
+        const imagePath = item.img_file
+            ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}`
+            : 'https://placehold.co/52x52/eef2ff/6366f1?text=?';
+        const isPending  = claim.claim_status === 'PENDING';
         const isChatting = claim.claim_status === 'CHATTING' || claim.claim_status === 'OWNER_CONFIRM';
-        let actionBtn = '';
-        if (isPending) {
-            actionBtn = `<button class="row-btn row-btn-primary" data-open-btn>✓ Approve &amp; Chat</button>`;
-        } else if (isChatting) {
-            actionBtn = `<button class="row-btn row-btn-secondary" data-open-btn>Open Chat</button>`;
-        }
+
+        let actionLabel = '';
+        if (isPending)  actionLabel = `<span class="noti-action-hint noti-action-approve">✓ Tap to Approve &amp; Chat</span>`;
+        else if (isChatting) actionLabel = `<span class="noti-action-hint noti-action-chat">💬 Tap to Open Chat</span>`;
+
         let card = `
-            <div id="claimReq_${escapeHtml(claim.claim_id)}" class="claim-req-row">
-                <img src="${imagePath}" style="width: 52px; height: 52px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
-                <div style="flex: 1; min-width: 0;">
-                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <strong style="font-size: 1rem; color: #111827;">${escapeHtml(item.title)}</strong>
+            <div id="claimReq_${escapeHtml(claim.claim_id)}" class="claim-noti-card ${isPending ? 'claim-noti-pending' : ''}" style="cursor:pointer;">
+                <div class="noti-dot-col">
+                    ${isPending ? '<span class="noti-pulse-dot"></span>' : '<span class="noti-inactive-dot"></span>'}
+                </div>
+                <img src="${imagePath}" class="claim-thumb" alt="${escapeHtml(item.title)}">
+                <div class="noti-body">
+                    <div class="noti-header-row">
+                        <span class="noti-claimer-name">👤 ${escapeHtml(claimer.username)}</span>
                         ${statusPillHtml(claim.claim_status)}
                     </div>
-                    <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
-                        ${escapeHtml(claimer.username)}&#39;s Answer: <em>&quot;${escapeHtml(claim.answer_text)}&quot;</em>
-                    </div>
-                </div>
-                <div style="flex-shrink: 0; display: flex; gap: 6px;">
-                    ${actionBtn}
+                    <div class="noti-item-title">${escapeHtml(item.title)}</div>
+                    <div class="noti-answer">&ldquo;${escapeHtml(claim.answer_text)}&rdquo;</div>
+                    ${actionLabel}
                 </div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
+
         const row = document.getElementById(`claimReq_${claim.claim_id}`);
-        const openBtn = row ? row.querySelector('[data-open-btn]') : null;
-        if (openBtn) {
-            if (isPending) {
-                openBtn.addEventListener('click', function() {
+        if (row) {
+            row.addEventListener('click', function() {
+                if (isPending) {
                     openApproveConfirm(claim);
-                });
-            } else {
-                openBtn.addEventListener('click', function() {
+                } else if (isChatting) {
                     openChat(claim);
-                });
-            }
+                }
+            });
         }
     }
 }
 
 function updateChatUi(newChat) {
-    if (newChat.length <= 0) {
-        return;
-    }
+    if (newChat.length <= 0) return;
 }
 
-function onClaimEdit(e) {
-
-}
-
-function onViewClaimer(e) {
-
-}
+function onClaimEdit(e) {}
+function onViewClaimer(e) {}
 
 let _pendingApprovalClaim = null;
 

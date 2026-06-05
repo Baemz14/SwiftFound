@@ -1,129 +1,183 @@
 import { callServer } from "/swiftfound/include/call_server.js";
 import { CategoryEnumDB, CategoryText, CategoryEnum } from "/swiftfound/enum_constant.js";
-import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
 
-let itemOn = null;
+let allItems = [];
 let user = null;
 
 export async function onBrowseLoad() {
+    // Load session / user data
     let sessData = await callServer('/swiftfound/server_call/user_call.php', null, "GET_SESSDATA");
     user = sessData['user'];
 
-  if (user) {
-        let navLinks = document.querySelector('.nav-links');
-        if (navLinks) {
-            navLinks.innerHTML = `
-                <a href="home.php" class="btn-reg">My Dashboard</a>
-            `;
-        }
+    // ── Nav: update in JS as a fallback/enhancement (PHP already handles it) ──
+    // (Nothing extra needed — PHP rendered the correct state server-side.)
+
+    // ── Load all items ─────────────────────────────────────────────────────────
+    let resp = await callServer("/swiftfound/server_call/item_call.php", null, "ALL_ITEMS");
+    allItems = resp['items'] || [];
+
+    const listingsWrapper = document.getElementById("listings_wrapper");
+    for (const item of allItems) {
+        drawItemCard(item);
     }
 
-    let listingsWrapper = document.getElementById("listings_wrapper");
-
-    let allItems = (await callServer("/swiftfound/server_call/item_call.php", null, "ALL_ITEMS"))['items'];
-    console.log("Loaded items:", allItems);
-    for (let i = 0; i < allItems.length; i++) {
-        drawItemCard(allItems[i]);
-    }
-
-    let categoryFilter = document.getElementById("categoryFilter");
+    // ── Populate category dropdown ─────────────────────────────────────────────
+    const categoryFilter = document.getElementById("categoryFilter");
     for (let i = 0; i < CategoryText.length; i++) {
-        let newCategory = `
-            <option value="${CategoryEnumDB[i]}">${CategoryText[i]}</option>
-        `;
-        categoryFilter.insertAdjacentHTML('beforeend', newCategory);
+        categoryFilter.insertAdjacentHTML('beforeend',
+            `<option value="${CategoryEnumDB[i]}">${capitalise(CategoryText[i])}</option>`
+        );
     }
 
-    let showResolvedCheckbox = document.getElementById('showResolved');
-    let hideAbandonedCheckbox = document.getElementById('showAbandoned');
+    // ── Filter elements ────────────────────────────────────────────────────────
+    const searchInput         = document.getElementById('searchInput');
+    const locationFilter      = document.getElementById('locationFilter');
+    const dateFrom            = document.getElementById('dateFrom');
+    const dateTo              = document.getElementById('dateTo');
+    const showResolvedCb      = document.getElementById('showResolved');
+    const showAbandonedCb     = document.getElementById('showAbandoned');
+    const showOwnerConfirmCb  = document.getElementById('showOwnerConfirm');
 
+    // ── Filter function ────────────────────────────────────────────────────────
     function filterItems() {
-        let selectedCategory = categoryFilter.value;
-        let showResolved = showResolvedCheckbox?.checked;
-        let hideAbandoned = hideAbandonedCheckbox?.checked;
+        const searchQ    = searchInput.value.trim().toLowerCase();
+        const selCat     = categoryFilter.value;
+        const locQ       = locationFilter.value.trim().toLowerCase();
+        const fromDate   = dateFrom.value ? new Date(dateFrom.value) : null;
+        const toDate     = dateTo.value   ? new Date(dateTo.value + 'T23:59:59') : null;
+        const showRes    = showResolvedCb?.checked;
+        const showAban   = showAbandonedCb?.checked;
+        const showOC     = showOwnerConfirmCb?.checked;
 
-        let allCards = document.querySelectorAll('.item-card');
-        allCards.forEach(card => {
-            let cardCategory = card.dataset.category;
-            let cardStatus = card.dataset.status || 'PENDING';
-            let categoryMatches = selectedCategory === "" || cardCategory === selectedCategory;
-            let statusMatches = true;
+        const cards = document.querySelectorAll('.item-card');
+        cards.forEach(card => {
+            const status   = card.dataset.status || 'AVAILABLE';
+            const cat      = card.dataset.category || '';
+            const title    = (card.dataset.title || '').toLowerCase();
+            const loc      = (card.dataset.location || '').toLowerCase();
+            const poster   = (card.dataset.poster || '').toLowerCase();
+            const cardDate = card.dataset.date ? new Date(card.dataset.date) : null;
 
-            if (cardStatus === "REMOVED") {
-                statusMatches = false;
-            } else if (cardStatus === "PENDING") {
-                statusMatches = true;
-            } else if (cardStatus === "RESOLVED") {
-                statusMatches = showResolved;
-            } else if (cardStatus === "ABANDONED") {
-                // Show abandoned by default; hide when checkbox is ticked
-                statusMatches = !hideAbandoned;
-            } else if (cardStatus === "OWNER_CONFIRM") {
-                // Always show owner_confirm items
-                statusMatches = true;
+            // Always hide REMOVED
+            if (status === 'REMOVED') { card.style.display = 'none'; return; }
+
+            // Hidden-by-default statuses — only show when checkbox is ticked
+            if (status === 'RESOLVED'      && !showRes)  { card.style.display = 'none'; return; }
+            if (status === 'ABANDONED'     && !showAban) { card.style.display = 'none'; return; }
+            if (status === 'OWNER_CONFIRM' && !showOC)   { card.style.display = 'none'; return; }
+
+            // Category
+            if (selCat && cat !== selCat) { card.style.display = 'none'; return; }
+
+            // Search (title, location, poster)
+            if (searchQ && !title.includes(searchQ) && !loc.includes(searchQ) && !poster.includes(searchQ)) {
+                card.style.display = 'none'; return;
             }
 
-            card.style.display = categoryMatches && statusMatches ? "" : "none";
+            // Location
+            if (locQ && !loc.includes(locQ)) { card.style.display = 'none'; return; }
+
+            // Date range
+            if (cardDate) {
+                if (fromDate && cardDate < fromDate) { card.style.display = 'none'; return; }
+                if (toDate   && cardDate > toDate)   { card.style.display = 'none'; return; }
+            }
+
+            card.style.display = '';
         });
     }
 
-    categoryFilter.addEventListener('change', filterItems);
-    [showResolvedCheckbox, hideAbandonedCheckbox].forEach(checkbox => {
-        if (checkbox) {
-            checkbox.addEventListener('change', filterItems);
-        }
+    // Attach all filter listeners
+    [searchInput, locationFilter, dateFrom, dateTo].forEach(el => {
+        if (el) el.addEventListener('input', filterItems);
+    });
+    [categoryFilter, showResolvedCb, showAbandonedCb, showOwnerConfirmCb].forEach(el => {
+        if (el) el.addEventListener('change', filterItems);
     });
 
-    // Apply filters immediately on load based on default checkbox states
+    // Run immediately to hide RESOLVED/ABANDONED/OWNER_CONFIRM on load
     filterItems();
 }
 
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function capitalise(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
+function escHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Status pill config (same palette as home.css)
+const STATUS_PILL = {
+    AVAILABLE:     { label: 'Available',     cls: 'sp-available'     },
+    LOST:          { label: 'Lost',          cls: 'sp-lost'          },
+    OWNER_CONFIRM: { label: 'Owner Confirm', cls: 'sp-owner-confirm' },
+    RESOLVED:      { label: 'Resolved',      cls: 'sp-resolved'      },
+    ABANDONED:     { label: 'Abandoned',     cls: 'sp-abandoned'     },
+    CLAIMED:       { label: 'Claimed',       cls: 'sp-claimed'       },
+};
+
+function statusPill(status) {
+    const cfg = STATUS_PILL[status];
+    if (!cfg) return '';
+    return `<span class="status-pill ${cfg.cls}">${cfg.label}</span>`;
+}
+
+// ── Draw one item card ─────────────────────────────────────────────────────────
 function drawItemCard(item) {
-    let listingsWrapper = document.getElementById("listings_wrapper");
-
-    // Never render items that have been removed by an admin
+    const listingsWrapper = document.getElementById("listings_wrapper");
     if (item['status'] === 'REMOVED') return;
 
-    let isUserPosted = false;
-    if (user) {
-        isUserPosted = item['user_id'] === user['user_id'];
-    }
+    const isUserPosted = user && item['user_id'] === user['user_id'];
+    const status  = item['status'] || 'AVAILABLE';
+    const catIdx  = CategoryEnum[item['category']];
+    const catText = catIdx !== undefined ? capitalise(CategoryText[catIdx]) : escHtml(item['category']);
+    const imgSrc  = item['img_file']
+        ? `/swiftfound/img_upload/${escHtml(item['img_file'])}`
+        : 'https://placehold.co/300x180/eef2ff/6366f1?text=No+Image';
 
-    let status = item['status'] || 'PENDING';
-    let statusLabel = '';
-    if (status !== 'PENDING') {
-        let statusClass = status.toLowerCase().replace(/_/g, '-');
-        let statusText = status.replace(/_/g, ' ');
-        statusLabel = `<div class="status-pill ${statusClass}">${statusText}</div>`;
-    }
+    const dateStr = item.created_at
+        ? new Date(item.created_at).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })
+        : '';
 
-    let newCard = `
-        <div id="itemCard_${item.item_id}" class="item-card" data-category="${item['category']}" data-status="${status}">
+    // Only show pill if NOT the default available/active state
+    const showPill = status !== 'AVAILABLE' && status !== 'LOST';
+
+    const card = `
+        <div id="itemCard_${escHtml(item.item_id)}"
+             class="item-card"
+             data-category="${escHtml(item['category'])}"
+             data-status="${escHtml(status)}"
+             data-title="${escHtml(item['title'])}"
+             data-location="${escHtml(item['location'])}"
+             data-poster="${escHtml(item['username'])}"
+             data-date="${escHtml(item['created_at'] || '')}">
             <div class="item-card-img">
-                <img src="/swiftfound/img_upload/${item['img_file']}" alt="${item['title']}">
+                <img src="${imgSrc}" alt="${escHtml(item['title'])}" loading="lazy">
+                ${showPill ? `<div class="card-status-overlay">${statusPill(status)}</div>` : ''}
             </div>
             <div class="card-info">
                 <div class="card-header">
-                    <div class="category-tag">${CategoryText[CategoryEnum[item['category']]]}</div>
-                    ${statusLabel}
+                    <span class="category-tag">${catText}</span>
+                    ${!showPill ? statusPill(status) : ''}
                 </div>
-                <h3>${item['title']}</h3>
+                <h3 title="${escHtml(item['title'])}">${escHtml(item['title'])}</h3>
                 <div class="card-meta">
-                    <span> loc: ${item['location']}</span>
+                    <span class="card-location">${escHtml(item['location']) || '—'}</span>
                 </div>
                 <div class="posted-by">
-                    posted by <strong>${isUserPosted? "you": item['username']}</strong>
+                    By <strong>${isUserPosted ? 'You' : escHtml(item['username'])}</strong>
                 </div>
-                <div class="posted-at">
-                    ${new Date(item.created_at).toLocaleDateString()}
-                </div>
+                <div class="posted-at">${dateStr}</div>
             </div>
         </div>
     `;
-    listingsWrapper.insertAdjacentHTML('beforeend', newCard);
-    let itemCard = document.getElementById("itemCard_"+item.item_id);
-    itemCard.addEventListener('click', function(){
+    listingsWrapper.insertAdjacentHTML('beforeend', card);
+    document.getElementById(`itemCard_${item.item_id}`).addEventListener('click', function () {
         window.location.href = `item_detail.php?item_id=${item.item_id}`;
     });
 }
