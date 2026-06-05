@@ -16,31 +16,119 @@
 </head>
 <body>
 
-    <header>
-        <a href="#" class="logo">SwiftFound</a>
-        <nav>
-            <a id=btnHome href="/swiftfound/home.php" class="nav-btn">Home</a>
-            <a id=btnLogin href="login.php" class="nav-btn login-cta">Login</a>
-            <a id=btnRegister href="signup.php" class="nav-btn login-cta">Register</a>
+    <header class="site-header">
+        <a href="/swiftfound/" class="logo">SwiftFound</a>
+        <nav class="nav-links">
+            <a id="btnHome" href="/swiftfound/home.php" class="nav-btn nav-secondary">Dashboard</a>
+            <a id="btnChat" href="/swiftfound/chat.php" class="nav-btn nav-secondary chat-link" style="display:none;">
+                <span>Chat</span>
+                <span id="chatBadge" class="nav-badge">0</span>
+            </a>
+            <a id="btnLogin" href="login.php" class="nav-btn login-cta">Login</a>
+            <a id="btnRegister" href="signup.php" class="nav-btn login-cta">Register</a>
         </nav>
     </header>
 
     <main>
         <section class="hero">
-            <div class="hero-text">
-                <h1>Lost something?</h1>
-                <p class="campus-tag">Tapah Campus | Lost & Found Network ;D</p>
-            </div>
-            
-            <div class="search-card">
-                <form action="search.php" method="GET" class="search-form">
-                    <input type="text" name="q" placeholder="Search for lost items..." disabled>
-                </form>
-                
-                <div class="button-stack">
+            <div class="hero-copy">
+                <span class="eyebrow">Campus Lost & Found</span>
+                <h1>Recover missing items faster with SwiftFound.</h1>
+                <p>Connect finders, owners, and campus helpers in one clean workflow with instant chat, claim tracking, and trusted handoffs.</p>
+
+                <div class="hero-actions">
                     <a class="btn-primary" href="/swiftfound/browse.php">Browse Items</a>
-                    <div class="or-divider"><span>OR</span></div>
                     <a class="btn-secondary" href="/swiftfound/item_form.php">Post Found Item</a>
+                </div>
+
+                <div class="hero-features">
+                    <span class="feature-pill">Verified claims</span>
+                    <span class="feature-pill">Real-time chat</span>
+                    <span class="feature-pill">Campus trusted</span>
+                </div>
+            </div>
+
+            <div class="hero-panel">
+                <div class="hero-card">
+                    <div class="hero-card-top">
+                        <div>
+                            <p class="subtitle">Campus connection</p>
+                            <h2 id="heroGreeting">A friendlier way to reunite lost items.</h2>
+                        </div>
+                        <div class="hero-status">Live</div>
+                    </div>
+                    <p class="hero-card-copy">Search for missing items, claim ownership securely, and keep your conversations organised through the built-in chat system.</p>
+
+                    <div class="hero-stats-grid">
+                        <div class="hero-stat-card">
+                            <strong>15K+</strong>
+                            <span>Items tracked</span>
+                        </div>
+                        <div class="hero-stat-card">
+                            <strong>1.2K</strong>
+                            <span>Successful claims</span>
+                        </div>
+                        <div class="hero-stat-card">
+                            <strong>98%</strong>
+                            <span>Positive feedback</span>
+                        </div>
+                    </div>
+
+                    <div id="userPanel" class="user-panel" style="display:none;">
+                        <div class="user-welcome">Signed in as <strong id="userNameHeader"></strong></div>
+                        <a id="heroChatBtn" class="hero-chat-btn" href="/swiftfound/chat.php">
+                            <span>Open chat</span>
+                            <span id="heroChatBadge" class="chat-badge">0</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-grid">
+            <div class="section-head">
+                <h2>Why SwiftFound?</h2>
+                <p>Built for campus life, designed to help lost items find their way home quickly.</p>
+            </div>
+            <div class="feature-cards">
+                <article class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Instant chat</h3>
+                    <p>Message finders and claimants directly so you can verify details without waiting.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Trusted workflow</h3>
+                    <p>Claim submissions are tracked and verified so every handoff is safer and simpler.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>Clear design</h3>
+                    <p>Easy navigation, strong visual hierarchy, and action-focused pages help you move faster.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="workflow-section">
+            <div class="section-head">
+                <h2>How it works</h2>
+                <p>Move from lost item to recovered item in three simple steps.</p>
+            </div>
+            <div class="workflow-grid">
+                <div class="workflow-card">
+                    <span class="workflow-step">1</span>
+                    <h4>Post or browse</h4>
+                    <p>Share found items or review the latest campus reports to spot your lost item.</p>
+                </div>
+                <div class="workflow-card">
+                    <span class="workflow-step">2</span>
+                    <h4>Claim securely</h4>
+                    <p>Submit a claim and answer the verification details to keep the process trustworthy.</p>
+                </div>
+                <div class="workflow-card">
+                    <span class="workflow-step">3</span>
+                    <h4>Chat & return</h4>
+                    <p>Open the built-in chat, confirm the handoff, and complete the recovery in one place.</p>
                 </div>
             </div>
         </section>

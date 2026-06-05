@@ -1,19 +1,29 @@
 buat user boleh stay sign in
 
 chat TODO:
-boleh bukak item detail bile tekan gamba item
+line 69
 
-
-chat.php -- line 69
+index TODO:
+index macam gelap sgt buat cerah macam site lain
+bagian kanan yg kata 15k+ item traked, ... tu mengraut try tuka benda lain
+buat chat notification check guna setInterval utk get unread message count so dia update real time
+ada beberapa butang ada underline
 
 home TODO:
-claim req pon boleh open chat
+claim req boleh open chat je tak perlu approve pon sebb dlm chat dah ada butang kalu nk approve, so jgn lupe buang popup modalnye skali
+claim ,claim req and item posted kasi ada mcm status tab kalu nk tgk pending saje or resolved saje
+kasi claim req tu mcm tak nice sebb tak sama dgn my active claim bagi dia sama cara open chat
+claim req rejected/canceled pon boleh open chat (semua claim kasi open chat)
+buang emoji
 
 item_details TODO:
 delete button tuka nama jadi abandon item
+buat logic abandon item (baem, org lain haram buat)
+pastikan bila item di abandoned/removed semua claim pada item itu pon update status abandon
 
 baem:
 item_details open chat broken
+buat logic restricted user kalu admin nak restrict user. user boleh buka acc, tpi tokleh post item and claim item
 
 reputation
 < 0 ➔ CAUTIOS
