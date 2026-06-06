@@ -348,6 +348,13 @@ function setChatsRead($chat_ids) {
 
 function updateItemStatus($item_id, $status) {
     global $conn;
+    if ($status == 'ABANDONED') {
+        $sql = "UPDATE report SET status = 'DISMISSED'
+            WHERE reported_item_id = '$item_id'";
+        if (!mysqli_query($conn, $sql)) {
+            return false;
+        }
+    }
     $sql = "UPDATE item SET status = '$status' WHERE item_id = '$item_id'";
     return mysqli_query($conn, $sql);
 }

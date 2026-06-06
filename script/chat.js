@@ -36,7 +36,7 @@ let contact = [];
 let user = null;
 let activeContact = 0;
 let activeTab = 'myClaims'; // default active tab
-let activeStatus = 'all'; // default active status
+let activeStatus = 'ALL'; // default active status
 
 const chatKey = [];
 
@@ -98,12 +98,15 @@ export async function chatLoad() {
     const urlParams = new URLSearchParams(window.location.search);
     let opening = urlParams.get('opening');
     if (opening) {
-        let tab = contact.find(c => c.contact_id === opening).isClaiming? 'myClaims' : 'claimRequests';
+        let c = contact.find(c => c.contact_id === opening);
+        let tab = c.isClaiming? 'myClaims' : 'claimRequests';
         if (activeTab !== tab) {
             switchTab(tab, false);
-            console.log(`auto switching to tab ${tab}`);
         }
-        console.log(`auto activating chat for opening param ${opening}`);
+        let isArchive = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED', 'ABANDONED'].includes(c.claimStatus);
+        if (isArchive) {
+            switchStatus('ARCHIVE_ALL', document.getElementById('statusDropdownToggle'));
+        }
         activateChat(opening);
         updateContactsDisplay(false);
     } else if(contact.length > 0) {
@@ -274,7 +277,7 @@ function drawNewChat(chat, _contact) {
     let isSender = chat.sender_id === user.user_id;
     let contactChat = document.getElementById(`chat_${_contact.contact_id}`);
     if (!contactChat) {
-        const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED'].includes(_contact.claimStatus);
+        const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED', 'ABANDONED'].includes(_contact.claimStatus);
         let claimReqBtns = `
             ${isArchived ? '' :
             _contact.claimStatus == 'OWNER_CONFIRM' ? 
@@ -437,7 +440,7 @@ export function redrawContacts() {
 }
 
 function applyHeaderButtons(contactObj, status, container) {
-    const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED'].includes(status);
+    const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED', 'ABANDONED'].includes(status);
     const header = container.querySelector('.chat-header');
     let buttonGroup = container.querySelector('.chat-header-btn-group');
 
@@ -453,7 +456,7 @@ function applyHeaderButtons(contactObj, status, container) {
             '<button id="openChatBtn" class="btn-primary">Open Chat</button> <button id="rejectBtn" class="btn-danger">Reject</button>';
     } else if (status === 'OWNER_CONFIRM' || status === 'OWNER_CONFIRMED') {
         if (!contactObj.isClaiming) {
-            html = '<button id="resolveBtn" class="btn-primary">Mark returned</button>';
+            html = '<button id="resolveBtn" class="btn-primary">Item returned</button>';
         } else {
             html = '<span class="chat-header-note">Claim confirmed. Waiting for the poster to mark the item returned.</span>';
         }
@@ -632,7 +635,13 @@ export function updateContactsDisplay(forceOpenFirst = true) {
         const contactType = item.dataset.contactType;
         const status = item.dataset.chatStatus;
         const isTypeMatch = contactType === activeTab;
-        const isStatusMatch = activeStatus === 'all' || status === activeStatus;
+        const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED', 'ABANDONED'].includes(status);
+        let isStatusMatch = status === activeStatus;
+        if (isArchived) {
+            isStatusMatch = isStatusMatch || activeStatus === 'ARCHIVE_ALL';
+        } else {
+           isStatusMatch = isStatusMatch || activeStatus === 'ALL' 
+        }
         const shouldShow = isTypeMatch && isStatusMatch;
         item.style.display = shouldShow ? '' : 'none';
 
@@ -642,7 +651,7 @@ export function updateContactsDisplay(forceOpenFirst = true) {
     });
 
     if (firstVisibleContactId && forceOpenFirst) {
-        console.log(`activating chat for contact ${firstVisibleContactId} because it's the first visible contact`);
+        //console.log(`activating chat for contact ${firstVisibleContactId} because it's the first visible contact`);
         activateChat(firstVisibleContactId);
     } else if (forceOpenFirst) {
         hideAllChats();

@@ -34,7 +34,7 @@
                 </button>
             </div>
             <div class="sidebar-status-filters">
-                <button class="status-tab active" data-status="all">All</button>
+                <button class="status-tab active" data-status="ALL">All</button>
                 <button class="status-tab" data-status="CHATTING">Chatting</button>
                 <button class="status-tab" data-status="PENDING">Pending</button>
                 <button class="status-tab" data-status="OWNER_CONFIRM">Owner Confirm</button>
@@ -42,9 +42,11 @@
                 <div class="status-dropdown" id="statusDropdown">
                     <button id="statusDropdownToggle" class="status-tab dropdown-toggle" type="button">Archive ▾</button>
                     <div class="dropdown-menu" id="statusDropdownMenu">
+                        <button class="dropdown-item" data-status="ARCHIVE_ALL">All</button>
                         <button class="dropdown-item" data-status="RESOLVED">Resolved</button>
                         <button class="dropdown-item" data-status="REJECTED">Rejected</button>
                         <button class="dropdown-item" data-status="CANCELED">Canceled</button>
+                        <button class="dropdown-item" data-status="ABANDONED">Abandoned</button>
                     </div>
                 </div>
             </div>

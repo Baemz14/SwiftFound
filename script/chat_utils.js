@@ -312,7 +312,8 @@ function getStatusPriority(status) {
         'PENDING': 3,
         'RESOLVED': 4,
         'REJECTED': 5,
-        'CANCELED': 6
+        'CANCELED': 6,
+        'ABANDONED': 7
     };
     return priorityMap[normalized] !== undefined ? priorityMap[normalized] : 5;
 }

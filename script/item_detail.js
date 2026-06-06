@@ -205,6 +205,7 @@ async function loadClaims() {
             }
         }
     }
+    console.log(userClaim);
 
     // update UI messaging about user's claim attempts / active claim
     const alreadyMsgEl = document.getElementById('alreadyClaimedMsg');
@@ -372,6 +373,18 @@ function updateButtonVisibility() {
     }
 
     // If item is archived, hide claim and report for everyone (except poster delete)
+    const rawItemStatus = getRawItemStatus();
+    if (rawItemStatus === 'ABANDONED') {
+        claimBtn.style.display = 'none';
+        reportBtn.style.display = 'none';
+        deleteBtn.style.display = 'none';
+        removeItemBtn.style.display = 'none';
+        dismissReportBtn.style.display = 'none';
+        chatBtn.style.display = 'none';
+        alreadyClaimedMsg.style.display = 'none';
+        return;
+    }
+
     if (isArchived) {
         claimBtn.style.display = 'none';
         reportBtn.style.display = 'none';
@@ -502,27 +515,66 @@ function closeAdminResultModal() {
 
 function displayClaimStatistics() {
     const statsContainer = document.getElementById('claimStats');
-    
-    // Count claims by status
-    const pendingCount = claims.filter(c => c['claim_status'] === 'PENDING').length;
-    const chattingCount = claims.filter(c => c['claim_status'] === 'CHATTING').length;
-    const confirmedCount = claims.filter(c => c['claim_status'] === 'OWNER_CONFIRM').length;
-    const totalClaims = pendingCount + chattingCount + confirmedCount;
-    
-    let statsHTML = '<div class="stats-row">';
-    
-    if (totalClaims === 0) {
-        statsHTML += '<span class="no-claims-msg">No claims yet</span>';
-    } else {
-        if (pendingCount > 0) statsHTML += `<span class="stat-badge stat-pending"><strong>${pendingCount}</strong> pending claim${pendingCount !== 1 ? 's' : ''}</span>`;
-        if (chattingCount > 0) statsHTML += `<span class="stat-badge stat-chatting"><strong>${chattingCount}</strong> chatting</span>`;
-        if (confirmedCount > 0) statsHTML += `<span class="stat-badge stat-confirmed"><strong>${confirmedCount}</strong> confirmed</span>`;
+    const statusCounts = {
+        PENDING: 0,
+        RESOLVED: 0,
+        REJECTED: 0,
+        CHATTING: 0,
+        OWNER_CONFIRM: 0,
+        CANCELED: 0,
+        PENDING_RESOLUTION: 0,
+        ABANDONED: 0,
+    };
+
+    for (let claim of claims) {
+        const status = (claim['claim_status'] || claim.claim_status || '').toString().toUpperCase();
+        if (statusCounts.hasOwnProperty(status)) {
+            statusCounts[status]++;
+        } else if (status) {
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+        }
     }
-    
+
+    const statusMeta = [
+        { key: 'PENDING', label: 'Pending', className: 'stat-pending' },
+        { key: 'PENDING_RESOLUTION', label: 'Pending Resolution', className: 'stat-pending-resolution' },
+        { key: 'CHATTING', label: 'Chatting', className: 'stat-chatting' },
+        { key: 'OWNER_CONFIRM', label: 'Owner Confirm', className: 'stat-owner-confirm' },
+        { key: 'RESOLVED', label: 'Resolved', className: 'stat-resolved' },
+        { key: 'REJECTED', label: 'Rejected', className: 'stat-rejected' },
+        { key: 'CANCELED', label: 'Canceled', className: 'stat-canceled' },
+        { key: 'ABANDONED', label: 'Abandoned', className: 'stat-abandoned' },
+    ];
+
+    let statsHTML = '<div class="stats-row">';
+    let hasAny = false;
+
+    for (let meta of statusMeta) {
+        const count = statusCounts[meta.key] || 0;
+        if (!count) continue;
+        hasAny = true;
+        statsHTML += `<span class="stat-badge ${meta.className}"><strong>${count}</strong> ${meta.label}</span>`;
+    }
+
+    if (!hasAny) {
+        statsHTML += '<span class="no-claims-msg">No claims yet</span>';
+    }
+
     statsHTML += '</div>';
     statsContainer.innerHTML = statsHTML;
 }
 
 async function abandonItem(e) {
-
+    e.preventDefault();
+    let isSuccess = await userUtils.abandonItem(item);
+    if (!isSuccess) {
+        alert('abandon item error');
+    } else {
+        if (item) {
+            item.status = 'ABANDONED';
+        }
+        renderItemStatus();
+        updateButtonVisibility();
+    }
+    document.getElementById('deleteModal').style.display = 'none';
 }

@@ -732,6 +732,14 @@ body {
     color: #9b1c1c;
 }
 
+.contact-status-chip.status-abandoned,
+.chat-status-chip.status-abandoned,
+.contact-status-chip.status-abandoned,
+.chat-status-chip.status-abandoned {
+    background-color: #ff0000;
+    color: #000000;
+}
+
 .chat-status-chip.status-canceled,
 .chat-status-chip.status-cancelled {
     box-shadow: 0 1px 3px rgba(155, 28, 28, 0.15);

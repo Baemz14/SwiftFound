@@ -1,7 +1,7 @@
 buat user boleh stay sign in
 
 chat TODO:
-line 69
+line 69, styliz the confirm modals (reject, confirm owner, item returned, cancel claim, open chat, etc)
 
 index TODO:
 index macam gelap sgt buat cerah macam site lain
@@ -22,7 +22,6 @@ buat logic abandon item (baem, org lain haram buat)
 pastikan bila item di abandoned/removed semua claim pada item itu pon update status abandon
 
 baem:
-item_details open chat broken
 buat logic restricted user kalu admin nak restrict user. user boleh buka acc, tpi tokleh post item and claim item
 
 reputation

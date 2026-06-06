@@ -1,4 +1,5 @@
 import { callServer } from "../include/call_server.js";
+import * as userUtils from './user_utils.js';
 
 export async function loadNewStats(loadedStats = null) {
     let data = await callServer('/swiftfound/server_call/admin_call.php', null, "GET_STATS");
@@ -105,6 +106,11 @@ export async function acceptReport(report) {
     data = await callServer('/swiftfound/server_call/admin_call.php', formData, "REMOVE_ITEM");
     if (!data['is_success']) {
         console.error(`remove item server error: ${data['error_log']}`);
+        return false;
+    }
+    let isUpdated = await userUtils.updateReputation(report.reported_user_id, -15);
+    if (!isUpdated) {
+        console.error(`update rep server error`);
         return false;
     }
     return true;

@@ -79,7 +79,7 @@
                 <div id="adminReportStatus" class="admin-report-status" style="display: none;"></div>
                 <button id="claimBtn" class="msg-btn">Claim</button>
                 <button id="openChatBtn" class="msg-btn" style="display: none;">Open Chat</button>
-                <button id="deleteBtn" class="delete-btn" style="display: none;">Delete Item</button>
+                <button id="deleteBtn" class="delete-btn" style="display: none;">Abandon Item</button>
                 <button id="removeItemBtn" class="delete-btn" style="display: none;">Remove Item</button>
                 <button id="dismissReportBtn" class="report-btn" style="display: none;">Dismiss Report</button>
             </div>
@@ -144,12 +144,12 @@
 <!-- Delete Modal -->
 <div id="deleteModal" class="modal-overlay" style="display: none;">
     <div class="modal-card">
-        <h2>Delete Item</h2>
-        <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+        <h2>Abandon Item</h2>
+        <p>Are you sure you want to abandon this item and all the claims to it? This action cannot be undone.</p>
 
         <div class="modal-actions">
             <button id="cancelDeleteBtn" class="btn-secondary">Cancel</button>
-            <button id="confirmDeleteBtn" class="btn-danger">Delete</button>
+            <button id="confirmDeleteBtn" class="btn-danger">Abandon</button>
         </div>
     </div>
 </div>

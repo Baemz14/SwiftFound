@@ -358,10 +358,10 @@ export async function updateReputation(user_id, change) {
     return true;
 }
 
-export async function abandonItem(item_id, poster_id, claim_id = null) {
+export async function abandonItem(item) {
     // Set item status to ABANDONED
     let formData = new FormData();
-    formData.append('item_id', item_id);
+    formData.append('item_id', item.item_id);
     formData.append('new_status', 'ABANDONED');
     let data = await callServer('server_call/item_call.php', formData, 'UPDATE_STATUS');
     if (!data['is_success']) {
@@ -370,12 +370,33 @@ export async function abandonItem(item_id, poster_id, claim_id = null) {
     }
 
     // Deduct -7 reputation from the poster
-    let isUpdated = await updateReputation(poster_id, -7);
+    let isUpdated = await updateReputation(item.user_id, -7);
     if (!isUpdated) {
         console.log('Failed to update poster reputation for abandon');
         return false;
     }
 
+    data = await callServer('server_call/item_call.php', formData, 'ITEM_CLAIMS');
+    if (data['claims']) {
+        for (const c of data['claims']) {
+            if (c.claim_status == 'CANCELLED' || c.claim_status == 'REJECTED') {
+                continue;
+            }
+            formData.append('claim_id', c.claim_id);
+            formData.append('status', "ABANDONED");
+            let data2 = await callServer('server_call/claim_call.php', formData, 'UPDATE_STATUS');
+            if (!data2['is_success']) {
+                console.error(`server abandon claim error: ${data2['error_log']}`);
+                return false;
+            }
+            let text = `${chatUtils.cancelReasonKey}Poster have abandoned this item, this claim will not progress any further, we are sorry that this happened`;
+            let isSent = await sendMessage(item.user_id, c.user_id, text, c.claim_id);
+            if (!isSent) {
+                console.error(`server send abandon message error`);
+                return false;
+            }
+        }
+    }
     return true;
 }
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2026 at 03:33 PM
+-- Generation Time: Jun 06, 2026 at 03:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,19 +24,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `admins`
---
-
-CREATE TABLE `admins` (
-  `admin_id` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password_hash` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `claim`
 --
 
@@ -45,7 +32,7 @@ CREATE TABLE `claim` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `item_id` int(11) UNSIGNED NOT NULL,
   `answer_text` varchar(255) NOT NULL,
-  `claim_status` enum('PENDING','RESOLVED','REJECTED','CHATTING','OWNER_CONFIRM','CANCELED','PENDING_RESOLUTION') NOT NULL
+  `claim_status` enum('PENDING','RESOLVED','REJECTED','CHATTING','OWNER_CONFIRM','CANCELED','PENDING_RESOLUTION','ABANDONED') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -95,9 +82,9 @@ CREATE TABLE `report` (
   `reported_user_id` int(11) UNSIGNED DEFAULT NULL,
   `reported_item_id` int(11) UNSIGNED DEFAULT NULL,
   `reason` varchar(500) NOT NULL,
-  `details` varchar(500) NOT NULL,
-  `status` enum('PENDING','RESOLVED','DISMISSED') NOT NULL DEFAULT 'PENDING',
-  `admin_note` varchar(500) DEFAULT current_timestamp(),
+  `details` varchar(500) NOT NULL DEFAULT 'Not provided',
+  `status` enum('PENDING','ACCEPTED','DISMISSED') NOT NULL DEFAULT 'PENDING',
+  `admin_note` varchar(500) DEFAULT 'Not reviewed yet',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -120,13 +107,6 @@ CREATE TABLE `user` (
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `admins`
---
-ALTER TABLE `admins`
-  ADD PRIMARY KEY (`admin_id`),
-  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- Indexes for table `claim`
@@ -167,12 +147,6 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `admins`
---
-ALTER TABLE `admins`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `claim`

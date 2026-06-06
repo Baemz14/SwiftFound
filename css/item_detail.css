@@ -291,9 +291,39 @@ body {
     color: #92400e;
 }
 
+.stat-pending-resolution {
+    background: #f3e8ff;
+    color: #7c3aed;
+}
+
 .stat-chatting {
     background: #d1fae5;
     color: #065f46;
+}
+
+.stat-owner-confirm {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.stat-resolved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.stat-rejected {
+    background: #fee2e2;
+    color: #991b1a;
+}
+
+.stat-canceled {
+    background: #f8fafc;
+    color: #334155;
+}
+
+.stat-abandoned {
+    background: #fff1f2;
+    color: #b91c1c;
 }
 
 .stat-confirmed {
