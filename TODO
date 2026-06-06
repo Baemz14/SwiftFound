@@ -16,13 +16,14 @@ kasi claim req tu mcm tak nice sebb tak sama dgn my active claim bagi dia sama c
 claim req rejected/canceled pon boleh open chat (semua claim kasi open chat)
 buang emoji
 
-item_details TODO:
-delete button tuka nama jadi abandon item
-buat logic abandon item (baem, org lain haram buat)
-pastikan bila item di abandoned/removed semua claim pada item itu pon update status abandon
-
 baem:
 buat logic restricted user kalu admin nak restrict user. user boleh buka acc, tpi tokleh post item and claim item
+
+readme TODO:
+isi dgn user manual dn beberapa screenshot
+list benda yg user boleh buat
+
+isi AI_LOG.md (semua)
 
 reputation
 < 0 ➔ CAUTIOS
@@ -35,3 +36,4 @@ cancel -1
 reject -3
 resolve item, poster +10, claimer +5
 abandon item -7
+reported and item removed - 15
