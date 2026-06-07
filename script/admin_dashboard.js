@@ -373,6 +373,7 @@ function drawUsersFromList(userList) {
                         <div class="user-main-info">
                             <div class="user-id" style="color:#94a3b8;">#${esc(u.user_id)}</div>
                             <div class="user-username">${esc(u.username)}</div>
+                            ${u.is_restricted==1? `<span class="restricted-badge">Restricted</span>`: ''}
                         </div>
                         <div class="user-main-stats">
                             <div class="user-stat">
@@ -408,11 +409,38 @@ function drawUsersFromList(userList) {
                                 }).join('')}
                             </div>
                         </div>
+                        ${u.is_restricted==0? 
+                            `<button class='restrict-btn' >Restrict User</button>`: 
+                            `<button class='unrestrict-btn' >Unrestrict User</button>`
+                        }
                     </div>
                 </div>
             `).join('')}
         </div>
     `;
+    for (let i = 0; i < userList.length; i++) {
+        let restrictBtn = container.querySelector(`#ucard_${i} .restrict-btn`);
+        let unrestrictBtn = container.querySelector(`#ucard_${i} .unrestrict-btn`);
+        if (restrictBtn) {
+            restrictBtn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                let isSuccess = await adminUtils.userRestrictUpdate(userList[i], true);
+                if (isSuccess) {
+                    users = await adminUtils.loadNewUsers();
+                    drawUsers();
+                }
+            });
+        } if (unrestrictBtn) {
+            unrestrictBtn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                let isSuccess = await adminUtils.userRestrictUpdate(userList[i], false);
+                if (isSuccess) {
+                    users = await adminUtils.loadNewUsers();
+                    drawUsers();
+                }
+            });
+        }
+    }
 }
 
 function drawUsers() {
@@ -425,8 +453,4 @@ function drawUsers() {
     }
 
     drawUsersFromList(users);
-}
-
-function updateUser(user) {
-
 }

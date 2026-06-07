@@ -464,7 +464,7 @@ function updateReportStatus($report_id, $status) {
 
 function getAllUsers() {
     global $conn;
-    $sql = "SELECT user_id, username, reputation,
+    $sql = "SELECT user_id, username, reputation, is_restricted,
                 (SELECT COUNT(*) FROM item WHERE item.user_id = user.user_id) AS item_count,
                 (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id) AS claim_count,
                 (SELECT COUNT(*) FROM claim WHERE claim.user_id = user.user_id AND claim_status = 'RESOLVED') AS resolved_claims,
@@ -502,6 +502,14 @@ function getItemClaims($item_id) {
 function updateUserReputation($user_id, $delta) {
     global $conn;
     $sql = "UPDATE user SET reputation = reputation + '$delta' WHERE user_id = '$user_id'";
+    return mysqli_query($conn, $sql);
+}
+
+function userRestrictUpdate($user_id, $is_restricted) {
+    global $conn;
+    $is_restricted = filter_var($is_restricted, FILTER_VALIDATE_BOOLEAN);
+    $restrict_token = $is_restricted? 1: 0;
+    $sql = "UPDATE user SET is_restricted = '$restrict_token' WHERE user_id = '$user_id'";
     return mysqli_query($conn, $sql);
 }
 ?>

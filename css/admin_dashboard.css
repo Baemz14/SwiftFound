@@ -727,3 +727,61 @@ body {
     text-align: center;
 }
 .loading-text::before { display: none; }
+
+.restrict-btn {
+    margin-top: 15px;
+    padding: 6px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #f87171;
+    background: #ffdfdf;
+    color: #fc6060;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.restrict-btn:hover {
+    border-color: #ef4444;    
+    background: #991b1b;
+    color: #fee2e2;           
+}
+
+.restricted-badge {
+    margin-top: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    
+    display: inline-flex;
+    white-space: nowrap;
+    width: fit-content;
+
+    color: #ef4444; 
+    background-color: rgba(239, 68, 68, 0.1); 
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.unrestrict-btn {
+    margin-top: 15px;
+    padding: 6px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #60a5fa;   /* Light Sky Blue border */
+    background: #eff6ff;           /* Very soft ice-blue tint background */
+    color: #2563eb;                /* Crisp Royal Blue text */
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.unrestrict-btn:hover {
+    border-color: #2563eb;         /* Darkens to true solid blue */
+    background: #1e40af;           /* Deep premium Navy Blue on hover */
+    color: #dbeafe;                /* Soft icy light-blue text for crisp legibility */
+}

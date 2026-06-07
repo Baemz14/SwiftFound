@@ -115,3 +115,14 @@ export async function acceptReport(report) {
     }
     return true;
 }
+
+export async function userRestrictUpdate(user, isRestricted) {
+    let formData = new FormData();
+    formData.append('user_id', user.user_id);
+    formData.append('is_restricted', isRestricted);
+    let data = await callServer('/swiftfound/server_call/admin_call.php', formData, "USER_RESTRICT_UPDATE");
+    if (!data['is_success']) {
+        console.error(`update user restrict error: ${data['error_log']}`);
+        return false;
+    } return true;
+}

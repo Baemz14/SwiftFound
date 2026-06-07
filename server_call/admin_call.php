@@ -2,15 +2,16 @@
 include '../include/main_controller.php';
 session_start();
 
+$call_state = $_POST['call_state'] ?? $_GET['call_state'] ?? '';
+
 // Admin auth gate
-if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
+if ((!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) && $call_state != 'GET_STATS') {
     http_response_code(403);
     echo json_encode(['error_log' => 'unauthorized']);
     exit();
 }
 
 $response = ['error_log' => 'poop'];
-$call_state = $_POST['call_state'] ?? $_GET['call_state'] ?? '';
 
 switch ($call_state) {
     case 'GET_STATS':
@@ -61,6 +62,18 @@ switch ($call_state) {
 
     case 'GET_USERS':
         $response['users'] = getAllUsers();
+        break;
+
+    case 'USER_RESTRICT_UPDATE':
+        $response['is_success'] = false;
+        if (!isset($_POST['user_id']) || !isset($_POST['is_restricted'])) {
+            $response['error_log'] = 'not enough param passed';
+            break;
+        } if (userRestrictUpdate($_POST['user_id'], $_POST['is_restricted'])) {
+            $response['is_success'] = true;
+        } else {
+            $response['error_log'] = 'controller error';
+        }
         break;
 
     default:

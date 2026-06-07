@@ -42,9 +42,9 @@
                 </div>
 
                 <div class="hero-features">
-                    <span class="feature-pill">Verified claims</span>
+                    <span class="feature-pill">safe claim system</span>
                     <span class="feature-pill">Real-time chat</span>
-                    <span class="feature-pill">Campus trusted</span>
+                    <span class="feature-pill">Admin moderation</span>
                 </div>
             </div>
 
@@ -61,16 +61,16 @@
 
                     <div class="hero-stats-grid">
                         <div class="hero-stat-card">
-                            <strong>15K+</strong>
-                            <span>Items tracked</span>
+                            <strong id='itemPosted'>15K+</strong>
+                            <span>Items posted</span>
                         </div>
                         <div class="hero-stat-card">
-                            <strong>1.2K</strong>
-                            <span>Successful claims</span>
+                            <strong id='totalUsers'>1.2K</strong>
+                            <span>Total users</span>
                         </div>
                         <div class="hero-stat-card">
-                            <strong>98%</strong>
-                            <span>Positive feedback</span>
+                            <strong id='messageSent'>100</strong>
+                            <span>Message sent</span>
                         </div>
                     </div>
 

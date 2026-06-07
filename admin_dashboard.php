@@ -91,6 +91,7 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
                     <button class="sort-btn" data-sort="reputation">Reputation</button>
                     <button class="sort-btn" data-sort="item_count">Items</button>
                     <button class="sort-btn" data-sort="claim_count">Claims</button>
+                    <button class="sort-btn" data-sort="is_restricted">Restricted</button>
                 </div>
             </div>
             

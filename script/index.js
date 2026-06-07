@@ -1,6 +1,16 @@
 ﻿import { loadUserData, getUnreadMessageCount } from "./user_utils.js";
+import { loadNewStats } from "./admin_utils.js";
+
+let stats = {};
 
 export async function onIndexLoad() {
+    stats = await loadNewStats();
+    console.log(stats);
+
+    document.getElementById('itemPosted').innerText = stats['total_items'];
+    document.getElementById('totalUsers').innerText = stats['total_users'];
+    document.getElementById('messageSent').innerText = stats['total_messages'];
+
     const btnHome = document.getElementById("btnHome");
     const btnChat = document.getElementById("btnChat");
     const btnLogin = document.getElementById("btnLogin");
@@ -48,4 +58,8 @@ export async function onIndexLoad() {
             heroChatBadge.style.display = "none";
         }
     }
+}
+
+function drawStats() {
+
 }

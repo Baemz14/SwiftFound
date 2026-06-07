@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 06, 2026 at 03:05 PM
+-- Generation Time: Jun 07, 2026 at 06:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,9 +98,9 @@ CREATE TABLE `report` (
 CREATE TABLE `user` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `username` varchar(100) NOT NULL,
-  `email_hash` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `reputation` int(11) NOT NULL,
+  `is_restricted` tinyint(1) NOT NULL DEFAULT 0,
   `avatar_url` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
