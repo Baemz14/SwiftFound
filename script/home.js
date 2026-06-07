@@ -333,7 +333,7 @@ function updateItemUi(newItem) {
 
 function getReputationLabel(reputation) {
     if (Number.isNaN(reputation)) return { label: 'NOVICE', className: 'rep-novice' };
-    if (reputation < 0)   return { label: 'CAUTIOS', className: 'rep-cautios' };
+    if (reputation < 0)   return { label: 'CAUTIOS', className: 'rep-caution' };
     if (reputation <= 19) return { label: 'NOVICE',  className: 'rep-novice' };
     if (reputation <= 49) return { label: 'HELPFUL', className: 'rep-helpful' };
     if (reputation <= 99) return { label: 'TRUSTED', className: 'rep-trusted' };
@@ -342,7 +342,7 @@ function getReputationLabel(reputation) {
 
 function updateReputationUI(rep) {
     const tiers = [
-        { label: 'CAUTIOUS',  className: 'rep-cautios', min: -Infinity, max: -1,  dotClass: 'cautios' },
+        { label: 'CAUTIOUS',  className: 'rep-caution', min: -Infinity, max: -1,  dotClass: 'caution' },
         { label: 'NOVICE',    className: 'rep-novice',  min: 0,         max: 19,  dotClass: 'novice'  },
         { label: 'HELPFUL',   className: 'rep-helpful', min: 20,        max: 49,  dotClass: 'helpful' },
         { label: 'TRUSTED',   className: 'rep-trusted', min: 50,        max: 99,  dotClass: 'trusted' },
