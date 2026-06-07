@@ -4,7 +4,7 @@ import { checkIsLoggedIn, saveLogin } from "/swiftfound/script/user_utils.js";
 export async function onSignupLoad() {
     let isLoggedIn = await checkIsLoggedIn();
     if (isLoggedIn) {
-        alert("already logged in dada");
+        alert("already logged in, redirecting to home page");
         window.location.href = '/swiftfound/home.php';        
     }
 
