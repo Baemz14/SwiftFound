@@ -46,6 +46,7 @@ export async function homeLoad() {
         window.location.href = 'login.php';
         return;
     }
+    console.log(user);
 
     item = await userUtil.loadNewItem();
     claim = await userUtil.loadNewClaim();

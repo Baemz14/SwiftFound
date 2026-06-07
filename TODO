@@ -1,16 +1,13 @@
 buat user boleh stay sign in
 
+index TODO:
+buat bagian about us bawah skali
+
 chat TODO:
 line 69, styliz the confirm modals (reject, confirm owner, item returned, cancel claim, open chat, etc)
 
 browse TODO:
 buat filder date clear pada user yg kiri 'from' kanan 'to'
-
-index TODO:
-index macam gelap sgt buat cerah macam site lain
-bagian kanan yg kata 15k+ item traked, ... tu mengraut try tuka benda lain
-buat chat notification check guna setInterval utk get unread message count so dia update real time
-ada beberapa butang ada underline
 
 home TODO:
 kalu user.is_restricted==1, tunjuk pada dashboard dn explain pada user tak boleh post item, claim item n report item until admin unrestrict

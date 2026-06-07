@@ -2,14 +2,13 @@
 import { loadNewStats } from "./admin_utils.js";
 
 let stats = {};
+let unreadCount = 0;
 
 export async function onIndexLoad() {
     stats = await loadNewStats();
-    console.log(stats);
-
-    document.getElementById('itemPosted').innerText = stats['total_items'];
-    document.getElementById('totalUsers').innerText = stats['total_users'];
-    document.getElementById('messageSent').innerText = stats['total_messages'];
+    unreadCount = await getUnreadMessageCount();
+    drawStats();
+    drawNotiBadge();
 
     const btnHome = document.getElementById("btnHome");
     const btnChat = document.getElementById("btnChat");
@@ -18,8 +17,6 @@ export async function onIndexLoad() {
     const userPanel = document.getElementById("userPanel");
     const userNameHeader = document.getElementById("userNameHeader");
     const heroGreeting = document.getElementById("heroGreeting");
-    const heroChatBadge = document.getElementById("heroChatBadge");
-    const chatBadge = document.getElementById("chatBadge");
 
     let user = await loadUserData();
     if (!user) {
@@ -39,7 +36,28 @@ export async function onIndexLoad() {
     if (userNameHeader) userNameHeader.innerText = user.username;
     if (heroGreeting) heroGreeting.innerText = `Welcome back, ${user.username}!`;
 
-    const unreadCount = await getUnreadMessageCount();
+    setInterval(checkNewThings, 2000);
+}
+
+async function checkNewThings() {
+    const newStats = await loadNewStats(stats);
+    if (Object.keys(newStats).length > 0) {
+        console.log(newStats);
+        for (let key in newStats) {
+            stats[key] = newStats[key];
+        }
+        drawStats();
+    }
+    const newUnreadCount = await getUnreadMessageCount();
+    if (newUnreadCount !== unreadCount) {
+        unreadCount = newUnreadCount;
+        drawNotiBadge();
+    }
+}
+
+function drawNotiBadge() {
+    const heroChatBadge = document.getElementById("heroChatBadge");
+    const chatBadge = document.getElementById("chatBadge");
     const unreadText = unreadCount > 99 ? '99+' : String(unreadCount);
     if (unreadCount > 0) {
         if (chatBadge) {
@@ -61,5 +79,7 @@ export async function onIndexLoad() {
 }
 
 function drawStats() {
-
+    document.getElementById('itemPosted').innerText = stats['total_items'];
+    document.getElementById('totalUsers').innerText = stats['total_users'];
+    document.getElementById('messageSent').innerText = stats['total_messages'];
 }
