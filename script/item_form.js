@@ -1,12 +1,17 @@
-import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
+import { loadUserData } from "/swiftfound/script/user_utils.js";
 import { CategoryText, CategoryEnumDB } from "/swiftfound/enum_constant.js";
 import { callServer } from "/swiftfound/include/call_server.js";
 
 export async function itemFormLoad() {
-    let isLoggedIn = await checkIsLoggedIn();
-    if (!isLoggedIn) {
+    let user = await loadUserData();
+    if (!user) {
         alert("You are not logged in. Redirecting to login page.");
-        window.location.href = 'login.php';
+        window.location.href = '/swiftfound/login.php';
+    }
+    console.log(user);
+    if (user.is_restricted == 1) {
+        alert("Your account are restricted. Youre not allowed to post item!.");
+        window.location.href = '/swiftfound/home.php';
     }
 
     let itemForm = document.getElementById("itemForm");

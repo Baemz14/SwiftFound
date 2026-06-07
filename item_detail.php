@@ -76,6 +76,9 @@
                     <p id="alreadyClaimedMsg" class="already-claimed-msg" style="display: none;"></p>
                     <span id="claimAttemptBadge" class="claim-attempt-badge" style="display: none;"></span>
                 </div>
+                <div>
+                    <p id='restrictedMsg' class='restricted-msg' style='display: none;'>Your account are restricted and are not allowed to claim and report items</p>
+                </div>
                 <div id="adminReportStatus" class="admin-report-status" style="display: none;"></div>
                 <button id="claimBtn" class="msg-btn">Claim</button>
                 <button id="openChatBtn" class="msg-btn" style="display: none;">Open Chat</button>

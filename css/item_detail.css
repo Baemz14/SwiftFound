@@ -491,6 +491,26 @@ body {
     margin-top: 25px;
 }
 
+.restricted-msg {
+    margin: 12px 0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.4;
+    font-family: 'Inter', sans-serif;
+    
+    /* Soft Red Alert Theme */
+    color: #ef4444; 
+    background-color: rgba(239, 68, 68, 0.08); 
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    
+    /* Flex layout to add a warning symbol nicely if you want one */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .btn-secondary { background: #f3f4f6; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: var(--text-dark); font-weight: 600; transition: 0.2s;}
 .btn-secondary:hover { background: #e5e7eb; }
 .btn-danger { background: #ef4444; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; font-weight: 600; transition: 0.2s;}

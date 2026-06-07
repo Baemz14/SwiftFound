@@ -350,9 +350,22 @@ function updateButtonVisibility() {
     const chatBtn = document.getElementById('openChatBtn');
     const alreadyClaimedMsg = document.getElementById('alreadyClaimedMsg');
     const adminStatusEl = document.getElementById('adminReportStatus');
+    const restrictedMsg = document.getElementById('restrictedMsg');
 
     if (adminStatusEl) {
         adminStatusEl.style.display = 'none';
+    }
+
+    if (user.is_restricted == 1) {
+        claimBtn.style.display = 'none';
+        reportBtn.style.display = 'none';
+        deleteBtn.style.display = 'none';
+        removeItemBtn.style.display = 'none';
+        dismissReportBtn.style.display = 'none';
+        chatBtn.style.display = 'none';
+        alreadyClaimedMsg.style.display = 'none';
+        restrictedMsg.style.display = '';
+        return;
     }
 
     if (viewingStatus === 'ADMIN_REVIEW') {

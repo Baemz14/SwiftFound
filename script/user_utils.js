@@ -19,7 +19,8 @@ export async function loadUserData() {
         "user_id": data.user_id,
         "username": data.username,
         "reputation": data.reputation,
-        "avatar_url": data.avatar_url || null
+        "avatar_url": data.avatar_url || null,
+        "is_restricted": data.is_restricted
     };
 }
 

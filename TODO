@@ -13,6 +13,7 @@ buat chat notification check guna setInterval utk get unread message count so di
 ada beberapa butang ada underline
 
 home TODO:
+kalu user.is_restricted==1, tunjuk pada dashboard dn explain pada user tak boleh post item, claim item n report item until admin unrestrict
 claim req boleh open chat je tak perlu approve pon sebb dlm chat dah ada butang kalu nk approve, so jgn lupe buang popup modalnye skali
 claim ,claim req and item posted kasi ada mcm status tab kalu nk tgk pending saje or resolved saje
 kasi claim req tu mcm tak nice sebb tak sama dgn my active claim bagi dia sama cara open chat
@@ -20,7 +21,7 @@ claim req rejected/canceled pon boleh open chat (semua claim kasi open chat)
 buang emoji
 
 baem:
-buat logic restricted user kalu admin nak restrict user. user boleh buka acc, tpi tokleh post item and claim item
+buat logic restricted user kalu admin nak restrict user. user boleh buka acc, tpi tokleh post item, claim item and report
 
 readme TODO:
 isi dgn user manual dn beberapa screenshot

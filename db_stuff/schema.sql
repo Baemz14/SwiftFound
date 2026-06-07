@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2026 at 06:43 AM
+-- Generation Time: Jun 07, 2026 at 06:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -136,7 +136,10 @@ ALTER TABLE `message`
 -- Indexes for table `report`
 --
 ALTER TABLE `report`
-  ADD PRIMARY KEY (`report_id`);
+  ADD PRIMARY KEY (`report_id`),
+  ADD KEY `reporter_user` (`reporter_id`),
+  ADD KEY `reported_item` (`reported_item_id`),
+  ADD KEY `reported_user` (`reported_user_id`);
 
 --
 -- Indexes for table `user`
@@ -202,6 +205,14 @@ ALTER TABLE `message`
   ADD CONSTRAINT `fk_message_claim` FOREIGN KEY (`claim_id`) REFERENCES `claim` (`claim_id`),
   ADD CONSTRAINT `fk_message_reciever` FOREIGN KEY (`reciever_id`) REFERENCES `user` (`user_id`),
   ADD CONSTRAINT `fk_message_sender` FOREIGN KEY (`sender_id`) REFERENCES `user` (`user_id`);
+
+--
+-- Constraints for table `report`
+--
+ALTER TABLE `report`
+  ADD CONSTRAINT `reported_item` FOREIGN KEY (`reported_item_id`) REFERENCES `item` (`item_id`),
+  ADD CONSTRAINT `reported_user` FOREIGN KEY (`reported_user_id`) REFERENCES `user` (`user_id`),
+  ADD CONSTRAINT `reporter_user` FOREIGN KEY (`reporter_id`) REFERENCES `user` (`user_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

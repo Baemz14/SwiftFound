@@ -113,6 +113,8 @@ switch ($call_state) {
         $response['username'] = $user_data ? $user_data['username'] : null;
         $response['reputation'] = $user_data ? $user_data['reputation'] : null;
         $response['avatar_url'] = $user_data && isset($user_data['avatar_url']) ? $user_data['avatar_url'] : null;
+        $response['is_restricted'] = $user_data ? $user_data['is_restricted'] : null;
+        $response['user'] = $user_data;
         break;
 
     case "UPLOAD_AVATAR":
