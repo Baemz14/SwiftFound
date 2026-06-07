@@ -48,6 +48,10 @@ export async function homeLoad() {
     }
     console.log(user);
 
+    if (parseInt(user.is_restricted) === 1) {
+        document.getElementById('restrictedBanner').style.display = 'block';
+    }
+
     item = await userUtil.loadNewItem();
     claim = await userUtil.loadNewClaim();
     claimReq = await userUtil.loadNewClaimReq();
@@ -161,7 +165,23 @@ export async function homeLoad() {
 
     setInterval(checkNewThings, 1000);
 
-    setupApproveConfirmModal();
+
+    setupFilters();
+}
+
+function setupFilters() {
+    ['posted', 'claims', 'claimReq'].forEach(prefix => {
+        const tabs = document.querySelectorAll(`#${prefix}FilterTabs .sf-tab`);
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                if (prefix === 'posted') applyPostedFilter();
+                if (prefix === 'claims') applyClaimsFilter();
+                if (prefix === 'claimReq') applyClaimReqFilter();
+            });
+        });
+    });
 }
 
 function activateSection(btnId) {
@@ -225,29 +245,29 @@ function updateChatNotiCount(count) {
 // ─── Item Status Pill (for posted items) ───────────────────────────────────────
 function itemStatusPillHtml(status) {
     const map = {
-        'AVAILABLE':     { cls: 'item-status-available',     icon: '🟢', label: 'Available' },
-        'LOST':          { cls: 'item-status-lost',          icon: '🔍', label: 'Lost' },
-        'OWNER_CONFIRM': { cls: 'item-status-owner-confirm', icon: '🔔', label: 'Owner Confirm' },
-        'RESOLVED':      { cls: 'item-status-resolved',      icon: '✅', label: 'Resolved' },
-        'ABANDONED':     { cls: 'item-status-abandoned',     icon: '⚠️', label: 'Abandoned' },
-        'CLAIMED':       { cls: 'item-status-claimed',       icon: '🏷️', label: 'Claimed' },
+        'AVAILABLE':     { cls: 'item-status-available',     label: 'Available' },
+        'LOST':          { cls: 'item-status-lost',          label: 'Lost' },
+        'OWNER_CONFIRM': { cls: 'item-status-owner-confirm', label: 'Owner Confirm' },
+        'RESOLVED':      { cls: 'item-status-resolved',      label: 'Resolved' },
+        'ABANDONED':     { cls: 'item-status-abandoned',     label: 'Abandoned' },
+        'CLAIMED':       { cls: 'item-status-claimed',       label: 'Claimed' },
     };
-    const info = map[status] || { cls: 'item-status-default', icon: '📌', label: status };
-    return `<span class="item-status-pill ${info.cls}">${info.icon} ${info.label}</span>`;
+    const info = map[status] || { cls: 'item-status-default', label: status };
+    return `<span class="item-status-pill ${info.cls}">${info.label}</span>`;
 }
 
 // ─── Claim Status Pill ─────────────────────────────────────────────────────────
 function statusPillHtml(status) {
     const map = {
-        'PENDING':       ['status-pending',       '⏳', 'Pending'],
-        'CHATTING':      ['status-chatting',       '💬', 'Chatting'],
-        'OWNER_CONFIRM': ['status-owner-confirm',  '🔔', 'Owner Confirm'],
-        'RESOLVED':      ['status-resolved',       '✅', 'Resolved'],
-        'REJECTED':      ['status-rejected',       '❌', 'Rejected'],
-        'CANCELED':      ['status-canceled',       '🚫', 'Canceled'],
+        'PENDING':       ['status-pending',       'Pending'],
+        'CHATTING':      ['status-chatting',      'Chatting'],
+        'OWNER_CONFIRM': ['status-owner-confirm', 'Owner Confirm'],
+        'RESOLVED':      ['status-resolved',      'Resolved'],
+        'REJECTED':      ['status-rejected',      'Rejected'],
+        'CANCELED':      ['status-canceled',      'Canceled'],
     };
-    const [cls, icon, label] = map[status] || ['status-pending', '📌', status];
-    return `<span class="status-pill ${cls}">${icon} ${label}</span>`;
+    const [cls, label] = map[status] || ['status-pending', status];
+    return `<span class="status-pill ${cls}">${label}</span>`;
 }
 
 // ─── Dashboard stats ───────────────────────────────────────────────────────────
@@ -290,7 +310,7 @@ function updateItemUi(newItem) {
             ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}`
             : 'https://placehold.co/300x160/eef2ff/6366f1?text=No+Image';
         let card = `
-            <div id="item_${escapeHtml(item.item_id)}" class="item-card" style="cursor:pointer;">
+            <div id="item_${escapeHtml(item.item_id)}" class="item-card item-row" style="cursor:pointer;" data-status="${escapeHtml(item.status)}">
                 <div class="item-card-img-wrap">
                     <img src="${imagePath}" alt="${escapeHtml(item.title)}" class="item-card-img">
                     <div class="item-card-status-overlay">${itemStatusPillHtml(item.status)}</div>
@@ -387,8 +407,8 @@ function updateClaimUi(newClaim) {
         const imagePath = claim.img_file
             ? `/swiftfound/img_upload/${escapeHtml(claim.img_file)}`
             : 'https://placehold.co/52x52/eef2ff/6366f1?text=?';
-        let card = `
-            <div id="claim_${escapeHtml(claim.claim_id)}" class="claim-row" style="cursor:pointer;" title="Open in chat">
+        const card = `
+            <div id="claim_${escapeHtml(claim.claim_id)}" class="claim-row" style="cursor:pointer;" title="Open in chat" data-status="${escapeHtml(claim.claim_status)}">
                 <img src="${imagePath}" class="claim-thumb" alt="${escapeHtml(claim.title)}">
                 <div style="flex: 1; min-width: 0;">
                     <div class="claim-row-top">
@@ -399,18 +419,19 @@ function updateClaimUi(newClaim) {
                         Your Answer: <em>&quot;${escapeHtml(claim.answer_text)}&quot;</em>
                     </div>
                 </div>
-                <div class="claim-row-action-hint">💬 Open Chat</div>
+                <div class="claim-row-action-hint">Open Chat</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
 
         document.getElementById(`claim_${claim.claim_id}`).addEventListener('click', function() {
-            window.location.href = `chat.php?opening=${claim.claim_id}`;
+            openChat(claim);
         });
     }
+    applyClaimsFilter();
 }
 
-// ─── Claim Requests — notification style, PENDING first & highlighted ─────────
+// ─── Claim Requests ─────────────────────────────────────────────────────────────
 function updateClaimReqUi(newClaimReq) {
     if (newClaimReq.length <= 0) return;
 
@@ -425,27 +446,20 @@ function updateClaimReqUi(newClaimReq) {
             ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}`
             : 'https://placehold.co/52x52/eef2ff/6366f1?text=?';
         const isPending  = claim.claim_status === 'PENDING';
-        const isChatting = claim.claim_status === 'CHATTING' || claim.claim_status === 'OWNER_CONFIRM';
-
-        let actionLabel = '';
-        if (isPending)  actionLabel = `<span class="noti-action-hint noti-action-approve">✓ Tap to Approve &amp; Chat</span>`;
-        else if (isChatting) actionLabel = `<span class="noti-action-hint noti-action-chat">💬 Tap to Open Chat</span>`;
 
         let card = `
-            <div id="claimReq_${escapeHtml(claim.claim_id)}" class="claim-noti-card ${isPending ? 'claim-noti-pending' : ''}" style="cursor:pointer;">
-                <div class="noti-dot-col">
-                    ${isPending ? '<span class="noti-pulse-dot"></span>' : '<span class="noti-inactive-dot"></span>'}
-                </div>
+            <div id="claimReq_${escapeHtml(claim.claim_id)}" class="claim-row ${isPending ? 'claim-row-pending' : ''}" style="cursor:pointer;" title="Open in chat" data-status="${escapeHtml(claim.claim_status)}">
                 <img src="${imagePath}" class="claim-thumb" alt="${escapeHtml(item.title)}">
-                <div class="noti-body">
-                    <div class="noti-header-row">
-                        <span class="noti-claimer-name">👤 ${escapeHtml(claimer.username)}</span>
+                <div style="flex: 1; min-width: 0;">
+                    <div class="claim-row-top">
+                        <strong class="claim-item-title">${escapeHtml(claimer.username)}</strong>
                         ${statusPillHtml(claim.claim_status)}
                     </div>
-                    <div class="noti-item-title">${escapeHtml(item.title)}</div>
-                    <div class="noti-answer">&ldquo;${escapeHtml(claim.answer_text)}&rdquo;</div>
-                    ${actionLabel}
+                    <div class="claim-row-answer">
+                        Answer: <em>&quot;${escapeHtml(claim.answer_text)}&quot;</em>
+                    </div>
                 </div>
+                <div class="claim-row-action-hint">Open Chat</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
@@ -453,14 +467,53 @@ function updateClaimReqUi(newClaimReq) {
         const row = document.getElementById(`claimReq_${claim.claim_id}`);
         if (row) {
             row.addEventListener('click', function() {
-                if (isPending) {
-                    openApproveConfirm(claim);
-                } else if (isChatting) {
-                    openChat(claim);
-                }
+                openChat(claim);
             });
         }
     }
+    applyClaimReqFilter();
+}
+
+function applyPostedFilter() {
+    const activeBtn = document.querySelector('#postedFilterTabs .sf-tab.active');
+    if (!activeBtn) return;
+    const filter = activeBtn.dataset.filter;
+    const rows = document.querySelectorAll('#postedItemsContainer .item-row');
+    rows.forEach(row => {
+        const status = row.dataset.status;
+        if (filter === 'all') row.style.display = 'flex';
+        else if (filter === 'active' && ['AVAILABLE', 'LOST', 'OWNER_CONFIRM', 'CLAIMED'].includes(status)) row.style.display = 'flex';
+        else if (filter === 'resolved' && ['RESOLVED', 'ABANDONED'].includes(status)) row.style.display = 'flex';
+        else row.style.display = 'none';
+    });
+}
+
+function applyClaimsFilter() {
+    const activeBtn = document.querySelector('#claimsFilterTabs .sf-tab.active');
+    if (!activeBtn) return;
+    const filter = activeBtn.dataset.filter;
+    const rows = document.querySelectorAll('#claimContainer .claim-row');
+    rows.forEach(row => {
+        const status = row.dataset.status;
+        if (filter === 'all') row.style.display = 'flex';
+        else if (filter === 'active' && ['PENDING', 'CHATTING', 'OWNER_CONFIRM'].includes(status)) row.style.display = 'flex';
+        else if (filter === 'closed' && ['RESOLVED', 'REJECTED', 'CANCELED', 'ABANDONED'].includes(status)) row.style.display = 'flex';
+        else row.style.display = 'none';
+    });
+}
+
+function applyClaimReqFilter() {
+    const activeBtn = document.querySelector('#claimReqFilterTabs .sf-tab.active');
+    if (!activeBtn) return;
+    const filter = activeBtn.dataset.filter;
+    const rows = document.querySelectorAll('#claimReqContainer .claim-row');
+    rows.forEach(row => {
+        const status = row.dataset.status;
+        if (filter === 'all') row.style.display = 'flex';
+        else if (filter === 'pending' && status === 'PENDING') row.style.display = 'flex';
+        else if (filter === 'closed' && ['RESOLVED', 'REJECTED', 'CANCELED', 'ABANDONED'].includes(status)) row.style.display = 'flex';
+        else row.style.display = 'none';
+    });
 }
 
 function updateChatUi(newChat) {
@@ -470,29 +523,6 @@ function updateChatUi(newChat) {
 function onClaimEdit(e) {}
 function onViewClaimer(e) {}
 
-let _pendingApprovalClaim = null;
-
-function setupApproveConfirmModal() {
-    const modal = document.getElementById('approveConfirmModal');
-    document.getElementById('confirmApproveCancel').addEventListener('click', () => {
-        modal.style.display = 'none';
-        _pendingApprovalClaim = null;
-    });
-    document.getElementById('confirmApproveOk').addEventListener('click', async () => {
-        if (!_pendingApprovalClaim) return;
-        modal.style.display = 'none';
-        await openChat(_pendingApprovalClaim);
-        _pendingApprovalClaim = null;
-    });
-}
-
-function openApproveConfirm(claim) {
-    _pendingApprovalClaim = claim;
-    document.getElementById('confirmClaimerName').textContent = claim.claimer.username;
-    document.getElementById('confirmClaimerRep').textContent = claim.claimer.reputation ?? '—';
-    document.getElementById('confirmAnswerBox').textContent = claim.answer_text;
-    document.getElementById('approveConfirmModal').style.display = 'flex';
-}
 
 async function openChat(claim) {
     if (claim.claim_status !== 'CHATTING' && claim.claim_status !== 'OWNER_CONFIRM') {

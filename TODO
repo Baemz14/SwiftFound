@@ -1,32 +1,3 @@
-index TODO:
-buat bagian about us bawah skali
-
-browse TODO:
-buat filder date clear pada user yg kiri 'from' kanan 'to'
-
-home TODO:
-kalu user.is_restricted==1, tunjuk pada dashboard dn explain pada user tak boleh post item, claim item n report item until admin unrestrict
-claim req boleh open chat je tak perlu approve pon sebb dlm chat dah ada butang kalu nk approve, so jgn lupe buang popup modalnye skali
-claim ,claim req and item posted kasi ada mcm status tab kalu nk tgk pending saje or resolved saje
-kasi claim req tu mcm tak nice sebb tak sama dgn my active claim bagi dia sama cara open chat
-claim req rejected/canceled pon boleh open chat (semua claim kasi open chat)
-buang emoji
-
-readme TODO:
-isi dgn user manual dn beberapa screenshot
-list benda yg user boleh buat
 
 isi AI_LOG.md (semua)
 
-reputation
-< 0 ➔ CAUTIOS
-0 - 19 ➔ NOVICE
-20 - 49 ➔ HELPFUL
-50 - 99 ➔ TRUSTED
-100+ ➔ GUARDIAN
-
-cancel -1
-reject -3
-resolve item, poster +10, claimer +5
-abandon item -7
-reported and item removed - 15

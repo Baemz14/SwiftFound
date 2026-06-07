@@ -130,8 +130,40 @@
                     <h4>Chat & return</h4>
                     <p>Open the built-in chat, confirm the handoff, and complete the recovery in one place.</p>
                 </div>
+                </div>
             </div>
         </section>
+
+        <!-- About Us Section -->
+        <section class="about-us-section">
+            <div class="section-header text-center">
+                <h2>About Us</h2>
+                <p>SwiftFound is a campus lost and found platform designed to reunite you with your belongings quickly.</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">&#128640;</div>
+                    <h4>Fast Recovery</h4>
+                    <p>Our real-time platform ensures lost items are posted and matched in minutes, not days.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">&#128274;</div>
+                    <h4>Secure Claims</h4>
+                    <p>Security questions and chat verification protect your items from false claims.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">&#127891;</div>
+                    <h4>Campus Focused</h4>
+                    <p>Built specifically for students and staff to navigate the hectic campus environment.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">&#11088;</div>
+                    <h4>Trust Driven</h4>
+                    <p>A transparent reputation system rewards honest behavior and keeps the community safe.</p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
 </body>

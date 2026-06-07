@@ -405,11 +405,11 @@ export function getReputationLabel(reputation) {
     if (Number.isNaN(reputation)) {
         return { label: 'NOVICE', className: 'rep-novice' };
     }
-    if (reputation < 0)   return { label: 'CAUTIOUS', className: 'rep-cautios' };
+    if (reputation < 0)   return { label: 'CAUTION', className: 'rep-caution' };
     if (reputation <= 19)  return { label: 'NOVICE',   className: 'rep-novice' };
     if (reputation <= 49)  return { label: 'HELPFUL',  className: 'rep-helpful' };
     if (reputation <= 99)  return { label: 'TRUSTED',  className: 'rep-trusted' };
-    return                        { label: 'GUARDIAN', className: 'rep-guardian' };
+    return                        { label: 'GUARDIANS', className: 'rep-guardian' };
 }
 
 export async function reportItem(item, reason, details) {

@@ -55,34 +55,38 @@
         <!-- Main Content Card -->
         <main class="content-area">
             <div id="dashboardSect" class="tab-content">
-                <h1>Hello, <span id="usernameTxt">User</span>! 👋</h1>
+                <div id="restrictedBanner" class="restricted-banner" style="display:none;">
+                    <strong>Account Restricted</strong>
+                    <p>You cannot post new items, claim items, or report items until an administrator removes your restriction.</p>
+                </div>
+                <h1>Hello, <span id="usernameTxt">User</span>!</h1>
                 <p class="dash-welcome-sub">Here's a snapshot of your SwiftFound activity.</p>
 
                 <!-- Quick Stats Row -->
                 <div class="dash-stats-row">
                     <div class="dash-stat-card dash-stat-blue">
-                        <div class="dash-stat-icon">📦</div>
+                        <div class="dash-stat-icon"></div>
                         <div class="dash-stat-info">
                             <div class="dash-stat-value" id="stat-posted">0</div>
                             <div class="dash-stat-label">Posted Items</div>
                         </div>
                     </div>
                     <div class="dash-stat-card dash-stat-purple">
-                        <div class="dash-stat-icon">💬</div>
+                        <div class="dash-stat-icon"></div>
                         <div class="dash-stat-info">
                             <div class="dash-stat-value" id="stat-claims">0</div>
                             <div class="dash-stat-label">Active Claims</div>
                         </div>
                     </div>
                     <div class="dash-stat-card dash-stat-orange">
-                        <div class="dash-stat-icon">⏳</div>
+                        <div class="dash-stat-icon"></div>
                         <div class="dash-stat-info">
                             <div class="dash-stat-value" id="stat-pending">0</div>
                             <div class="dash-stat-label">Pending Requests</div>
                         </div>
                     </div>
                     <div class="dash-stat-card dash-stat-green">
-                        <div class="dash-stat-icon">✅</div>
+                        <div class="dash-stat-icon"></div>
                         <div class="dash-stat-info">
                             <div class="dash-stat-value" id="stat-resolved">0</div>
                             <div class="dash-stat-label">Resolved</div>
@@ -111,7 +115,7 @@
                     </div>
 
                     <div class="rep-tiers">
-                        <div class="rep-tier-dot cautios">  <span class="dot"></span><span class="tier-label">CAUTIOUS<br><small>&lt;0</small></span></div>
+                        <div class="rep-tier-dot caution">  <span class="dot"></span><span class="tier-label">CAUTION<br><small>&lt;0</small></span></div>
                         <div class="rep-tier-dot novice">   <span class="dot"></span><span class="tier-label">NOVICE<br><small>0</small></span></div>
                         <div class="rep-tier-dot helpful">  <span class="dot"></span><span class="tier-label">HELPFUL<br><small>20</small></span></div>
                         <div class="rep-tier-dot trusted">  <span class="dot"></span><span class="tier-label">TRUSTED<br><small>50</small></span></div>
@@ -124,13 +128,13 @@
                     <div class="dash-qa-title">Quick Actions</div>
                     <div class="dash-qa-row">
                         <a href="item_form.php" class="dash-qa-btn dash-qa-primary">
-                            <span>📋</span> Post an Item
+                            Post an Item
                         </a>
                         <a href="browse.php" class="dash-qa-btn dash-qa-secondary">
-                            <span>🔍</span> Browse Items
+                            Browse Items
                         </a>
                         <a href="chat.php" class="dash-qa-btn dash-qa-chat">
-                            <span>💬</span> Open Chat
+                            Open Chat
                         </a>
                     </div>
                 </div>
@@ -139,6 +143,11 @@
             <div id="postedSect" class="tab-content" style="display:none;">
                 <h1>My Posted Items</h1>
                 <p class="section-sub">Your items, sorted by status — active first.</p>
+                <div class="sf-row" id="postedFilterTabs">
+                    <button class="sf-tab active" data-filter="all">All</button>
+                    <button class="sf-tab" data-filter="active">Active</button>
+                    <button class="sf-tab" data-filter="resolved">Resolved / Abandoned</button>
+                </div>
                 <div id="postedItemsContainer" class="items-grid">
                 </div>
             </div>
@@ -146,6 +155,11 @@
             <div id="claimsSect" class="tab-content" style="display:none;">
                 <h1>My Active Claims</h1>
                 <p class="section-sub">Items you've claimed — click any row to open chat.</p>
+                <div class="sf-row" id="claimsFilterTabs">
+                    <button class="sf-tab active" data-filter="all">All</button>
+                    <button class="sf-tab" data-filter="active">Active</button>
+                    <button class="sf-tab" data-filter="closed">Closed</button>
+                </div>
                 <div id="claimContainer" class="claim-grid">
                 </div>
             </div>
@@ -153,6 +167,11 @@
             <div id="claimReqSect" class="tab-content" style="display:none;">
                 <h1>Claim Requests</h1>
                 <p class="section-sub">People requesting your posted items — PENDING requests shown first.</p>
+                <div class="sf-row" id="claimReqFilterTabs">
+                    <button class="sf-tab active" data-filter="all">All</button>
+                    <button class="sf-tab" data-filter="pending">Pending</button>
+                    <button class="sf-tab" data-filter="closed">Closed</button>
+                </div>
                 <div id="claimReqContainer" class="claim-grid"></div>
             </div>
         </main>
@@ -175,22 +194,5 @@
         </div>
     </div>
 
-    <!-- Approve Claim Confirm Dialog -->
-    <div id="approveConfirmModal" class="modal-overlay" style="display: none;">
-        <div class="confirm-modal-card">
-            <h2>Approve Claim Request?</h2>
-            <p style="color: #6b7280; margin-bottom: 4px;">Claimer: <strong id="confirmClaimerName">—</strong></p>
-            <div class="confirm-rep">
-                <span class="rep-star">★</span>
-                <span>Reputation: <strong id="confirmClaimerRep">—</strong></span>
-            </div>
-            <p style="font-size: 0.85rem; color: #374151; margin-bottom: 4px;">Their answer:</p>
-            <div class="confirm-answer-box" id="confirmAnswerBox">—</div>
-            <div class="modal-actions">
-                <button id="confirmApproveCancel" class="row-btn row-btn-secondary">Cancel</button>
-                <button id="confirmApproveOk" class="row-btn row-btn-primary">✓ Approve &amp; Open Chat</button>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

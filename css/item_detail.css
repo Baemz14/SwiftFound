@@ -168,9 +168,9 @@ body {
     color: inherit;
 }
 
-.poster-reputation.rep-cautios {
-    background: rgba(254, 226, 226, 0.95);
-    border-color: #fca5a5;
+.poster-reputation.rep-caution {
+    background: rgba(254,226,226,0.92);
+    border: 1px solid #fca5a5;
     color: #991b1b;
 }
 

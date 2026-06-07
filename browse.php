@@ -37,8 +37,14 @@
                 <option value="">All Categories</option>
             </select>
             <input type="text" id="locationFilter" placeholder="Location">
-            <input type="date" id="dateFrom" title="From date">
-            <input type="date" id="dateTo" title="To date">
+            <div class="date-field">
+                <span class="date-label">From</span>
+                <input type="date" id="dateFrom" title="From date">
+            </div>
+            <div class="date-field">
+                <span class="date-label">To</span>
+                <input type="date" id="dateTo" title="To date">
+            </div>
         </div>
 
         <div class="filter-row-bottom">
