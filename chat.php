@@ -65,12 +65,11 @@
         </div>
     </div>
 
-    <!-- Confirm Owner Modal -->
-    <div id="confirmOwnerModal" class="modal">
+    <!-- Confirm Owner Modal /-->
+    <div id="confirmOwnerModal" class="modal modal-confirm-theme">
         <div class="modal-content">
             <h2>Confirm as Owner</h2>
             <p>All other claimers for this item will be rejected.</p>
-            <!-- TODO: write css class for this -->
             <div class="rejecting-list"> 
                 <h3>Rejecting Claimers:</h3>
                 <ul id="rejectingClaimersList">
@@ -78,13 +77,13 @@
                 </ul>
             </div>
             <div class="modal-buttons">
-                <button id="confirmOwnerBtn" class="btn-primary">Confirm</button>
-                <button id="cancelOwnerBtn" class="btn-secondary">Cancel</button>
+                <button id="confirmOwnerBtn" class="btn-secondary-close">Confirm</button>
+                <button id="cancelOwnerBtn" class="btn-success-confirm">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Open Chat Modal -->
+    <!-- Open Chat Modal /-->
     <div id="openChatModal" class="modal">
         <div class="modal-content">
             <h2>Open Chat</h2>
@@ -96,28 +95,28 @@
         </div>
     </div>
 
-    <!-- Reject Claim Modal -->
-    <div id="rejectClaimModal" class="modal">
+    <!-- Reject Claim Modal /-->
+    <div id="rejectClaimModal" class="modal modal-cancel-theme">
         <div class="modal-content">
             <h2>Reject Claim</h2>
             <p>Are you sure you want to reject this claim?</p>
-            <input type="text" id="rejectReasonInput" placeholder="Reason for rejection (optional)" aria-label="Reason for rejection">
+            <input type="text" class='input' id="rejectReasonInput" placeholder="Reason for rejection (optional)" aria-label="Reason for rejection">
             <div class="modal-buttons">
-                <button id="rejectClaimBtn" class="btn-danger">Reject</button>
-                <button id="cancelRejectBtn" class="btn-secondary">Cancel</button>
+                <button id="rejectClaimBtn" class="btn-danger-outline">Reject</button>
+                <button id="cancelRejectBtn" class="btn-primary-keep">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Cancel Claim Modal -->
-    <div id="cancelClaimModal" class="modal">
+    <!-- Cancel Claim Modal /-->
+    <div id="cancelClaimModal" class="modal modal-cancel-theme">
         <div class="modal-content">
             <h2>Cancel Claim</h2>
             <p>Are you sure you want to cancel this claim?</p>
-            <input type="text" id="cancelReasonInput" placeholder="Reason for cancellation (optional)" aria-label="Reason for cancellation">
+            <input type="text" class='input' id="cancelReasonInput" placeholder="Reason for cancellation (optional)" aria-label="Reason for cancellation">
             <div class="modal-buttons">
-                <button id="cancelClaimBtn" class="btn-secondary">Cancel Claim</button>
-                <button id="cancelCancelBtn" class="btn-primary">Keep Claim</button>
+                <button id="cancelClaimBtn" class="btn-danger-outline">Cancel Claim</button>
+                <button id="cancelCancelBtn" class="btn-primary-keep">Keep Claim</button>
             </div>
         </div>
     </div>
