@@ -356,7 +356,7 @@ function updateButtonVisibility() {
         adminStatusEl.style.display = 'none';
     }
 
-    if (user.is_restricted == 1) {
+    if (user && user.is_restricted == 1) {
         claimBtn.style.display = 'none';
         reportBtn.style.display = 'none';
         deleteBtn.style.display = 'none';
