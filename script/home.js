@@ -496,8 +496,7 @@ function applyClaimsFilter() {
     rows.forEach(row => {
         const status = row.dataset.status;
         if (filter === 'all') row.style.display = 'flex';
-        else if (filter === 'active' && ['PENDING', 'CHATTING', 'OWNER_CONFIRM'].includes(status)) row.style.display = 'flex';
-        else if (filter === 'closed' && ['RESOLVED', 'REJECTED', 'CANCELED', 'ABANDONED'].includes(status)) row.style.display = 'flex';
+        else if (filter === status) row.style.display = 'flex';
         else row.style.display = 'none';
     });
 }
@@ -510,8 +509,7 @@ function applyClaimReqFilter() {
     rows.forEach(row => {
         const status = row.dataset.status;
         if (filter === 'all') row.style.display = 'flex';
-        else if (filter === 'pending' && status === 'PENDING') row.style.display = 'flex';
-        else if (filter === 'closed' && ['RESOLVED', 'REJECTED', 'CANCELED', 'ABANDONED'].includes(status)) row.style.display = 'flex';
+        else if (filter === status) row.style.display = 'flex';
         else row.style.display = 'none';
     });
 }

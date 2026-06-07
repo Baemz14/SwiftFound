@@ -157,8 +157,11 @@
                 <p class="section-sub">Items you've claimed — click any row to open chat.</p>
                 <div class="sf-row" id="claimsFilterTabs">
                     <button class="sf-tab active" data-filter="all">All</button>
-                    <button class="sf-tab" data-filter="active">Active</button>
-                    <button class="sf-tab" data-filter="closed">Closed</button>
+                    <button class="sf-tab" data-filter="PENDING">Pending</button>
+                    <button class="sf-tab" data-filter="RESOLVED">Resolved</button>
+                    <button class="sf-tab" data-filter="ABANDONED">Abandoned</button>
+                    <button class="sf-tab" data-filter="OWNER_CONFIRM">Owner Confirm</button>
+                    <button class="sf-tab" data-filter="REMOVED">Removed</button>
                 </div>
                 <div id="claimContainer" class="claim-grid">
                 </div>
@@ -169,8 +172,11 @@
                 <p class="section-sub">People requesting your posted items — PENDING requests shown first.</p>
                 <div class="sf-row" id="claimReqFilterTabs">
                     <button class="sf-tab active" data-filter="all">All</button>
-                    <button class="sf-tab" data-filter="pending">Pending</button>
-                    <button class="sf-tab" data-filter="closed">Closed</button>
+                    <button class="sf-tab" data-filter="PENDING">Pending</button>
+                    <button class="sf-tab" data-filter="RESOLVED">Resolved</button>
+                    <button class="sf-tab" data-filter="ABANDONED">Abandoned</button>
+                    <button class="sf-tab" data-filter="OWNER_CONFIRM">Owner Confirm</button>
+                    <button class="sf-tab" data-filter="REMOVED">Removed</button>
                 </div>
                 <div id="claimReqContainer" class="claim-grid"></div>
             </div>
