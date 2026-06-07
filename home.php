@@ -145,8 +145,11 @@
                 <p class="section-sub">Your items, sorted by status — active first.</p>
                 <div class="sf-row" id="postedFilterTabs">
                     <button class="sf-tab active" data-filter="all">All</button>
-                    <button class="sf-tab" data-filter="active">Active</button>
-                    <button class="sf-tab" data-filter="resolved">Resolved / Abandoned</button>
+                    <button class="sf-tab" data-filter="PENDING">Pending</button>
+                    <button class="sf-tab" data-filter="RESOLVED">Resolved</button>
+                    <button class="sf-tab" data-filter="ABANDONED">Abandoned</button>
+                    <button class="sf-tab" data-filter="OWNER_CONFIRM">Owner Confirm</button>
+                    <button class="sf-tab" data-filter="REMOVED">Removed</button>
                 </div>
                 <div id="postedItemsContainer" class="items-grid">
                 </div>
@@ -159,9 +162,12 @@
                     <button class="sf-tab active" data-filter="all">All</button>
                     <button class="sf-tab" data-filter="PENDING">Pending</button>
                     <button class="sf-tab" data-filter="RESOLVED">Resolved</button>
-                    <button class="sf-tab" data-filter="ABANDONED">Abandoned</button>
+                    <button class="sf-tab" data-filter="REJECTED">Rejected</button>
+                    <button class="sf-tab" data-filter="CHATTING">Chatting</button>
                     <button class="sf-tab" data-filter="OWNER_CONFIRM">Owner Confirm</button>
-                    <button class="sf-tab" data-filter="REMOVED">Removed</button>
+                    <button class="sf-tab" data-filter="CANCELED">Canceled</button>
+                    <button class="sf-tab" data-filter="PENDING_RESOLUTION">Pending Resolution</button>
+                    <button class="sf-tab" data-filter="ABANDONED">Abandoned</button>
                 </div>
                 <div id="claimContainer" class="claim-grid">
                 </div>
@@ -174,9 +180,12 @@
                     <button class="sf-tab active" data-filter="all">All</button>
                     <button class="sf-tab" data-filter="PENDING">Pending</button>
                     <button class="sf-tab" data-filter="RESOLVED">Resolved</button>
-                    <button class="sf-tab" data-filter="ABANDONED">Abandoned</button>
+                    <button class="sf-tab" data-filter="REJECTED">Rejected</button>
+                    <button class="sf-tab" data-filter="CHATTING">Chatting</button>
                     <button class="sf-tab" data-filter="OWNER_CONFIRM">Owner Confirm</button>
-                    <button class="sf-tab" data-filter="REMOVED">Removed</button>
+                    <button class="sf-tab" data-filter="CANCELED">Canceled</button>
+                    <button class="sf-tab" data-filter="PENDING_RESOLUTION">Pending Resolution</button>
+                    <button class="sf-tab" data-filter="ABANDONED">Abandoned</button>
                 </div>
                 <div id="claimReqContainer" class="claim-grid"></div>
             </div>

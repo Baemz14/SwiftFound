@@ -482,8 +482,7 @@ function applyPostedFilter() {
     rows.forEach(row => {
         const status = row.dataset.status;
         if (filter === 'all') row.style.display = 'flex';
-        else if (filter === 'active' && ['AVAILABLE', 'LOST', 'OWNER_CONFIRM', 'CLAIMED'].includes(status)) row.style.display = 'flex';
-        else if (filter === 'resolved' && ['RESOLVED', 'ABANDONED'].includes(status)) row.style.display = 'flex';
+        else if (filter === status) row.style.display = 'flex';
         else row.style.display = 'none';
     });
 }
