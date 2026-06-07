@@ -426,77 +426,296 @@ main {
     }
 }
 
-/* ── About Us ────────────────────────────────────────────────────── */
-.about-us-section {
-    padding: 100px 5%;
-    max-width: 1300px;
+/* Container Alignment */
+.pillars-section {
+    padding: 80px 20px;
+    background: transparent; /* Seamlessly inherits your existing main app gradient background */
+}
+
+.pillars-section .container {
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-.section-header {
-    margin-bottom: 60px;
+/* Section Typography Headers */
+.pillars-section .section-header {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
-.section-header h2 {
-    font-size: 2.5rem;
-    margin-bottom: 16px;
-    background: linear-gradient(135deg, #e0e7ff, #818cf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.pillars-section .section-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+    background-color: var(--primary-color);
+    border-radius: 100px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
-.section-header p {
+.pillars-section .section-header h2 {
+    font-size: 2rem;
+    color: var(--text-light);
+    font-weight: 700;
+    margin: 0 0 12px 0;
+}
+
+.pillars-section .section-header p {
+    font-size: 1.05rem;
     color: var(--text-muted);
-    font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
-}
-
-.about-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
-}
-
-.about-card {
-    background: var(--surface);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 24px;
-    padding: 32px 24px;
-    text-align: center;
-    transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.about-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.about-icon {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-}
-
-.about-card h4 {
-    color: #fff;
-    font-size: 1.25rem;
-    margin-bottom: 12px;
-}
-
-.about-card p {
-    color: var(--text-muted);
-    font-size: 0.95rem;
     line-height: 1.6;
 }
 
-@media (max-width: 1024px) {
-    .about-grid {
-        grid-template-columns: repeat(2, 1fr);
+/* Responsive Grid Mechanics */
+.pillars-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default mobile layout stack */
+    gap: 24px;
+}
+
+/* Responsive Breakpoints */
+@media (min-width: 640px) {
+    .pillars-layout-grid {
+        grid-template-columns: repeat(2, 1fr); /* Tablets */
     }
 }
 
-@media (max-width: 640px) {
-    .about-grid {
-        grid-template-columns: 1fr;
+@media (min-width: 1024px) {
+    .pillars-layout-grid {
+        grid-template-columns: repeat(4, 1fr); /* Desktop Viewports */
+    }
+}
+
+/* Block Element Styles & Dynamic Interactivity */
+.pillar-block {
+    background-color: var(--surface);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(199, 210, 254, 0.15); /* Soft transparent border accent */
+    border-radius: 12px;
+    padding: 24px;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow);
+}
+
+.pillar-block:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.45);
+}
+
+/* Icon Decorative Containers */
+.block-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    background-color: var(--surface-soft);
+    border: 1px solid rgba(91, 80, 206, 0.3);
+}
+
+/* Card Content Typography */
+.pillar-block h4 {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 600;
+    margin: 0 0 10px 0;
+}
+
+.pillar-block p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Core Structural Layout Base */
+.main-footer {
+    background-color: var(--surface);
+    border-top: 1px solid rgba(199, 210, 254, 0.15); /* Translucent text-muted boundary border line */
+    padding: 60px 20px 0 20px;
+    font-family: system-ui, -apple-system, sans-serif;
+    box-shadow: var(--shadow);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr; /* Default mobile single vertical grid trace */
+    gap: 40px;
+    padding-bottom: 40px;
+}
+
+/* Responsive Grid Breakpoints */
+@media (min-width: 768px) {
+    .footer-container {
+        grid-template-columns: repeat(2, 1fr); /* Tablet layout configuration */
+    }
+}
+
+@media (min-width: 1024px) {
+    .footer-container {
+        grid-template-columns: 2fr 1fr 1fr 2fr; /* Balanced desktop proportions grid tracks */
+    }
+}
+
+/* Column 1: Brand Header & Bio Metrics */
+.footer-brand-column .footer-logo {
+    color: var(--text-light);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+}
+
+.footer-brand-column .footer-brand-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+}
+
+/* Live Operational Tracking Badge */
+.footer-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--surface-soft);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    font-weight: 500;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981; /* Healthy system emerald indicator light */
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: operationalPulse 2s infinite;
+}
+
+/* Navigation & Policy Link Columns Layout */
+.footer-links-column h4,
+.footer-contact-column h4 {
+    color: var(--text-light);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    position: relative;
+}
+
+.footer-links-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links-column ul li {
+    margin-bottom: 12px;
+}
+
+.footer-links-column ul li a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+}
+
+.footer-links-column ul li a:hover {
+    color: var(--text-light);
+    transform: translateX(4px); /* Minor shifting interactive element */
+}
+
+/* Column 4: Detailed Contact / Support Grid items */
+.footer-contact-column .contact-info-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+}
+
+.contact-meta-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contact-meta-list li {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.contact-meta-list .contact-icon {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+/* Lower Copyright Bar Execution Rules */
+.footer-bottom-bar {
+    border-top: 1px solid rgba(199, 210, 254, 0.08);
+    padding: 24px 0;
+}
+
+.footer-bottom-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (min-width: 640px) {
+    .footer-bottom-container {
+        flex-direction: row; /* Converts back to flat alignment rows on larger views */
+    }
+}
+
+.footer-bottom-container p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.footer-bottom-container .compliance-text {
+    opacity: 0.65;
+    font-style: italic;
+}
+
+/* Keyframe tracking for system status dot */
+@keyframes operationalPulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
     }
 }

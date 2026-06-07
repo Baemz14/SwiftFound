@@ -92,17 +92,14 @@
             </div>
             <div class="feature-cards">
                 <article class="feature-card">
-                    <div class="feature-icon">💬</div>
                     <h3>Instant chat</h3>
                     <p>Message finders and claimants directly so you can verify details without waiting.</p>
                 </article>
                 <article class="feature-card">
-                    <div class="feature-icon">🛡️</div>
                     <h3>Trusted workflow</h3>
                     <p>Claim submissions are tracked and verified so every handoff is safer and simpler.</p>
                 </article>
                 <article class="feature-card">
-                    <div class="feature-icon">✨</div>
                     <h3>Clear design</h3>
                     <p>Easy navigation, strong visual hierarchy, and action-focused pages help you move faster.</p>
                 </article>
@@ -134,37 +131,86 @@
             </div>
         </section>
 
-        <!-- About Us Section -->
-        <section class="about-us-section">
-            <div class="section-header text-center">
-                <h2>About Us</h2>
-                <p>SwiftFound is a campus lost and found platform designed to reunite you with your belongings quickly.</p>
-            </div>
-            <div class="about-grid">
-                <div class="about-card">
-                    <div class="about-icon">&#128640;</div>
-                    <h4>Fast Recovery</h4>
-                    <p>Our real-time platform ensures lost items are posted and matched in minutes, not days.</p>
+        <section class="pillars-section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-badge">Our Mission</span>
+                    <h2>Cultivating a Culture of Shared Trust</h2>
+                    <p>SwiftFound is more than a tracking utility—it is a community-driven initiative built to foster integrity across our campus.</p>
                 </div>
-                <div class="about-card">
-                    <div class="about-icon">&#128274;</div>
-                    <h4>Secure Claims</h4>
-                    <p>Security questions and chat verification protect your items from false claims.</p>
-                </div>
-                <div class="about-card">
-                    <div class="about-icon">&#127891;</div>
-                    <h4>Campus Focused</h4>
-                    <p>Built specifically for students and staff to navigate the hectic campus environment.</p>
-                </div>
-                <div class="about-card">
-                    <div class="about-icon">&#11088;</div>
-                    <h4>Trust Driven</h4>
-                    <p>A transparent reputation system rewards honest behavior and keeps the community safe.</p>
+
+                <div class="pillars-layout-grid">
+                    <div class="pillar-block">
+                        <h4>Integrity First</h4>
+                        <p>We believe in the integrity of our campus residents. The platform provides a streamlined path for finders to do the right thing and safely return items out of genuine goodwill.</p>
+                    </div>
+
+                    <div class="pillar-block">
+                        <h4>Reducing Lost Waste</h4>
+                        <p>Countless valuable items like spectacles, controllers, and keys accumulate permanently in physical campus bins. We reduce waste by keeping lost property items cycling back to their owners.</p>
+                    </div>
+
+                    <div class="pillar-block">
+                        <h4>Peace of Mind</h4>
+                        <p>Navigating a hectic academic semester is stressful enough. Knowing there is a central, monitored campus network looking out for your lost belongings provides security for everyone.</p>
+                    </div>
+
+                    <div class="pillar-block">
+                        <h4>Collective Accountability</h4>
+                        <p>Every successful match reinforces a positive cycle of mutual aid. By looking out for one another's missing possessions, we cultivate a safer, more reliable campus ecosystem.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand-column">
+                <h3 class="footer-logo">SwiftFound</h3>
+                <p class="footer-brand-desc">Reconnecting campus residents with their missing property through real-time matching and secure closed-loop verification streams.</p>
+                <div class="footer-status-tag">
+                    <span class="pulse-dot"></span> System Status: Operational
+                </div>
+            </div>
+
+            <div class="footer-links-column">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="home.php">Home Dashboard</a></li>
+                    <li><a href="browse.php">Browse Lost Items</a></li>
+                    <li><a href="login.php">Account Login</a></li>
+                    <li><a href="signup.php">Resident Registration</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-column">
+                <h4>Community Rules</h4>
+                <ul>
+                    <li><a href="docs/SwiftFound_User-Manual.pdf" target="_blank" rel="noopener noreferrer">User Manual & Terms</a></li>
+                    <li><a href="admin.php">Admin Security Portal</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact-column">
+                <h4>Contact & Support</h4>
+                <p class="contact-info-text">Encountered an issue, or fighting an account restriction flag? Reach out to the core campus IT support unit:</p>
+                <ul class="contact-meta-list">
+                    <li>baraimz14@gmail.com</li>
+                    <li>+60 10-357 9103 (Afrizal-support)</li>
+                    <li>UiTM Tapah</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom-bar">
+            <div class="footer-bottom-container">
+                <p>&copy; 2026 SwiftFound Platform. Developed for Campus Resident Safety.</p>
+                <p class="compliance-text">Section 508 Accessibility Compliant Layout</p>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
