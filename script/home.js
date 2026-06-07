@@ -525,12 +525,5 @@ function onViewClaimer(e) {}
 
 
 async function openChat(claim) {
-    if (claim.claim_status !== 'CHATTING' && claim.claim_status !== 'OWNER_CONFIRM') {
-        const ok = await userUtil.openChat(claim);
-        if (!ok) {
-            alert('o no something went wong!');
-            throw new Error('server error opening chat');
-        }
-    }
     window.location.href = `/swiftfound/chat.php?opening=${claim.claim_id}`;
 }
