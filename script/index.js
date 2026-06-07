@@ -7,6 +7,7 @@ let unreadCount = 0;
 export async function onIndexLoad() {
     stats = await loadNewStats();
     unreadCount = await getUnreadMessageCount();
+    console.log(stats);
     drawStats();
     drawNotiBadge();
 

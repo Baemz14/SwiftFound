@@ -308,14 +308,25 @@ function drawNewChat(chat, _contact) {
                 <div class="message-area"></div>
             </div>
         `;
-        // owner btn to confirm contact is owner, resolve btn to confirm claim resolved, 
-        // reject btn to reject claim. only show if user is claimer or owner respectively and claim not resolved yet
-        // make popup confirmation for each action to prevent misclicks, and for owner confirm also ask for item condition (same, worse, better)
-        // for owner confirm, make sure to let user know that this action will reject all other claims on the same item
+
         document.getElementById('chatCont').insertAdjacentHTML('beforeend', newChat);
         contactChat = document.getElementById(`chat_${_contact.contact_id}`);
         applyHeaderButtons(_contact, _contact.claimStatus, contactChat);
         contactChat.style.display = "none";
+
+        const avatarImg = document.querySelector(`#chat_${_contact.contact_id} #headerAvatarImg`);
+        const avatarInitial = document.querySelector(`#chat_${_contact.contact_id} #headerAvatarInitial`);
+        if (avatarImg && avatarInitial) {
+            if (_contact.avatar_url) {
+                avatarImg.src = _contact.avatar_url;
+                avatarImg.style.display = 'block';
+                avatarInitial.style.display = 'none';
+            } else {
+                avatarImg.style.display = 'none';
+                avatarInitial.style.display = 'block';
+                avatarInitial.innerText = _contact['username'].charAt(0).toUpperCase();
+            }
+        }
     }
     let chatDate = new Date(chat.sent_at);
     const timeString = chatDate.toLocaleTimeString('en-GB', {
@@ -638,9 +649,9 @@ export function updateContactsDisplay(forceOpenFirst = true) {
         const isArchived = ['RESOLVED', 'REJECTED', 'CANCELED', 'CANCELLED', 'ABANDONED'].includes(status);
         let isStatusMatch = status === activeStatus;
         if (isArchived) {
-            isStatusMatch = isStatusMatch || activeStatus === 'ARCHIVE_ALL';
+            isStatusMatch = isStatusMatch || activeStatus === 'ARCHIVE_ALL' || activeStatus === 'ALL' ;
         } else {
-           isStatusMatch = isStatusMatch || activeStatus === 'ALL' 
+           isStatusMatch = isStatusMatch || activeStatus === 'ALL' ;
         }
         const shouldShow = isTypeMatch && isStatusMatch;
         item.style.display = shouldShow ? '' : 'none';

@@ -434,7 +434,7 @@ function updateButtonVisibility() {
     if (viewingStatus === 'USER_CLAIMED') {
         // User already claimed - show chat button, hide claim, report, delete
         claimBtn.style.display = 'none';
-        reportBtn.style.display = 'none';
+        reportBtn.style.display = 'block';
         deleteBtn.style.display = 'none';
         chatBtn.style.display = 'block';
         removeItemBtn.style.display = 'none';
