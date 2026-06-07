@@ -1,5 +1,3 @@
-buat user boleh stay sign in
-
 index TODO:
 buat bagian about us bawah skali
 
@@ -16,9 +14,6 @@ claim ,claim req and item posted kasi ada mcm status tab kalu nk tgk pending saj
 kasi claim req tu mcm tak nice sebb tak sama dgn my active claim bagi dia sama cara open chat
 claim req rejected/canceled pon boleh open chat (semua claim kasi open chat)
 buang emoji
-
-baem:
-buat logic restricted user kalu admin nak restrict user. user boleh buka acc, tpi tokleh post item, claim item and report
 
 readme TODO:
 isi dgn user manual dn beberapa screenshot
