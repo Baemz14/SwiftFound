@@ -472,3 +472,56 @@ async function drawReportStatusChart() {
         options: pieChartOption // Attaches directly to your unified pie layout configuration block
     });
 }
+
+export function redrawAnalysisTables(freshTables) {
+    if (!freshTables || Object.keys(freshTables).length === 0) {
+        // No changes detected by the comparison engine, skip execution
+        return;
+    }
+
+    console.log("Synchronizing data engines and refreshing canvas surfaces...", freshTables);
+
+    // 1. Update the underlying data arrays inside your config mapping
+    if (freshTables['user_table'])    sections['user'].data    = freshTables['user_table'];
+    if (freshTables['item_table'])    sections['item'].data    = freshTables['item_table'];
+    if (freshTables['claim_table'])   sections['claim'].data   = freshTables['claim_table'];
+    if (freshTables['message_table']) sections['message'].data = freshTables['message_table'];
+    if (freshTables['report_table'])  sections['report'].data  = freshTables['report_table'];
+
+    // 2. Loop through and rebuild the main time-series bar charts
+    Object.keys(sections).forEach(type => {
+        drawChart(type);
+    });
+
+    // 3. Force update the distribution and state composition widgets
+    drawUserFreqChart();
+    drawItemStatusChart();
+    drawReportStatusChart();
+}
+
+export function redrawStats(freshStats) {
+    if (!freshStats || Object.keys(freshStats).length === 0) {
+        // No changes detected by the comparison loop, skip execution
+        return;
+    }
+
+    console.log("Synchronizing counter engines and rebuilding pie charts...", freshStats);
+
+    // 1. If the claim breakdown dataset changed, sync it and redraw the pie chart
+    if (freshStats['claim_breakdown']) {
+        claimStatusData = freshStats['claim_breakdown'];
+        drawClaimStatusChart();
+    }
+
+    // 2. Loop through and update your numerical UI counter widgets
+    // (e.g., total users count, total item count cards on your dashboard)
+    for (let key in freshStats) {
+        if (key === 'claim_breakdown') continue; // Handled by the block above
+
+        // Looks for HTML elements with IDs matching your stats keys (e.g., id="total_users")
+        let statCardElement = document.getElementById(key);
+        if (statCardElement) {
+            statCardElement.innerText = freshStats[key];
+        }
+    }
+}

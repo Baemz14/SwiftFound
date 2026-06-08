@@ -150,12 +150,19 @@ async function checkNewData() {
             stats[key] = newStats[key];
         }
         loadStats();
+        await analysis.redrawStats(stats);
     }
     const newReports = await adminUtils.loadNewReports(reports);
     if (newReports.length > 0) {
         console.log("New reports:", newReports);
         reports.push(...newReports);
         drawReports();
+    }
+    const newTables = await adminUtils.loadAnalysisTables(tables);
+    if (newTables) {
+        console.log("tables update:", newTables);
+        tables = newTables;
+        await analysis.redrawAnalysisTables(tables);
     }
 }
 
