@@ -76,6 +76,10 @@ switch ($call_state) {
         }
         break;
 
+    case 'GET_ANALYSIS_TABLES':
+        $response['tables'] = getAnalysisTables();
+        break;
+
     default:
         $response['error_log'] = 'state wong >:(';
 }

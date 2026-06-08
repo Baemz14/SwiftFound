@@ -1,0 +1,92 @@
+[
+    {
+        "user_id": "1",
+        "created_at": "2026-05-01 13:44:27",
+        "reputation": "90"
+    },
+    {
+        "user_id": "2",
+        "created_at": "2026-05-03 08:05:13",
+        "reputation": "0"
+    },
+    {
+        "user_id": "3",
+        "created_at": "2026-05-05 09:42:14",
+        "reputation": "0"
+    },
+    {
+        "user_id": "4",
+        "created_at": "2026-05-07 19:54:22",
+        "reputation": "0"
+    },
+    {
+        "user_id": "5",
+        "created_at": "2026-05-08 05:47:57",
+        "reputation": "0"
+    },
+    {
+        "user_id": "6",
+        "created_at": "2026-05-08 08:47:17",
+        "reputation": "0"
+    },
+    {
+        "user_id": "7",
+        "created_at": "2026-05-16 00:38:01",
+        "reputation": "0"
+    },
+    {
+        "user_id": "8",
+        "created_at": "2026-05-16 15:08:47",
+        "reputation": "0"
+    },
+    {
+        "user_id": "9",
+        "created_at": "2026-05-22 11:05:24",
+        "reputation": "-16"
+    },
+    {
+        "user_id": "10",
+        "created_at": "2026-05-22 16:09:13",
+        "reputation": "0"
+    },
+    {
+        "user_id": "11",
+        "created_at": "2026-05-25 02:12:45",
+        "reputation": "0"
+    },
+    {
+        "user_id": "12",
+        "created_at": "2026-05-25 10:35:18",
+        "reputation": "0"
+    },
+    {
+        "user_id": "13",
+        "created_at": "2026-05-31 01:07:59",
+        "reputation": "0"
+    },
+    {
+        "user_id": "14",
+        "created_at": "2026-06-04 10:37:27",
+        "reputation": "0"
+    },
+    {
+        "user_id": "15",
+        "created_at": "2026-06-04 21:14:28",
+        "reputation": "-1"
+    },
+    {
+        "user_id": "16",
+        "created_at": "2026-06-05 14:45:41",
+        "reputation": "25"
+    },
+    {
+        "user_id": "17",
+        "created_at": "2026-06-07 16:51:55",
+        "reputation": "55"
+    },
+    {
+        "user_id": "18",
+        "created_at": "2026-06-08 16:51:02",
+        "reputation": "110"
+    }
+]

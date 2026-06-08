@@ -785,3 +785,55 @@ body {
     background: #1e40af;           /* Deep premium Navy Blue on hover */
     color: #dbeafe;                /* Soft icy light-blue text for crisp legibility */
 }
+
+.chart-container {
+    margin: 20px 0;
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.05); /* Match site style */
+    padding: 20px;
+    border-radius: 12px;
+    color: #dbeafe;                /* Soft icy light-blue text for crisp legibility */
+}
+
+.chart-container {
+    position: relative;
+    height: 300px; /* Adjust as needed */
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.analysis-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.analysis-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.analysis-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+.analysis-card p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    margin: 0;
+    line-height: 1.5;
+}

@@ -382,6 +382,43 @@ function submitReport($reporter_id, $reported_user_id, $reported_item_id, $reaso
     return mysqli_query($conn, $sql);
 }
 
+function getAnalysisTables() {
+    global $conn;
+    $stats = [];
+
+    $user_result = mysqli_query($conn, "SELECT user_id, created_at, reputation FROM user");
+    $stats['user_table'] = [];
+    while ($row = mysqli_fetch_assoc($user_result)) {
+        $stats['user_table'][] = $row;
+    }
+
+    $item_result = mysqli_query($conn, "SELECT item_id, created_at, status FROM item");
+    $stats['item_table'] = [];
+    while ($row = mysqli_fetch_assoc($item_result)) {
+        $stats['item_table'][] = $row;
+    }
+
+    $claim_result = mysqli_query($conn, "SELECT claim_id, created_at, claim_status FROM claim");
+    $stats['claim_table'] = [];
+    while ($row = mysqli_fetch_assoc($claim_result)) {
+        $stats['claim_table'][] = $row;
+    }
+
+    $message_result = mysqli_query($conn, "SELECT message_id, sent_at as created_at FROM message");
+    $stats['message_table'] = [];
+    while ($row = mysqli_fetch_assoc($message_result)) {
+        $stats['message_table'][] = $row;
+    }
+
+    $report_result = mysqli_query($conn, "SELECT report_id, created_at, status FROM report");
+    $stats['report_table'] = [];
+    while ($row = mysqli_fetch_assoc($report_result)) {
+        $stats['report_table'][] = $row;
+    }
+
+    return $stats;
+}
+
 function getAdminStats() {
     global $conn;
     $stats = [];
@@ -512,4 +549,5 @@ function userRestrictUpdate($user_id, $is_restricted) {
     $sql = "UPDATE user SET is_restricted = '$restrict_token' WHERE user_id = '$user_id'";
     return mysqli_query($conn, $sql);
 }
-?>
+
+

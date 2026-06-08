@@ -13,6 +13,7 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
     <title>SwiftFound | Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin_dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
     <script type="module">
         import { onAdminDashboardLoad } from "/swiftfound/script/admin_dashboard.js?v=2";
         window.onload = onAdminDashboardLoad;
@@ -28,7 +29,7 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
 
         <ul class="dash-nav">
             <li class="active" data-section="statsSect">
-                <span class="dash-nav-icon">📊</span> Statistics
+               <span class="dash-nav-icon">📊</span> Statistics
             </li>
             <li data-section="reportsSect">
                 <span class="dash-nav-icon">🚩</span> User Reports
@@ -59,6 +60,65 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
             <p class="sub-heading">Claim Status Breakdown</p>
             <div class="breakdown-grid" id="breakdownGrid">
                 <div class="loading-text">Loading…</div>
+            </div>
+
+            <div class='additional-stats'>
+                <p class="sub-heading">Analysis</p>
+                <div id='userAnalysis' class='sub-analysis' data-section="user">
+                    <p>User Analysis</p>
+                    <div class="time-filter-btns">
+                        <button class="filter-btn active" data-time-filter="monthly">Monthly</button>
+                        <button class="filter-btn" data-time-filter="weekly">Weekly</button>
+                        <button class="filter-btn" data-time-filter="daily">Daily</button>
+                    </div>                    
+                    <div class="chart-container">
+                        <canvas id="userChart"></canvas>
+                    </div>                    
+                </div>
+                <div id='itemAnalysis' class='sub-analysis' data-section="item">
+                    <p>Item Analysis</p>
+                    <div class="time-filter-btns">
+                        <button class="filter-btn active" data-time-filter="monthly">Monthly</button>
+                        <button class="filter-btn" data-time-filter="weekly">Weekly</button>
+                        <button class="filter-btn" data-time-filter="daily">Daily</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="itemChart"></canvas>
+                    </div>
+                </div>
+                <div id='claimAnalysis' class='sub-analysis' data-section="claim">
+                    <p>Claim Analysis</p>
+                    <div class="time-filter-btns">
+                        <button class="filter-btn active" data-time-filter="monthly">Monthly</button>
+                        <button class="filter-btn" data-time-filter="weekly">Weekly</button>
+                        <button class="filter-btn" data-time-filter="daily">Daily</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="claimChart"></canvas>
+                    </div>
+                </div>
+                <div id='messageAnalysis' class='sub-analysis' data-section="message">
+                    <p>Message Analysis</p>
+                    <div class="time-filter-btns">
+                        <button class="filter-btn active" data-time-filter="monthly">Monthly</button>
+                        <button class="filter-btn" data-time-filter="weekly">Weekly</button>
+                        <button class="filter-btn" data-time-filter="daily">Daily</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="messageChart"></canvas>
+                    </div>
+                </div>
+                <div id='reportAnalysis' class='sub-analysis' data-section="report">
+                    <p>Report Analysis</p>
+                    <div class="time-filter-btns">
+                        <button class="filter-btn active" data-time-filter="monthly">Monthly</button>
+                        <button class="filter-btn" data-time-filter="weekly">Weekly</button>
+                        <button class="filter-btn" data-time-filter="daily">Daily</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -104,3 +164,4 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
 </div>
 </body>
 </html>
+

@@ -1,8 +1,13 @@
 import * as adminUtils from "/swiftfound/script/admin_utils.js";
+import Chart from 'https://cdn.jsdelivr.net/npm/chart.js/auto/+esm';
+import * as analysis from '/swiftfound/script/admin_analysis.js';
+
+let stats = {};
 
 let reports = [];
-let stats = {};
-let users = [];
+export let users = [];
+export let tables = null;
+
 let currentSortKey = null;
 let currentSortAsc = true;
 
@@ -10,9 +15,13 @@ export async function onAdminDashboardLoad() {
     reports = await adminUtils.loadNewReports();
     stats = await adminUtils.loadNewStats();
     users = await adminUtils.loadNewUsers();
-    console.log(users);
-    console.log(stats);
-    console.log(reports);
+    tables = await adminUtils.loadAnalysisTables();
+    console.log(tables);
+    // console.log(users);
+    // console.log(stats);
+    // console.log(reports);
+
+    await analysis.initAnalysis();
 
     document.querySelectorAll('.dash-nav li').forEach(li => {
         li.addEventListener('click', () => {
@@ -73,6 +82,21 @@ export async function onAdminDashboardLoad() {
                 currentSortAsc = true;
                 sortUsers(document.getElementById('userSearch').value, currentSortKey, currentSortAsc);
             }
+        });
+    });
+
+    document.querySelector(".additional-stats").querySelectorAll(".sub-analysis").forEach(sub => {
+        sub.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener('click', function () {
+                sub.querySelectorAll(".filter-btn").forEach(_btn => {
+                    if (btn == _btn) {
+                        btn.classList.add("active");
+                    } else {
+                        _btn.classList.remove("active");
+                    }
+                });
+                analysis.changeChartState(sub.dataset.section, btn.dataset.timeFilter);
+            });
         });
     });
 

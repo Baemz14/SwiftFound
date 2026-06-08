@@ -1,0 +1,77 @@
+[
+    {
+        "item_id": "1",
+        "created_at": "2026-05-04 12:54:43",
+        "status": "PENDING"
+    },
+    {
+        "item_id": "2",
+        "created_at": "2026-05-06 01:39:01",
+        "status": "PENDING"
+    },
+    {
+        "item_id": "3",
+        "created_at": "2026-05-09 02:35:04",
+        "status": "REJECTED"
+    },
+    {
+        "item_id": "4",
+        "created_at": "2026-05-14 12:16:02",
+        "status": "PENDING"
+    },
+    {
+        "item_id": "5",
+        "created_at": "2026-05-15 02:37:34",
+        "status": "PENDING"
+    },
+    {
+        "item_id": "6",
+        "created_at": "2026-05-16 03:26:21",
+        "status": "CHATTING"
+    },
+    {
+        "item_id": "7",
+        "created_at": "2026-05-18 06:52:58",
+        "status": "CANCELED"
+    },
+    {
+        "item_id": "8",
+        "created_at": "2026-05-19 14:42:00",
+        "status": "REJECTED"
+    },
+    {
+        "item_id": "9",
+        "created_at": "2026-05-19 21:46:49",
+        "status": "PENDING"
+    },
+    {
+        "item_id": "10",
+        "created_at": "2026-05-20 21:36:11",
+        "status": "CANCELED"
+    },
+    {
+        "item_id": "11",
+        "created_at": "2026-05-22 18:47:49",
+        "status": "CANCELED"
+    },
+    {
+        "item_id": "12",
+        "created_at": "2026-05-22 19:48:29",
+        "status": "CHATTING"
+    },
+    {
+        "item_id": "13",
+        "created_at": "2026-05-31 15:46:04",
+        "status": "CHATTING"
+    },
+    {
+        "item_id": "14",
+        "created_at": "2026-06-04 03:23:27",
+        "status": "PENDING"
+    },
+    {
+        "item_id": "15",
+        "created_at": "2026-06-07 13:37:29",
+        "status": "REJECTED"
+    }
+]

@@ -27,6 +27,11 @@ export async function loadNewStats(loadedStats = null) {
     return newStats;
 }
 
+export async function loadAnalysisTables() {
+    let data = await callServer('/swiftfound/server_call/admin_call.php', null, "GET_ANALYSIS_TABLES");
+    return data['tables'];
+}
+
 export async function loadNewReports(loadedReports = null) {
     let data = await callServer('/swiftfound/server_call/admin_call.php', null, "GET_REPORTS");
     let reports = data['reports'];
