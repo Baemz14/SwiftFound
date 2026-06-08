@@ -175,6 +175,7 @@ body {
 
 /* ── Claim breakdown ─────────────────────────────────── */
 .breakdown-grid {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
@@ -787,24 +788,21 @@ body {
 }
 
 .chart-container {
-    margin: 20px 0;
-    width: 100%;
-    max-width: 500px;
-    background: rgba(255, 255, 255, 0.05); /* Match site style */
-    padding: 20px;
-    border-radius: 12px;
-    color: #dbeafe;                /* Soft icy light-blue text for crisp legibility */
-}
-
-.chart-container {
     position: relative;
-    height: 300px; /* Adjust as needed */
     width: 100%;
+    /* Keep the maximum boundary constrained so it doesn't stretch infinitely */
+    max-width: 600px; 
+    height: 300px; 
+    
+    /* Center margins inside its own wrapper track */
+    margin: 0 auto; 
+    
+    /* Clean background and styling shapes */
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 15px;
-    margin-bottom: 20px;
+    color: #dbeafe; 
 }
 
 .analysis-section {
@@ -836,4 +834,18 @@ body {
     color: var(--text-dim);
     margin: 0;
     line-height: 1.5;
+}
+
+.additional-stats {
+    display: flex;
+    flex-wrap: wrap;        /* Allows items to move to a new line if they run out of room */
+    gap: 30px;              /* Creates a clean gutter space between your columns */
+    width: 100%;
+    align-items: flex-start;
+}
+
+.sub-analysis {
+    flex: 1 1 620px;        /* ✨ KEY RULE: Grow, shrink, and target an optimal base width of 620px */
+    max-width: 100%;        /* Prevents clipping on tiny phone viewports */
+    box-sizing: border-box;
 }

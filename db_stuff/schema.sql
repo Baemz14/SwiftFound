@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2026 at 06:52 AM
+-- Generation Time: Jun 08, 2026 at 05:40 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,7 +32,8 @@ CREATE TABLE `claim` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `item_id` int(11) UNSIGNED NOT NULL,
   `answer_text` varchar(255) NOT NULL,
-  `claim_status` enum('PENDING','RESOLVED','REJECTED','CHATTING','OWNER_CONFIRM','CANCELED','PENDING_RESOLUTION','ABANDONED') NOT NULL
+  `claim_status` enum('PENDING','RESOLVED','REJECTED','CHATTING','OWNER_CONFIRM','CANCELED','PENDING_RESOLUTION','ABANDONED') NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -101,7 +102,8 @@ CREATE TABLE `user` (
   `password_hash` varchar(255) NOT NULL,
   `reputation` int(11) NOT NULL,
   `is_restricted` tinyint(1) NOT NULL DEFAULT 0,
-  `avatar_url` varchar(255) DEFAULT NULL
+  `avatar_url` varchar(255) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -186,8 +188,8 @@ ALTER TABLE `user`
 --
 
 --
--- Constraints for table `claim`
---
+Constraints for table `claim`
+
 ALTER TABLE `claim`
   ADD CONSTRAINT `fk_claim_item` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`),
   ADD CONSTRAINT `fk_claim_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);

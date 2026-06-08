@@ -2,9 +2,9 @@ import * as adminUtils from "/swiftfound/script/admin_utils.js";
 import Chart from 'https://cdn.jsdelivr.net/npm/chart.js/auto/+esm';
 import * as analysis from '/swiftfound/script/admin_analysis.js';
 
-let stats = {};
-
 let reports = [];
+
+export let stats = {};
 export let users = [];
 export let tables = null;
 
@@ -18,10 +18,10 @@ export async function onAdminDashboardLoad() {
     tables = await adminUtils.loadAnalysisTables();
     console.log(tables);
     // console.log(users);
-    // console.log(stats);
+    console.log(stats);
     // console.log(reports);
 
-    await analysis.initAnalysis();
+    await analysis.initAnalysis(stats, tables);
 
     document.querySelectorAll('.dash-nav li').forEach(li => {
         li.addEventListener('click', () => {
@@ -204,8 +204,26 @@ async function loadStats() {
     `).join('');
 
     const breakdown = s.claim_breakdown || {};
-    const bColors = { PENDING:'#fbbf24', CHATTING:'#60a5fa', OWNER_CONFIRM:'#a78bfa', RESOLVED:'#34d399', REJECTED:'#f87171', CANCELED:'#94a3b8' };
-    const bLabels = { PENDING:'Pending', CHATTING:'Chatting', OWNER_CONFIRM:'Owner Confirm', RESOLVED:'Resolved', REJECTED:'Rejected', CANCELED:'Canceled' };
+    const bColors = { 
+        PENDING: '#fbbf24', 
+        CHATTING: '#60a5fa', 
+        OWNER_CONFIRM: '#a78bfa', 
+        RESOLVED: '#34d399', 
+        REJECTED: '#f87171', 
+        CANCELED: '#94a3b8',
+        PENDING_RESOLUTION: '#f97316',
+        ABANDONED: '#ec4899'
+    };
+    const bLabels = { 
+        PENDING: 'Pending', 
+        CHATTING: 'Chatting', 
+        OWNER_CONFIRM: 'Owner Confirm', 
+        RESOLVED: 'Resolved', 
+        REJECTED: 'Rejected', 
+        CANCELED: 'Canceled',
+        PENDING_RESOLUTION: 'Pending Resolution',
+        ABANDONED: 'Abandoned'
+    };
     document.getElementById('breakdownGrid').innerHTML = Object.entries(bLabels).map(([k, label]) => `
         <div class="breakdown-pill" style="border-color:${bColors[k]}22; color:${bColors[k]};">
             <span class="pill-count">${breakdown[k] ?? 0}</span> ${label}
