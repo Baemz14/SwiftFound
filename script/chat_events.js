@@ -58,9 +58,9 @@ export async function onCancelClaimConfirm(_contact) {
     updateContactStatus(_contact.contact_id, "CANCELLED");
 }
 
-export async function onConfirmOwnerConfirm(_contact) {
+export async function onConfirmOwnerConfirm(_contact, rejectingClaimers) {
     // Fill in your confirmation logic here
-    let isSuccess = await userUtil.confirmOwner(_contact);
+    let isSuccess = await userUtil.confirmOwner(_contact, rejectingClaimers);
     if (isSuccess) {
         console.log("Owner confirmed for contact:", _contact);
     } else {

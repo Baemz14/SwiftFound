@@ -242,7 +242,7 @@ function confirmClaimOwner($claim_id) {
     }
     $sql = "UPDATE claim SET claim_status = 'REJECTED' 
         WHERE claim_id != '$claim_id' 
-            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND claim_status = 'CHATTING'";
+            AND item_id = (SELECT item_id FROM claim WHERE claim_id = '$claim_id') AND (claim_status = 'CHATTING' OR claim_status = 'PENDING')";
     return mysqli_query($conn, $sql);
 }
 

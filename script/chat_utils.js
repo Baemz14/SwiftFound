@@ -97,16 +97,13 @@ export function onConfirmOwner(_contact) {
     const cancelBtn = document.getElementById('cancelOwnerBtn');
     
     modal.classList.add('show');
-    
-    confirmBtn.onclick = () => chatEvents.onConfirmOwnerConfirm(_contact);
-    cancelBtn.onclick = () => closeConfirmOwnerModal();
 
     const rejectingClaimersList = document.getElementById('rejectingClaimersList');
     rejectingClaimersList.innerHTML = '';
     const rejectingClaimers = contactList.filter(c => !c.isClaiming && 
         c.contact_id !== _contact.contact_id && 
         c.item.item_id === _contact.item.item_id &&
-        c.claimStatus === 'CHATTING');
+        (c.claimStatus === 'CHATTING' || c.claimStatus === 'PENDING'));
     if (rejectingClaimers.length === 0) {
         const listItem = document.createElement('li');
         listItem.textContent = 'No other claimers';
@@ -117,6 +114,9 @@ export function onConfirmOwner(_contact) {
         listItem.textContent = claimer.username;
         rejectingClaimersList.appendChild(listItem);
     });
+
+    confirmBtn.onclick = () => chatEvents.onConfirmOwnerConfirm(_contact, rejectingClaimers);
+    cancelBtn.onclick = () => closeConfirmOwnerModal();
 }
 
 export function closeConfirmOwnerModal() {

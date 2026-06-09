@@ -224,7 +224,7 @@ export async function loadUpdatedClaimStatus(loadedClaim) {
     return updatedClaim;
 }
 
-export async function confirmOwner(contact) {
+export async function confirmOwner(contact, rejectingClaimers) {
     let claim = contact.claim;
     let formData = new FormData();
     formData.append('claim_id', claim.claim_id);
@@ -238,6 +238,15 @@ export async function confirmOwner(contact) {
         console.log("Failed to send owner confirmation message");
         return false;
     }
+
+    for (const c of rejectingClaimers) {
+        let isSuccess = await rejectClaim(c.claim, 'the poster have found and confirmed someone else is the owner');
+        if (!isSuccess) {
+            console.error(`rejecting other claimers error`);
+            return false;
+        }
+    }
+
     formData.append('item_id', contact.item.item_id);
     formData.append('new_status', "OWNER_CONFIRM");
     data = await callServer('server_call/item_call.php', formData, "UPDATE_STATUS");
