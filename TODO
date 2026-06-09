@@ -1,2 +1,15 @@
 chat bug:
 rejecting other claimer bila nk confirm owner broken
+
+reputation
+< 0 ➔ CAUTIOS
+0 - 19 ➔ NOVICE
+20 - 49 ➔ HELPFUL
+50 - 99 ➔ TRUSTED
+100+ ➔ GUARDIAN
+
+cancel -1
+reject -3
+resolve item, poster +10, claimer +5
+abandon item -7
+reported and item removed - 15
