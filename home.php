@@ -162,8 +162,8 @@
                         <div class="rep-tip-row">
                             <div class="rep-tip-icon rep-icon-orange"><span class="rep-icon-sym">×</span></div>
                             <div class="rep-tip-body">
-                                <div class="rep-tip-label">Reject a Claim</div>
-                                <div class="rep-tip-desc">Rejecting a claimer's request on your posted item.</div>
+                                <div class="rep-tip-label">Claim Rejected</div>
+                                <div class="rep-tip-desc">Claim rejected by poster.</div>
                             </div>
                             <div class="rep-tip-badge rep-badge-orange">−3</div>
                         </div>
