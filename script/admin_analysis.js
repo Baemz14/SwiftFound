@@ -242,7 +242,7 @@ export async function drawChart(type) {
         data: {
             labels: labels,
             datasets: [{
-                label: `${section.labelNoun} (Monthly)`,
+                label: `${section.labelNoun} (Daily)`,
                 data: data,
                 backgroundColor: section.borderColor, // Pulls the exact unique hex mapping from config
                 borderRadius: 6,
