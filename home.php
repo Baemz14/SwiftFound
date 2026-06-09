@@ -123,19 +123,69 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="dash-quick-actions">
-                    <div class="dash-qa-title">Quick Actions</div>
-                    <div class="dash-qa-row">
-                        <a href="item_form.php" class="dash-qa-btn dash-qa-primary">
-                            Post an Item
-                        </a>
-                        <a href="browse.php" class="dash-qa-btn dash-qa-secondary">
-                            Browse Items
-                        </a>
-                        <a href="chat.php" class="dash-qa-btn dash-qa-chat">
-                            Open Chat
-                        </a>
+                <!-- How to Earn More Reputation -->
+                <div class="dash-rep-tips">
+                    <div class="dash-rep-tips-title">How Reputation Works</div>
+                    <div class="dash-rep-tips-card">
+
+                        <div class="rep-tip-section-label rep-tip-section-gain">Earn Reputation</div>
+
+                        <div class="rep-tip-row">
+                            <div class="rep-tip-icon rep-icon-green"><span class="rep-icon-sym">✓</span></div>
+                            <div class="rep-tip-body">
+                                <div class="rep-tip-label">Resolve an Item <span class="rep-tip-role">(as Poster)</span></div>
+                                <div class="rep-tip-desc">Successfully confirm an item has been returned to its owner.</div>
+                            </div>
+                            <div class="rep-tip-badge rep-badge-green">+10</div>
+                        </div>
+                        <div class="rep-tip-divider"></div>
+                        <div class="rep-tip-row">
+                            <div class="rep-tip-icon rep-icon-blue"><span class="rep-icon-sym">✓</span></div>
+                            <div class="rep-tip-body">
+                                <div class="rep-tip-label">Resolve an Item <span class="rep-tip-role">(as Claimer)</span></div>
+                                <div class="rep-tip-desc">Your claim is accepted and the item is successfully returned.</div>
+                            </div>
+                            <div class="rep-tip-badge rep-badge-blue">+5</div>
+                        </div>
+
+                        <div class="rep-tip-section-label rep-tip-section-lose">Lose Reputation</div>
+
+                        <div class="rep-tip-row">
+                            <div class="rep-tip-icon rep-icon-orange"><span class="rep-icon-sym">−</span></div>
+                            <div class="rep-tip-body">
+                                <div class="rep-tip-label">Cancel a Claim</div>
+                                <div class="rep-tip-desc">Withdrawing a claim you previously submitted.</div>
+                            </div>
+                            <div class="rep-tip-badge rep-badge-orange">−1</div>
+                        </div>
+                        <div class="rep-tip-divider"></div>
+                        <div class="rep-tip-row">
+                            <div class="rep-tip-icon rep-icon-orange"><span class="rep-icon-sym">×</span></div>
+                            <div class="rep-tip-body">
+                                <div class="rep-tip-label">Reject a Claim</div>
+                                <div class="rep-tip-desc">Rejecting a claimer's request on your posted item.</div>
+                            </div>
+                            <div class="rep-tip-badge rep-badge-orange">−3</div>
+                        </div>
+                        <div class="rep-tip-divider"></div>
+                        <div class="rep-tip-row">
+                            <div class="rep-tip-icon rep-icon-red"><span class="rep-icon-sym">×</span></div>
+                            <div class="rep-tip-body">
+                                <div class="rep-tip-label">Abandon an Item</div>
+                                <div class="rep-tip-desc">Leaving a posted item without resolution.</div>
+                            </div>
+                            <div class="rep-tip-badge rep-badge-red">−7</div>
+                        </div>
+                        <div class="rep-tip-divider"></div>
+                        <div class="rep-tip-row">
+                            <div class="rep-tip-icon rep-icon-red"><span class="rep-icon-sym">!</span></div>
+                            <div class="rep-tip-body">
+                                <div class="rep-tip-label">Reported &amp; Removed</div>
+                                <div class="rep-tip-desc">Your item was reported and removed by an administrator.</div>
+                            </div>
+                            <div class="rep-tip-badge rep-badge-red">−15</div>
+                        </div>
+
                     </div>
                 </div>
             </div>

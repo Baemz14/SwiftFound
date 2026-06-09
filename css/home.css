@@ -291,12 +291,12 @@ h1 {
 .dash-stat-orange { background: linear-gradient(135deg,#fef3c7,#fde68a); border-color: #fbbf24; color: #78350f; }
 .dash-stat-green  { background: linear-gradient(135deg,#dcfce7,#bbf7d0); border-color: #4ade80; color: #14532d; }
 
-/* ── Quick Actions ─────────────────────────────────────────────── */
-.dash-quick-actions {
+/* ── Reputation Tips Card ──────────────────────────────────────── */
+.dash-rep-tips {
     margin-top: 24px;
 }
 
-.dash-qa-title {
+.dash-rep-tips-title {
     font-size: 0.85rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -305,34 +305,111 @@ h1 {
     margin-bottom: 12px;
 }
 
-.dash-qa-row {
+.dash-rep-tips-card {
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    max-width: 580px;
+}
+
+.rep-tip-row {
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.dash-qa-btn {
-    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-weight: 700;
+    gap: 14px;
+    padding: 14px 18px;
+    transition: background 0.15s;
+}
+
+.rep-tip-row:hover {
+    background: #f9fafb;
+}
+
+.rep-tip-divider {
+    height: 1px;
+    background: #f3f4f6;
+    margin: 0 18px;
+}
+
+.rep-tip-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rep-icon-sym {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+}
+
+.rep-icon-green  .rep-icon-sym { color: #15803d; }
+.rep-icon-blue   .rep-icon-sym { color: #1e40af; }
+.rep-icon-orange .rep-icon-sym { color: #92400e; }
+.rep-icon-red    .rep-icon-sym { color: #991b1b; }
+
+.rep-icon-blue   { background: #dbeafe; }
+.rep-icon-green  { background: #dcfce7; }
+.rep-icon-orange { background: #fef3c7; }
+.rep-icon-red    { background: #fee2e2; }
+
+.rep-tip-section-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 8px 18px 6px;
+}
+
+.rep-tip-section-gain { color: #15803d; background: #f0fdf4; border-top: 1px solid #f3f4f6; }
+.rep-tip-section-lose { color: #b91c1c; background: #fff5f5; border-top: 1px solid #f3f4f6; }
+
+.rep-tip-role {
+    font-weight: 500;
+    font-size: 0.8rem;
+    color: var(--text-gray);
+}
+
+.rep-tip-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.rep-tip-label {
     font-size: 0.88rem;
-    text-decoration: none;
-    transition: transform 0.18s, filter 0.18s, box-shadow 0.18s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 2px;
 }
 
-.dash-qa-btn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.07);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.13);
+.rep-tip-desc {
+    font-size: 0.78rem;
+    color: var(--text-gray);
+    line-height: 1.4;
 }
 
-.dash-qa-primary  { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; }
-.dash-qa-secondary{ background: linear-gradient(135deg, #f3f4f6, #e5e7eb); color: #1f2937; border: 1px solid #d1d5db; }
-.dash-qa-chat     { background: linear-gradient(135deg, #43e6b0, #6fffcf); color: #065f46; }
+.rep-tip-badge {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.rep-badge-blue   { background: #dbeafe; color: #1e3a8a; }
+.rep-badge-green  { background: #dcfce7; color: #14532d; }
+.rep-badge-orange { background: #fef3c7; color: #92400e; }
+.rep-badge-red    { background: #fee2e2; color: #991b1b; }
+
+
 
 /* ── Reputation Card ──────────────────────────────────────────── */
 .rep-card {
@@ -590,6 +667,7 @@ h1 {
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     flex: 1;
