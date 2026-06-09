@@ -160,45 +160,73 @@ export async function initAnalysis(stats, tables) {
 }
 
 function processDataByState(dataArray, state) {
-    // 1. Safety check: if data is empty or missing, return empty structures
     if (!dataArray || dataArray.length === 0) {
         return { labels: [], data: [] };
     }
 
-    // 2. Sort data chronologically. It checks for 'created_at', 'timestamp', or logs.
+    // 1. Sort data chronologically to find the exact boundaries
     const sortedData = [...dataArray].sort((a, b) => {
         const dateA = new Date(a.created_at || a.timestamp || a.date);
         const dateB = new Date(b.created_at || b.timestamp || b.date);
         return dateA - dateB;
     });
-    
-    const intervals = {};
 
+    // Extract raw frequency counts exactly like before
+    const rawCounts = {};
     sortedData.forEach(item => {
-        // Fallback checks to extract the date string regardless of dataset type
         const rawDate = item.created_at || item.timestamp || item.date;
-        if (!rawDate) return; // Skip row if no date property exists
+        if (!rawDate) return;
         
         const dateObj = new Date(rawDate);
-        let key = '';
-
-        if (state === 'monthly') {
-            key = dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
-        } else if (state === 'weekly') {
-            const startOfYear = new Date(dateObj.getFullYear(), 0, 1);
-            const weekNum = Math.ceil((((dateObj - startOfYear) / 86400000) + startOfYear.getDay() + 1) / 7);
-            key = `Wk ${weekNum}`;
-        } else {
-            key = dateObj.toLocaleString('default', { month: 'short', day: '2-digit' });
-        }
-
-        intervals[key] = (intervals[key] || 0) + 1;
+        let key = getIntervalKey(dateObj, state);
+        rawCounts[key] = (rawCounts[key] || 0) + 1;
     });
 
-    const labels = Object.keys(intervals);
-    const rawCounts = Object.values(intervals);
+    // 2. Generate a truly continuous timeline range from start to end boundaries
+    const continuousIntervals = {};
+    const startDate = new Date(sortedData[0].created_at || sortedData[0].timestamp || sortedData[0].date);
+    const endDate = new Date(sortedData[sortedData.length - 1].created_at || sortedData[sortedData.length - 1].timestamp || sortedData[sortedData.length - 1].date);
+    
+    // Normalize date references to midnight to avoid timezone looping traps
+    startDate.setHours(0,0,0,0);
+    endDate.setHours(0,0,0,0);
 
-    return { labels, data: rawCounts };
+    let currentLoopDate = new Date(startDate);
+
+    // Loop day-by-day (or month-by-month) to seamlessly fill in the structural gaps
+    while (currentLoopDate <= endDate) {
+        let key = getIntervalKey(currentLoopDate, state);
+        
+        // If your database had real events, use that count; otherwise, hard-set to 0
+        continuousIntervals[key] = rawCounts[key] || 0;
+
+        // Step forward chronologically based on the UI state selection
+        if (state === 'monthly') {
+            currentLoopDate.setMonth(currentLoopDate.getMonth() + 1);
+        } else if (state === 'weekly') {
+            currentLoopDate.setDate(currentLoopDate.getDate() + 7);
+        } else { // 'daily'
+            currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+        }
+    }
+
+    return {
+        labels: Object.keys(continuousIntervals),
+        data: Object.values(continuousIntervals)
+    };
+}
+
+// Helper function to handle string formatting cleanly in one location
+function getIntervalKey(dateObj, state) {
+    if (state === 'monthly') {
+        return dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
+    } else if (state === 'weekly') {
+        const startOfYear = new Date(dateObj.getFullYear(), 0, 1);
+        const weekNum = Math.ceil((((dateObj - startOfYear) / 86400000) + startOfYear.getDay() + 1) / 7);
+        return `Wk ${weekNum}`;
+    } else { // 'daily'
+        return dateObj.toLocaleString('default', { month: 'short', day: '2-digit' });
+    }
 }
 
 export function changeChartState(type, state) {
