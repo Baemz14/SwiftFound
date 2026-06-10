@@ -27,10 +27,10 @@
         <div class="sidebar">
             <div class="sidebar-tabs">
                 <button class="sidebar-tab active" data-tab="myClaims">My Claims
-                    <span class="btn-unread-badge" id="unread_claim">1</span>
+                    <span class="btn-unread-badge" id="unread_claim" style="display: none;">1</span>
                 </button>
                 <button class="sidebar-tab" data-tab="claimRequests">Claim Requests
-                    <span class="btn-unread-badge" id="unread_request">2</span>
+                    <span class="btn-unread-badge" id="unread_request" style="display: none;">2</span>
                 </button>
             </div>
             <div class="sidebar-status-filters">

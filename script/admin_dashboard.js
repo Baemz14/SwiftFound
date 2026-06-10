@@ -140,6 +140,18 @@ function activateSection(li) {
         document.getElementById('userSearch').value = '';
         drawUsers();
     }
+    if (li.dataset.section === 'statsSect') {
+        document.querySelector(".additional-stats").querySelectorAll(".sub-analysis").forEach(sub => {
+            sub.querySelectorAll(".filter-btn").forEach(btn => {
+                if (btn.dataset.timeFilter === 'daily') {
+                    btn.classList.add('active');
+                    analysis.changeChartState(sub.dataset.section, btn.dataset.timeFilter);
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        });
+    }
 }
 
 async function checkNewData() {
