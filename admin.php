@@ -31,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <h1>Admin Portal</h1>
         <p class="subtitle">Enter the security key to access management tools.</p>
+        <p class="subtitle">For lecturer grading and testing, the key is <strong><code><?php echo htmlspecialchars(getAdminKey()); ?></code></strong></p>
 
         <?php if($error): ?>
             <div class="error-box"><?php echo htmlspecialchars($error); ?></div>

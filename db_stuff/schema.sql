@@ -188,7 +188,7 @@ ALTER TABLE `user`
 --
 
 --
-Constraints for table `claim`
+-- Constraints for table `claim`
 
 ALTER TABLE `claim`
   ADD CONSTRAINT `fk_claim_item` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`),
