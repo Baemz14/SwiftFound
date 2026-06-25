@@ -12,10 +12,10 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftFound | Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin_dashboard.css">
+    <link rel="stylesheet" href="./css/admin_dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
     <script type="module">
-        import { onAdminDashboardLoad } from "script/admin_dashboard.js?v=2";
+        import { onAdminDashboardLoad } from "./script/admin_dashboard.js?v=2";
         window.onload = onAdminDashboardLoad;
     </script>
 </head>

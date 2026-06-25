@@ -7,10 +7,10 @@
     
     <!-- Updated font weights to support the bold title -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="./css/signup.css">
 
     <script type="module">
-        import { onSignupLoad } from "script/signup.js";
+        import { onSignupLoad } from "./script/signup.js";
         window.onload = onSignupLoad;
 
         document.addEventListener('DOMContentLoaded', () => {

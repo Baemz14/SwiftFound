@@ -7,10 +7,10 @@
     
     <!-- Added Inter Font to match SwiftFound branding -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="./css/home.css">
 
     <script type="module">
-        import { homeLoad } from 'script/home.js?v=5';
+        import { homeLoad } from './script/home.js?v=5';
         window.onload = homeLoad;
     </script>
 </head>

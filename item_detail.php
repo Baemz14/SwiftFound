@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftFound | Item</title>
 
-    <link rel="stylesheet" href="css/item_detail.css">
+    <link rel="stylesheet" href="./css/item_detail.css">
 
     <script type="module">
-        import { onItemLoad } from "script/item_detail.js";
+        import { onItemLoad } from "./script/item_detail.js";
         window.onload = onItemLoad;
     </script>
 </head>

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="./css/chat.css">
 
     <script type="module">
-        import { chatLoad } from 'script/chat.js';
+        import { chatLoad } from './script/chat.js';
         window.onload = chatLoad;
     </script>
 </head>

@@ -7,10 +7,10 @@
     <title>SwiftFound | Welcome</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- The ?v=2 forces the browser to load the NEW css -->
-    <link rel="stylesheet" href="css/index.css?v=2">
+    <link rel="stylesheet" href="./css/index.css?v=2">
 
     <script type="module">
-        import { onIndexLoad } from 'script/index.js';
+        import { onIndexLoad } from './script/index.js';
         window.onload = onIndexLoad;
     </script>
 </head>

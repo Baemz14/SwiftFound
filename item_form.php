@@ -7,10 +7,10 @@
     
     <!-- Fonts and Separated CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/itemform.css">
+    <link rel="stylesheet" href="./css/itemform.css">
     
     <script type="module">
-        import { itemFormLoad } from "script/item_form.js";
+        import { itemFormLoad } from "./script/item_form.js";
         window.onload = itemFormLoad;
     </script>
 </head>

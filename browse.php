@@ -7,10 +7,10 @@
     <title>SwiftFound | Browse Items</title>
     <meta name="description" content="Browse all lost and found items posted on SwiftFound.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/browse.css">
+    <link rel="stylesheet" href="./css/browse.css">
 
     <script type="module">
-        import { onBrowseLoad } from "script/browse.js?v=4";
+        import { onBrowseLoad } from "./script/browse.js?v=4";
         window.onload = onBrowseLoad;
     </script>
 </head>

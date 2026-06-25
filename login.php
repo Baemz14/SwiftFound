@@ -6,10 +6,10 @@
     <title>SwiftFound | Login</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="./css/login.css">
 
     <script type="module">
-        import { onLoginLoad } from 'script/login.js';
+        import { onLoginLoad } from './script/login.js';
         window.onload = onLoginLoad;
 
         document.addEventListener('DOMContentLoaded', () => {
