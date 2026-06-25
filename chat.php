@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/chat.css">
 
     <script type="module">
-        import { chatLoad } from '/swiftfound/script/chat.js';
+        import { chatLoad } from 'script/chat.js';
         window.onload = chatLoad;
     </script>
 </head>

@@ -1,19 +1,19 @@
-import { callServer } from "/swiftfound/include/call_server.js";
-import { CategoryEnumDB, CategoryText, CategoryEnum } from "/swiftfound/enum_constant.js";
+import { callServer } from "../include/call_server.js";
+import { CategoryEnumDB, CategoryText, CategoryEnum } from "../enum_constant.js";
 
 let allItems = [];
 let user = null;
 
 export async function onBrowseLoad() {
     // Load session / user data
-    let sessData = await callServer('/swiftfound/server_call/user_call.php', null, "GET_SESSDATA");
+    let sessData = await callServer('../server_call/user_call.php', null, "GET_SESSDATA");
     user = sessData['user'];
 
     // ── Nav: update in JS as a fallback/enhancement (PHP already handles it) ──
     // (Nothing extra needed — PHP rendered the correct state server-side.)
 
     // ── Load all items ─────────────────────────────────────────────────────────
-    let resp = await callServer("/swiftfound/server_call/item_call.php", null, "ALL_ITEMS");
+    let resp = await callServer("../server_call/item_call.php", null, "ALL_ITEMS");
     allItems = resp['items'] || [];
 
     const listingsWrapper = document.getElementById("listings_wrapper");
@@ -137,7 +137,7 @@ function drawItemCard(item) {
     const catIdx  = CategoryEnum[item['category']];
     const catText = catIdx !== undefined ? capitalise(CategoryText[catIdx]) : escHtml(item['category']);
     const imgSrc  = item['img_file']
-        ? `/swiftfound/img_upload/${escHtml(item['img_file'])}`
+        ? `../img_upload/${escHtml(item['img_file'])}`
         : 'https://placehold.co/300x180/eef2ff/6366f1?text=No+Image';
 
     const dateStr = item.created_at

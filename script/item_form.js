@@ -1,17 +1,17 @@
-import { loadUserData } from "/swiftfound/script/user_utils.js";
-import { CategoryText, CategoryEnumDB } from "/swiftfound/enum_constant.js";
-import { callServer } from "/swiftfound/include/call_server.js";
+import { loadUserData } from "user_utils.js";
+import { CategoryText, CategoryEnumDB } from "../enum_constant.js";
+import { callServer } from "../include/call_server.js";
 
 export async function itemFormLoad() {
     let user = await loadUserData();
     if (!user) {
         alert("You are not logged in. Redirecting to login page.");
-        window.location.href = '/swiftfound/login.php';
+        window.location.href = '../login.php';
     }
     console.log(user);
     if (user.is_restricted == 1) {
         alert("Your account are restricted. Youre not allowed to post item!.");
-        window.location.href = '/swiftfound/home.php';
+        window.location.href = '../home.php';
     }
 
     let itemForm = document.getElementById("itemForm");
@@ -55,9 +55,9 @@ async function onItemSubmit(event) {
     formData.append("img", imgPointer);
     formData.append("secret_question", secretQuestion);
 
-    let data = await callServer("/swiftfound/server_call/item_call.php", formData, "UPLOAD");
+    let data = await callServer("../server_call/item_call.php", formData, "UPLOAD");
     if (data['upload_status'] === "success") {
         alert("item uploaded :D");
-        window.location.href = "/swiftfound/home.php";
+        window.location.href = "../home.php";
     }
 }

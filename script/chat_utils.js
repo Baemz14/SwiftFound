@@ -1,6 +1,6 @@
-import * as userUtil from "/swiftfound/script/user_utils.js";
-import { callServer } from "/swiftfound/include/call_server.js";
-import * as chatEvents from "/swiftfound/script/chat_events.js";
+import * as userUtil from "user_utils.js";
+import { callServer } from "../include/call_server.js";
+import * as chatEvents from "chat_events.js";
 
 export const rejectReasonKey = `/r`;
 export const cancelReasonKey = `/c`;

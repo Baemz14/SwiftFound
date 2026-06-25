@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/home.css">
 
     <script type="module">
-        import { homeLoad } from '/swiftfound/script/home.js?v=5';
+        import { homeLoad } from 'script/home.js?v=5';
         window.onload = homeLoad;
     </script>
 </head>
@@ -24,7 +24,7 @@
                     <img id="sidebarAvatarImg" class="avatar-image" alt="Profile avatar" />
                     <span id="sidebarAvatarInitial" class="avatar-initial">F</span>
                 </div>
-                <a href="/swiftfound/" class="logo">SwiftFound</a>
+                <a href="index.php" class="logo">SwiftFound</a>
                 <p id="sidebarUsername" class="profile-name">User</p>
                 <p class="profile-role">Member Dashboard</p>
             </div>

@@ -1,7 +1,7 @@
-import * as userUtil from "/swiftfound/script/user_utils.js";
-import { callServer } from "/swiftfound/include/call_server.js";
-import * as chatUtils from "/swiftfound/script/chat_utils.js";
-import { redrawContacts, updateContactStatus } from "/swiftfound/script/chat.js";
+import * as userUtil from "user_utils.js";
+import { callServer } from "../include/call_server.js";
+import * as chatUtils from "chat_utils.js";
+import { redrawContacts, updateContactStatus } from "chat.js";
 
 export async function onOpenChatConfirm(_contact) {
     let isSuccess = await userUtil.openChat(_contact.claim);

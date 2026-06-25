@@ -10,17 +10,17 @@
     <link rel="stylesheet" href="css/index.css?v=2">
 
     <script type="module">
-        import { onIndexLoad } from '/swiftfound/script/index.js';
+        import { onIndexLoad } from 'script/index.js';
         window.onload = onIndexLoad;
     </script>
 </head>
 <body>
 
     <header class="site-header">
-        <a href="/swiftfound/" class="logo">SwiftFound</a>
+        <a href="index.php" class="logo">SwiftFound</a>
         <nav class="nav-links">
-            <a id="btnHome" href="/swiftfound/home.php" class="nav-btn nav-secondary">Dashboard</a>
-            <a id="btnChat" href="/swiftfound/chat.php" class="nav-btn nav-secondary chat-link" style="display:none;">
+            <a id="btnHome" href="home.php" class="nav-btn nav-secondary">Dashboard</a>
+            <a id="btnChat" href="chat.php" class="nav-btn nav-secondary chat-link" style="display:none;">
                 <span>Chat</span>
                 <span id="chatBadge" class="nav-badge">0</span>
             </a>
@@ -37,8 +37,8 @@
                 <p>Connect finders, owners, and campus helpers in one clean workflow with instant chat, claim tracking, and trusted handoffs.</p>
 
                 <div class="hero-actions">
-                    <a class="btn-primary" href="/swiftfound/browse.php">Browse Items</a>
-                    <a class="btn-secondary" href="/swiftfound/item_form.php">Post Found Item</a>
+                    <a class="btn-primary" href="browse.php">Browse Items</a>
+                    <a class="btn-secondary" href="item_form.php">Post Found Item</a>
                 </div>
 
                 <div class="hero-features">
@@ -76,7 +76,7 @@
 
                     <div id="userPanel" class="user-panel" style="display:none;">
                         <div class="user-welcome">Signed in as <strong id="userNameHeader"></strong></div>
-                        <a id="heroChatBtn" class="hero-chat-btn" href="/swiftfound/chat.php">
+                        <a id="heroChatBtn" class="hero-chat-btn" href="chat.php">
                             <span>Open chat</span>
                             <span id="heroChatBadge" class="chat-badge">0</span>
                         </a>

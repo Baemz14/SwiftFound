@@ -39,7 +39,7 @@ export async function claimItem(item_id, poster_id, claimer_id, question, answer
     let formData = new FormData();
     formData.append('item_id', item_id);
     formData.append('answer_text', answer);
-    let data = await callServer('/swiftfound/server_call/claim_call.php', formData, "ADD_CLAIM");
+    let data = await callServer('../server_call/claim_call.php', formData, "ADD_CLAIM");
     if (!data['is_added']) {
         console.log(`something went wong: ${data['error_log']}`);
         return false;

@@ -1,6 +1,6 @@
-import * as adminUtils from "/swiftfound/script/admin_utils.js";
+import * as adminUtils from "admin_utils.js";
 import Chart from 'https://cdn.jsdelivr.net/npm/chart.js/auto/+esm';
-import * as analysis from '/swiftfound/script/admin_analysis.js';
+import * as analysis from 'admin_analysis.js';
 
 let reports = [];
 
@@ -31,7 +31,7 @@ export async function onAdminDashboardLoad() {
 
     document.getElementById('logoutBtn').addEventListener('click', async (e) => {
         e.preventDefault();
-        await fetch('/swiftfound/server_call/admin_call.php?call_state=ADMIN_LOGOUT', { method: 'GET' });
+        await fetch('../server_call/admin_call.php?call_state=ADMIN_LOGOUT', { method: 'GET' });
         window.location.href = 'admin_logout.php';
     });
 
@@ -189,7 +189,7 @@ async function callAdmin(state, extra = {}) {
     const fd = new FormData();
     fd.append('call_state', state);
     for (const [k, v] of Object.entries(extra)) fd.append(k, v);
-    const res = await fetch('/swiftfound/server_call/admin_call.php', { method: 'POST', body: fd });
+    const res = await fetch('../server_call/admin_call.php', { method: 'POST', body: fd });
     return res.json();
 }
 
@@ -352,7 +352,7 @@ function drawReports() {
         let reviewBtn = document.getElementById(`reviewBtn_${r.report_id}`);
         if (reviewBtn) {
             reviewBtn.addEventListener('click', function (e) {
-                window.location.href = `/swiftfound/item_detail.php?item_id=${r.reported_item_id}&report_id=${r.report_id}`;
+                window.location.href = `../item_detail.php?item_id=${r.reported_item_id}&report_id=${r.report_id}`;
             });
         }
 

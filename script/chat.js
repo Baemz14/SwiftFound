@@ -1,6 +1,6 @@
-import * as userUtil from "/swiftfound/script/user_utils.js";
-import { callServer } from "/swiftfound/include/call_server.js";
-import * as chatUtils from "/swiftfound/script/chat_utils.js";
+import * as userUtil from "script/user_utils.js";
+import { callServer } from "../include/call_server.js";
+import * as chatUtils from "chat_utils.js";
 // moved some functions to chat_utils for better organization
 let onResolveClaim = chatUtils.onResolveClaim;
 let closeResolveClaimModal = chatUtils.closeResolveClaimModal;
@@ -29,7 +29,7 @@ let hideAllChats = chatUtils.hideAllChats;
 let isContactLoaded = chatUtils.isContactLoaded;
 let contactIndex = chatUtils.contactIndex;
 let updateTopBarUnreadCount = chatUtils.updateTopBarUnreadCount;
-import * as chatEvents from "/swiftfound/script/chat_events.js";
+import * as chatEvents from "chat_events.js";
 
 let chat = [];
 let contact = [];

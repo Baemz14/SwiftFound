@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/item_detail.css">
 
     <script type="module">
-        import { onItemLoad } from "/swiftfound/script/item_detail.js";
+        import { onItemLoad } from "script/item_detail.js";
         window.onload = onItemLoad;
     </script>
 </head>
@@ -18,7 +18,7 @@
     <!-- Top Navigation -->
     <header class="page-header">
         <a href="browse.php" class="back-link">← Back to Browsing</a>
-        <div class="logo" onclick="window.location.href='/swiftfound/'">Swift<span>Found</span></div>
+        <div class="logo" onclick="window.location.href='index.php'">Swift<span>Found</span></div>
     </header>
 
     <main class="item-details-grid">

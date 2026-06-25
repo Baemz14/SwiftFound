@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/login.css">
 
     <script type="module">
-        import { onLoginLoad } from '/swiftfound/script/login.js';
+        import { onLoginLoad } from 'script/login.js';
         window.onload = onLoginLoad;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -29,7 +29,7 @@
             <h1>SwiftFound</h1>
         </div>
 
-        <a href="/swiftfound/" class="brand-link">← Return to Home</a>
+        <a href="index.php" class="brand-link">← Return to Home</a>
         
         <h2>Welcome Back</h2>
         <p class="subtitle">Please enter your details</p>

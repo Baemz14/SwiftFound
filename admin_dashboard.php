@@ -15,7 +15,7 @@ if (!isset($_SESSION['admin_auth']) || !$_SESSION['admin_auth']) {
     <link rel="stylesheet" href="css/admin_dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
     <script type="module">
-        import { onAdminDashboardLoad } from "/swiftfound/script/admin_dashboard.js?v=2";
+        import { onAdminDashboardLoad } from "script/admin_dashboard.js?v=2";
         window.onload = onAdminDashboardLoad;
     </script>
 </head>

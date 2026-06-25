@@ -1,11 +1,11 @@
 import { callServer } from "../include/call_server.js";
-import { checkIsLoggedIn, saveLogin } from "/swiftfound/script/user_utils.js";
+import { checkIsLoggedIn, saveLogin } from "user_utils.js";
 
 export async function onLoginLoad() {
     let isLoggedIn = await checkIsLoggedIn()
     if (isLoggedIn) {
         alert("already logged in, redirecting to home page");
-        window.location.href = '/swiftfound/home.php';        
+        window.location.href = '../home.php';        
     }
 
     let form = document.getElementById("loginForm");
@@ -44,7 +44,7 @@ async function onLoginSubmit(event) {
     let data = await callServer('server_call/user_call.php', formData, "FIND_USER");
     if (data.status === 'success') {
         await saveLogin(data.user_id);
-        window.location.href = "/swiftfound/home.php";
+        window.location.href = "../home.php";
     } else {
         alert("Login failed");
     }

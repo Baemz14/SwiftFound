@@ -10,13 +10,13 @@
     <link rel="stylesheet" href="css/browse.css">
 
     <script type="module">
-        import { onBrowseLoad } from "/swiftfound/script/browse.js?v=4";
+        import { onBrowseLoad } from "script/browse.js?v=4";
         window.onload = onBrowseLoad;
     </script>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/swiftfound/" class="logo">SwiftFound</a>
+        <a href="index.php" class="logo">SwiftFound</a>
         <div class="nav-links" id="navLinks">
             <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="home.php">My Dashboard</a>

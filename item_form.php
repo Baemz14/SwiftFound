@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/itemform.css">
     
     <script type="module">
-        import { itemFormLoad } from "/swiftfound/script/item_form.js";
+        import { itemFormLoad } from "script/item_form.js";
         window.onload = itemFormLoad;
     </script>
 </head>
@@ -18,7 +18,7 @@
 
     <div class="form-container">
         <div class="brand-name">SwiftFound</div>
-        <a href="/swiftfound/home.php" class="back-link">← Return to Home</a>
+        <a href="home.php" class="back-link">← Return to Home</a>
 
         <h2>Post Found Item</h2>
         <p class="subtitle">Please enter the item details</p>

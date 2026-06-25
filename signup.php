@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/signup.css">
 
     <script type="module">
-        import { onSignupLoad } from "/swiftfound/script/signup.js";
+        import { onSignupLoad } from "script/signup.js";
         window.onload = onSignupLoad;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -34,7 +34,7 @@
             <h1>SwiftFound</h1>
         </div>
 
-        <a href="/swiftfound/" class="brand-link">← Back to Frontpage</a>
+        <a href="index.php" class="brand-link">← Back to Frontpage</a>
         
         <h2>Create Account</h2>
 

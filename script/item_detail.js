@@ -1,8 +1,8 @@
-import { callServer } from "/swiftfound/include/call_server.js";
-import { CategoryEnumDB, CategoryText, CategoryEnum } from "/swiftfound/enum_constant.js";
-import { checkIsLoggedIn } from "/swiftfound/script/user_utils.js";
-import * as userUtils from "/swiftfound/script/user_utils.js";
-import * as adminUtils from "/swiftfound/script/admin_utils.js";
+import { callServer } from "../include/call_server.js";
+import { CategoryEnumDB, CategoryText, CategoryEnum } from "../enum_constant.js";
+import { checkIsLoggedIn } from "user_utils.js";
+import * as userUtils from "user_utils.js";
+import * as adminUtils from "admin_utils.js";
 
 let item = null;
 let user = null;
@@ -29,23 +29,23 @@ export async function onItemLoad() {
     if (viewingStatus === 'ADMIN_REVIEW') {
         const backLink = document.querySelector('.back-link');
         if (backLink) {
-            backLink.setAttribute('href', '/swiftfound/admin_dashboard.php');
+            backLink.setAttribute('href', '../admin_dashboard.php');
             backLink.innerText = '← Back to Admin Dashboard';
         }
     }
 
     let formData = new FormData();
     formData.append('item_id', urlParams.get('item_id'));
-    let data = await callServer('/swiftfound/server_call/item_call.php', formData, "GET_ITEM");
+    let data = await callServer('../server_call/item_call.php', formData, "GET_ITEM");
     item = data['item'];
     if (!item) {
         alert(`cant find item`);
-        window.location.href = "/swiftfound/browse.php";
+        window.location.href = "../browse.php";
     }
     console.log(item);
 
     if (viewingStatus !== 'ADMIN_REVIEW') {        
-        let sessData = await callServer('/swiftfound/server_call/user_call.php', null, "GET_SESSDATA");
+        let sessData = await callServer('../server_call/user_call.php', null, "GET_SESSDATA");
         user = sessData['user'];
         if (user) {
             viewingStatus = item['user_id'] === user['user_id']? 'USER_POSTED': 'USER_VIEW';
@@ -56,7 +56,7 @@ export async function onItemLoad() {
     displayClaimStatistics();
     renderItemStatus();
 
-    document.getElementById('item_image').src = `/swiftfound/img_upload/${item['img_file']}`;
+    document.getElementById('item_image').src = `../img_upload/${item['img_file']}`;
     document.getElementById('category').innerText = CategoryText[CategoryEnum[item['category']]];
     document.getElementById('title').innerText = item['title'];
     document.getElementById('question').innerText = item['secret_question'];
@@ -127,7 +127,7 @@ export async function onItemLoad() {
     // open chat button listener (if applicable)
     if (user && viewingStatus === 'USER_CLAIMED') {
         document.getElementById('openChatBtn').addEventListener('click', function() {
-            window.location.href = `/swiftfound/chat.php?opening=${userClaim['claim_id']}`;
+            window.location.href = `../chat.php?opening=${userClaim['claim_id']}`;
         });
     }
 
@@ -246,7 +246,7 @@ function onClaimClick(e) {
     }
     if (!user) {
         alert(`you no login go login`);
-        window.location.href = "/swiftfound/login.php";
+        window.location.href = "../login.php";
         return;
     }
     if (viewingStatus === 'USER_CLAIMED') {
@@ -297,7 +297,7 @@ async function claimItem(e) {
         document.getElementById('successModal').style.display = "";
         document.getElementById('btnOk').addEventListener('click', function() {
             document.getElementById('successModal').style.display = "none";
-            window.location.href = `/swiftfound/chat.php?opening=${userClaim['claim_id']}`;
+            window.location.href = `../chat.php?opening=${userClaim['claim_id']}`;
         });
     } else {
         alert(`something went wong`);

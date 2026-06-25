@@ -1,7 +1,7 @@
-import * as userUtil from "/swiftfound/script/user_utils.js";
+import * as userUtil from "user_utils.js";
 let loadUserData = userUtil.loadUserData;
-import { logout } from "/swiftfound/script/logout.js";
-import { callServer } from "/swiftfound/include/call_server.js";
+import { logout } from "logout.js";
+import { callServer } from "../include/call_server.js";
 
 const btnIdToSect = {
     'dashboardBtn': 'dashboardSect',
@@ -115,7 +115,7 @@ export async function homeLoad() {
             const formData = new FormData();
             formData.append('avatar', file);
             try {
-                const result = await callServer('/swiftfound/server_call/user_call.php', formData, 'UPLOAD_AVATAR');
+                const result = await callServer('../server_call/user_call.php', formData, 'UPLOAD_AVATAR');
                 if (result.status === 'success') {
                     alert('Avatar uploaded successfully.');
                     if (result.avatar_url) {
@@ -307,7 +307,7 @@ function updateItemUi(newItem) {
         const dateObj = new Date(item.created_at);
         const dateStr = dateObj.toLocaleDateString('en-MY', { month: 'short', day: 'numeric', year: 'numeric' });
         const imagePath = item.img_file
-            ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}`
+            ? `../img_upload/${escapeHtml(item.img_file)}`
             : 'https://placehold.co/300x160/eef2ff/6366f1?text=No+Image';
         let card = `
             <div id="item_${escapeHtml(item.item_id)}" class="item-card item-row" style="cursor:pointer;" data-status="${escapeHtml(item.status)}">
@@ -405,7 +405,7 @@ function updateClaimUi(newClaim) {
     const container = document.getElementById('claimContainer');
     for (const claim of sorted) {
         const imagePath = claim.img_file
-            ? `/swiftfound/img_upload/${escapeHtml(claim.img_file)}`
+            ? `../img_upload/${escapeHtml(claim.img_file)}`
             : 'https://placehold.co/52x52/eef2ff/6366f1?text=?';
         const card = `
             <div id="claim_${escapeHtml(claim.claim_id)}" class="claim-row" style="cursor:pointer;" title="Open in chat" data-status="${escapeHtml(claim.claim_status)}">
@@ -443,7 +443,7 @@ function updateClaimReqUi(newClaimReq) {
         let item = claim.item;
         let claimer = claim.claimer;
         const imagePath = item.img_file
-            ? `/swiftfound/img_upload/${escapeHtml(item.img_file)}`
+            ? `../img_upload/${escapeHtml(item.img_file)}`
             : 'https://placehold.co/52x52/eef2ff/6366f1?text=?';
         const isPending  = claim.claim_status === 'PENDING';
 
@@ -522,5 +522,5 @@ function onViewClaimer(e) {}
 
 
 async function openChat(claim) {
-    window.location.href = `/swiftfound/chat.php?opening=${claim.claim_id}`;
+    window.location.href = `../chat.php?opening=${claim.claim_id}`;
 }
