@@ -3,7 +3,7 @@ include '../db_stuff/db_conn.php';
 
 function findUser($username, $password) {
     global $conn;
-    $sql = "SELECT * FROM User WHERE username = '$username'";
+    $sql = "SELECT * FROM user WHERE username = '$username'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
@@ -17,7 +17,7 @@ function findUser($username, $password) {
 
 function userExists($username) {
     global $conn;
-    $sql = "SELECT user_id FROM User WHERE username = '$username'";
+    $sql = "SELECT user_id FROM user WHERE username = '$username'";
     $result = mysqli_query($conn, $sql);
     return mysqli_num_rows($result) > 0;
 }
@@ -25,13 +25,13 @@ function userExists($username) {
 function addUser($username, $password) {
     global $conn;
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO User (username, password_hash) VALUES ('$username', '$passwordHash')";
+    $sql = "INSERT INTO user (username, password_hash, reputation) VALUES ('$username', '$passwordHash', 0)";
     return mysqli_query($conn, $sql);
 }
 
 function getUserId($username) {
     global $conn;
-    $sql = "SELECT user_id FROM User WHERE username = '$username'";
+    $sql = "SELECT user_id FROM user WHERE username = '$username'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
@@ -43,7 +43,7 @@ function getUserId($username) {
 
 function getUser($user_id) {
     global $conn;
-    $sql = "SELECT user_id, username, reputation, avatar_url, is_restricted FROM User WHERE user_id = '$user_id'";
+    $sql = "SELECT user_id, username, reputation, avatar_url, is_restricted FROM user WHERE user_id = '$user_id'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
@@ -55,7 +55,7 @@ function getUser($user_id) {
 
 function updateUserAvatar($user_id, $avatar_url) {
     global $conn;
-    $sql = "UPDATE User SET avatar_url = '$avatar_url' WHERE user_id = '$user_id'";
+    $sql = "UPDATE user SET avatar_url = '$avatar_url' WHERE user_id = '$user_id'";
     return mysqli_query($conn, $sql);
 }
 
@@ -69,7 +69,7 @@ function addItem(
     $secret_question
 ) {
     global $conn;
-    $sql = "INSERT INTO Item (
+    $sql = "INSERT INTO item (
         user_id, 
         title, 
         category, 
@@ -145,7 +145,7 @@ function getClaim($claim_id) {
 
 function addClaim($user_id, $item_id, $answer_text) {
     global $conn;
-    $sql = "INSERT INTO Claim (user_id, item_id, answer_text)
+    $sql = "INSERT INTO claim (user_id, item_id, answer_text)
             VALUES ('$user_id', '$item_id', '$answer_text')";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
@@ -444,7 +444,7 @@ function getAdminStats() {
     $r = mysqli_query($conn, "SELECT COUNT(*) AS c FROM report");
     $stats['total_reports'] = mysqli_fetch_assoc($r)['c'];
 
-    // Claim status breakdown
+    // claim status breakdown
     $r = mysqli_query($conn, "SELECT claim_status, COUNT(*) AS c FROM claim GROUP BY claim_status");
     $stats['claim_breakdown'] = [];
     while ($row = mysqli_fetch_assoc($r)) {
