@@ -1,6 +1,6 @@
 {
   "servername": "localhost",
-  "username": "syrqzycf_swiftfound",
-  "password": "pKekPbXC3BxsPSeHZgmk",
-  "dbname": "syrqzycf_swiftfound"
+  "username": "root",
+  "password": "",
+  "dbname": "swiftfound_db"
 }
